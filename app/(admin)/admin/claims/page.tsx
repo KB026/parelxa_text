@@ -2,17 +2,6 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { sendClaimApproved } from '@/lib/email/actions';
 
-type ClaimRow = {
-  id: string;
-  work_email: string;
-  role: string;
-  status: string;
-  created_at: string;
-  agent_id: number;
-  user_id: string;
-  agents?: { name?: string; website?: string; slug?: string; id?: number } | null;
-};
-
 export default async function AdminClaimsPage() {
   const supabase = createClient();
   
@@ -21,11 +10,13 @@ export default async function AdminClaimsPage() {
     .select('*, agents(name, website, slug, id)')
     .order('created_at', { ascending: false });
 
-  const claims = (data || []) as ClaimRow[];
+  // No manual interface needed! Rely on the generated types.
+  const claims = data || [];
 
   async function resolveClaim(formData: FormData) {
     'use server';
-    const id = formData.get('id');
+    // FIX: Extract the ID as a string, then cast to Number for Supabase queries
+    const id = Number(formData.get('id') as string);
     const action = formData.get('action'); // 'approve', 'reject'
     const supabase = createClient();
 
@@ -43,7 +34,7 @@ export default async function AdminClaimsPage() {
       await supabase
         .from('agents')
         .update({ user_id: claim.user_id, is_maker_claimed: true })
-        .eq('id', claim.agent_id);
+        .eq('id', Number(claim.agent_id));
 
       // Update status
       await supabase
@@ -51,15 +42,16 @@ export default async function AdminClaimsPage() {
         .update({ status: 'approved' })
         .eq('id', id);
 
-      // Notify user
-      const agentName = (claim.agents as unknown as { name: string })?.name || 'your tool';
+      // Notify user safely
+      const agentData = Array.isArray(claim.agents) ? claim.agents[0] : claim.agents;
+      const agentName = (agentData as { name?: string })?.name || 'your tool';
       await sendClaimApproved(claim.work_email, agentName);
 
       // Reject all other claims for this agent
       await supabase
         .from('listing_claims')
         .update({ status: 'rejected' })
-        .eq('agent_id', claim.agent_id)
+        .eq('agent_id', Number(claim.agent_id))
         .neq('id', id);
 
     } else {
@@ -96,53 +88,60 @@ export default async function AdminClaimsPage() {
               <tr>
                 <td colSpan={5} style={{ padding: '48px', textAlign: 'center', color: 'var(--text-dim)' }}>No claim requests found.</td>
               </tr>
-            ) : (claims || []).map(claim => (
-              <tr key={claim.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                <td style={{ padding: '20px 24px' }}>
-                  <div style={{ fontWeight: 700, color: 'white' }}>{(claim.agents as unknown as { name: string })?.name}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--cyan)' }}>{(claim.agents as unknown as { website: string })?.website}</div>
-                </td>
-                <td style={{ padding: '20px 24px' }}>
-                  <div style={{ color: 'white', fontSize: '14px' }}>{claim.work_email}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '4px' }}>{claim.role}</div>
-                </td>
-                <td style={{ padding: '20px 24px' }}>
-                  <span style={{ 
-                    padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700,
-                    background: claim.status === 'approved' ? 'rgba(16,185,129,0.1)' : 
-                               claim.status === 'disputed' ? 'rgba(245,158,11,0.1)' : 'rgba(21,101,192,0.1)',
-                    color: claim.status === 'approved' ? '#10b981' : 
-                          claim.status === 'disputed' ? '#fb923c' : '#60a5fa'
-                  }}>
-                    {claim.status.replace('_', ' ').toUpperCase()}
-                  </span>
-                </td>
-                <td style={{ padding: '20px 24px', color: 'var(--text-dim)', fontSize: '13px' }}>
-                  {new Date(claim.created_at).toLocaleDateString()}
-                </td>
-                <td style={{ padding: '20px 24px' }}>
-                  {['approved', 'rejected'].includes(claim.status) ? (
-                    <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Resolved</span>
-                  ) : (
-                    <form action={resolveClaim} style={{ display: 'flex', gap: '8px' }}>
-                      <input type="hidden" name="id" value={claim.id} />
-                      <button name="action" value="approve" style={{ padding: '6px 12px', borderRadius: '6px', background: '#10b981', color: 'black', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Approve</button>
-                      <button 
-                        name="action" 
-                        value="reject" 
-                        style={{ 
-                          padding: '6px 12px', borderRadius: '6px', background: 'transparent', 
-                          color: '#f87171', border: '1px solid rgba(248,113,113,0.3)', 
-                          cursor: 'pointer', fontSize: '12px' 
-                        }}
-                      >
-                        Reject
-                      </button>
-                    </form>
-                  )}
-                </td>
-              </tr>
-            ))}
+            ) : claims.map(claim => {
+              // Extract agent data safely for rendering
+              const agent = Array.isArray(claim.agents) ? claim.agents[0] : claim.agents;
+              const agentDetails = agent as { name?: string; website?: string } | null;
+
+              return (
+                <tr key={claim.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                  <td style={{ padding: '20px 24px' }}>
+                    <div style={{ fontWeight: 700, color: 'white' }}>{agentDetails?.name || 'Unknown Tool'}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--cyan)' }}>{agentDetails?.website || 'No website provided'}</div>
+                  </td>
+                  <td style={{ padding: '20px 24px' }}>
+                    <div style={{ color: 'white', fontSize: '14px' }}>{claim.work_email}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '4px' }}>{claim.role}</div>
+                  </td>
+                  <td style={{ padding: '20px 24px' }}>
+                    <span style={{ 
+                      padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700,
+                      background: claim.status === 'approved' ? 'rgba(16,185,129,0.1)' : 
+                                 claim.status === 'disputed' ? 'rgba(245,158,11,0.1)' : 'rgba(21,101,192,0.1)',
+                      color: claim.status === 'approved' ? '#10b981' : 
+                            claim.status === 'disputed' ? '#fb923c' : '#60a5fa'
+                    }}>
+                      {claim.status?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
+                    </span>
+                  </td>
+                  <td style={{ padding: '20px 24px', color: 'var(--text-dim)', fontSize: '13px' }}>
+                    {/* FIX: Handled the possibility of claim.created_at being null */}
+                    {new Date(claim.created_at || Date.now()).toLocaleDateString()}
+                  </td>
+                  <td style={{ padding: '20px 24px' }}>
+                    {claim.status && ['approved', 'rejected'].includes(claim.status) ? (
+                      <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Resolved</span>
+                    ) : (
+                      <form action={resolveClaim} style={{ display: 'flex', gap: '8px' }}>
+                        <input type="hidden" name="id" value={String(claim.id)} />
+                        <button name="action" value="approve" style={{ padding: '6px 12px', borderRadius: '6px', background: '#10b981', color: 'black', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Approve</button>
+                        <button 
+                          name="action" 
+                          value="reject" 
+                          style={{ 
+                            padding: '6px 12px', borderRadius: '6px', background: 'transparent', 
+                            color: '#f87171', border: '1px solid rgba(248,113,113,0.3)', 
+                            cursor: 'pointer', fontSize: '12px' 
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </form>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

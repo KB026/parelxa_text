@@ -15,7 +15,7 @@ export default async function EditListingPage({ params }: { params: { id: string
   const { data: agent, error } = await supabase
     .from('agents')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', number(params.id))
     .single();
 
   if (error || !agent) {

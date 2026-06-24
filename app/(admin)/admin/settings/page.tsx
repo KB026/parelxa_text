@@ -4,23 +4,43 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
+type SiteSetting = {
+  key: string;
+  value: {
+    enabled?: boolean;
+    text?: string;
+    link?: string;
+    weekly?: number;
+    monthly?: number;
+  };
+};
+
 export default async function AdminSettings() {
   const supabase = createClient();
 
   // Fetch all settings
   const { data: settings } = await supabase.from('site_settings').select('*');
+  const siteSettings = (settings ?? []) as unknown as SiteSetting[];
   
-  const banner = settings?.find(s => s.key === 'announcement_banner')?.value || { enabled: false, text: '', link: '' };
-  const pricing = settings?.find(s => s.key === 'featured_pricing')?.value || { weekly: 0, monthly: 0 };
+  const banner =
+    siteSettings.find((s: SiteSetting) => s.key === 'announcement_banner')?.value ||
+    { enabled: false, text: '', link: '' };
+    
+  const pricing = 
+    siteSettings.find((s: SiteSetting) => s.key === 'featured_pricing')?.value || 
+    { weekly: 0, monthly: 0 };
 
   async function updateBanner(formData: FormData) {
     'use server';
     const supabase = createClient();
+    
+    // FIX: Cast formData values to strings so they are valid JSON
     const value = {
       enabled: formData.get('enabled') === 'on',
-      text: formData.get('text'),
-      link: formData.get('link')
+      text: formData.get('text') as string,
+      link: formData.get('link') as string
     };
+    
     await supabase.from('site_settings').update({ value, updated_at: new Date().toISOString() }).eq('key', 'announcement_banner');
     revalidatePath('/admin/settings');
     revalidatePath('/');
@@ -29,10 +49,13 @@ export default async function AdminSettings() {
   async function updatePricing(formData: FormData) {
     'use server';
     const supabase = createClient();
+    
+    // FIX: Cast formData to strings before wrapping in Number()
     const value = {
-      weekly: Number(formData.get('weekly')),
-      monthly: Number(formData.get('monthly'))
+      weekly: Number(formData.get('weekly') as string),
+      monthly: Number(formData.get('monthly') as string)
     };
+    
     await supabase.from('site_settings').update({ value, updated_at: new Date().toISOString() }).eq('key', 'featured_pricing');
     revalidatePath('/admin/settings');
     revalidatePath('/');

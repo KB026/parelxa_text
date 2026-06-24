@@ -6,20 +6,31 @@ export default async function AdminReports() {
   const supabase = createClient();
 
   // 1. Revenue Metrics
-  const { data: transactions } = await supabase
-    .from('transactions')
-    .select('amount, created_at')
-    .eq('status', 'completed');
-  
-  const totalRevenue = transactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+ const { data: transactionsData } = await supabase
+  .from('transactions')
+  .select('amount, created_at')
+  .eq('status', 'completed');
+
+const transactions = Array.isArray(transactionsData)
+  ? transactionsData
+  : [];
+
+const totalRevenue = transactions.reduce(
+  (sum, t) => sum + Number((t as { amount?: string | number }).amount || 0),
+  0
+);
   
   // 2. Category Distribution
-  const { data: agents } = await supabase
-    .from('agents')
-    .select('category');
+  const { data: agentsData } = await supabase
+  .from('agents')
+  .select('category');
+
+const agents = Array.isArray(agentsData)
+  ? agentsData
+  : [];
   
   const categoryMap: Record<string, number> = {};
-  agents?.forEach(a => {
+ agents.forEach((a) => {
     categoryMap[a.category] = (categoryMap[a.category] || 0) + 1;
   });
   

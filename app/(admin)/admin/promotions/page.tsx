@@ -6,23 +6,38 @@ export default async function AdminPromotions() {
   const supabase = createClient();
   
   // 1. Fetch Stats
-  const { data: transactions } = await supabase.from('transactions').select('*').eq('status', 'completed');
-  const totalRevenue = transactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+const { data: transactionsData } = await supabase
+  .from('transactions')
+  .select('*')
+  .eq('status', 'completed');
+
+const transactions = Array.isArray(transactionsData) ? transactionsData : [];
+
+const totalRevenue = transactions.reduce(
+  (sum, t) => sum + Number((t as { amount?: number | string }).amount || 0),
+  0
+);
   
   // 2. Fetch Active Promotions
-  const { data: promotions } = await supabase
-    .from('promotions')
-    .select('*, agents(name, id)')
-    .order('created_at', { ascending: false });
+  const { data: promotionsData } = await supabase
+  .from('promotions')
+  .select('*, agents(name, id)')
+  .order('created_at', { ascending: false });
+
+const promotions = Array.isArray(promotionsData) ? promotionsData : [];
 
   // 3. Fetch Agents for Manual Boost selection
-  const { data: allAgents } = await supabase
-    .from('agents')
-    .select('id, name')
-    .eq('approval_status', 'approved')
-    .order('name', { ascending: true });
+const { data: allAgentsData } = await supabase
+  .from('agents')
+  .select('id, name')
+  .eq('approval_status', 'approved')
+  .order('name', { ascending: true });
 
-  const activeCount = promotions?.filter(p => p.status === 'active').length || 0;
+const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
+
+  const activeCount = promotions.filter(
+  (p) => (p as { status?: string }).status === 'active'
+).length;
 
   return (
     <div style={{ paddingBottom: '40px' }}>

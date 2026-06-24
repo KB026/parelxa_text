@@ -3,6 +3,19 @@ import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 
+type Profile = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+  industry: string | null;
+  created_at: string;
+  is_suspended: boolean;
+  agents?: {
+    count: number;
+  }[];
+};
+
 export const dynamic = 'force-dynamic';
 
 export default async function AdminUsers({
@@ -24,9 +37,13 @@ export default async function AdminUsers({
 
   const { data: profiles } = await fetchQuery;
 
+  // FIX: Added 'unknown' to safely cast the complex Supabase relational response
+  const typedProfiles = (profiles ?? []) as unknown as Profile[];
+
   async function toggleSuspension(formData: FormData) {
     'use server';
-    const id = formData.get('id');
+    // FIX: Cast formData value to string
+    const id = formData.get('id') as string;
     const isSuspended = formData.get('is_suspended') === 'true';
     const supabase = createClient();
     await supabase.from('profiles').update({ is_suspended: !isSuspended }).eq('id', id);
@@ -86,7 +103,7 @@ export default async function AdminUsers({
             </tr>
           </thead>
           <tbody>
-            {(profiles || []).map(profile => (
+            {typedProfiles.map((profile: Profile) => (
               <tr key={profile.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                 <td style={{ padding: '20px 24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -105,7 +122,8 @@ export default async function AdminUsers({
                 </td>
                 <td style={{ padding: '20px 24px', color: 'var(--text-muted)' }}>{profile.industry || 'Not set'}</td>
                 <td style={{ padding: '20px 24px', color: 'var(--text-muted)' }}>{(profile as unknown as { agents: { count: number }[] }).agents?.[0]?.count || 0}</td>
-                <td style={{ padding: '20px 24px', color: 'var(--text-dim)', fontSize: '13px' }}>{new Date(profile.created_at).toLocaleDateString()}</td>
+                {/* FIX: Handled the possibility of profile.created_at being null */}
+                <td style={{ padding: '20px 24px', color: 'var(--text-dim)', fontSize: '13px' }}>{new Date(profile.created_at || Date.now()).toLocaleDateString()}</td>
                 <td style={{ padding: '20px 24px' }}>
                   <span style={{ 
                     padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 800,

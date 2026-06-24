@@ -1,7 +1,26 @@
 import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-
+type Transaction = {
+  id: string;
+  user_id: string;
+  agent_id: string | null;
+  amount: number | string;
+  currency: string;
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  gateway: string | null;
+  gateway_order_id: string | null;
+  gateway_payment_id: string | null;
+  created_at: string;
+  profiles?: {
+    full_name?: string;
+    email?: string;
+  } | null;
+  agents?: {
+    name?: string;
+    slug?: string;
+  } | null;
+};
 export const dynamic = 'force-dynamic';
 
 type TransactionStatus = 'pending' | 'completed' | 'failed' | 'refunded';
@@ -55,7 +74,15 @@ export default async function AdminTransactions({
     query = query.eq('status', status);
   }
 
-  const { data: transactions, count, error } = await query;
+const {
+  data: transactions,
+  count,
+  error,
+} = (await query) as {
+  data: Transaction[] | null;
+  count: number | null;
+  error: Error | null;
+};
 
   if (error) {
     return (

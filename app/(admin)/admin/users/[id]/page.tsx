@@ -2,30 +2,50 @@ import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+// 1. Define explicit interfaces for your data
+interface Listing {
+  id: string | number;
+  name: string;
+  category: string;
+  approval_status: string;
+}
+
+interface Review {
+  id: string | number;
+  content: string;
+  rating_overall: number;
+  created_at: string;
+  agents?: { name: string } | null;
+}
+
 export default async function UserDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
   
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', params.id)
+  .eq('id', number(params.id))  
     .single();
 
   if (!profile) {
     return redirect('/admin/users');
   }
 
-  // Fetch user's listings
-  const { data: listings } = await supabase
+  // 2. Fetch and cast user's listings to an array of Listing objects
+  const { data: rawListings } = await supabase
     .from('agents')
     .select('id, name, category, approval_status')
     .eq('user_id', params.id);
+  
+  const listings: Listing[] = (rawListings as unknown as Listing[]) || [];
 
-  // Fetch user's reviews
-  const { data: reviews } = await supabase
+  // 3. Fetch and cast user's reviews to an array of Review objects
+  const { data: rawReviews } = await supabase
     .from('reviews')
     .select('id, content, rating_overall, created_at, agents(name)')
     .eq('user_id', params.id);
+
+  const reviews: Review[] = (rawReviews as unknown as Review[]) || [];
 
   return (
     <section>
@@ -64,7 +84,8 @@ export default async function UserDetailPage({ params }: { params: { id: string 
               </div>
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginBottom: '4px' }}>Member Since</div>
-                <div style={{ color: 'white' }}>{new Date(profile.created_at).toLocaleDateString(undefined, { dateStyle: 'long' })}</div>
+                {/* FIX: Handled the possibility of profile.created_at being null */}
+                <div style={{ color: 'white' }}>{new Date(profile.created_at || Date.now()).toLocaleDateString(undefined, { dateStyle: 'long' })}</div>
               </div>
               <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
                 <span style={{ 
@@ -83,11 +104,12 @@ export default async function UserDetailPage({ params }: { params: { id: string 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           {/* Listings */}
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Listings ({listings?.length || 0})</h3>
+            {/* 4. JSX is much cleaner now since 'listings' is definitely an array */}
+            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Listings ({listings.length})</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {(listings || []).length === 0 ? (
+              {listings.length === 0 ? (
                 <p style={{ color: 'var(--text-dim)', fontSize: '14px' }}>No tools listed by this user.</p>
-              ) : (listings || []).map(item => (
+              ) : listings.map((item: Listing) => (
                 <Link key={item.id} href={`/admin/listings/${item.id}/edit`} style={{ 
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
                   padding: '16px', background: 'var(--bg-secondary)', borderRadius: '12px', textDecoration: 'none', border: '1px solid transparent'
@@ -104,14 +126,17 @@ export default async function UserDetailPage({ params }: { params: { id: string 
 
           {/* Reviews */}
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Platform Reviews ({reviews?.length || 0})</h3>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Platform Reviews ({reviews.length})</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {(reviews || []).length === 0 ? (
+              {reviews.length === 0 ? (
                 <p style={{ color: 'var(--text-dim)', fontSize: '14px' }}>User has not written any reviews yet.</p>
-              ) : (reviews || []).map(review => (
+              ) : reviews.map((review: Review) => (
                 <div key={review.id} style={{ padding: '20px', background: 'var(--bg-secondary)', borderRadius: '16px', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <div style={{ color: 'var(--cyan)', fontWeight: 600, fontSize: '14px' }}>{(review.agents as unknown as { name: string })?.name || 'Unnamed Agent'}</div>
+                    {/* Simplified Agent name display since it is typed in the interface */}
+                    <div style={{ color: 'var(--cyan)', fontWeight: 600, fontSize: '14px' }}>
+                      {review.agents?.name || 'Unnamed Agent'}
+                    </div>
                     <div style={{ color: '#fbbf24', fontSize: '14px', fontWeight: 700 }}>★ {review.rating_overall}</div>
                   </div>
                   <p style={{ fontSize: '14px', color: 'var(--text-white)', lineHeight: 1.6, marginBottom: '12px' }}>&quot;{review.content}&quot;</p>

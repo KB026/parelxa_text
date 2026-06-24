@@ -26,7 +26,23 @@ export default async function AdminListings({
     fetchQuery = fetchQuery.ilike('name', `%${query}%`);
   }
 
-  const { data: listings } = await fetchQuery;
+  type Listing = {
+  id: string;
+  name: string | null;
+  category: string | null;
+  website: string | null;
+  approval_status: string;
+  is_verified: boolean | null;
+  is_featured: boolean | null;
+  is_pinned_trending: boolean | null;
+  created_at: string | null;
+  user_id: string | null;
+  is_maker_claimed: boolean | null;
+  listing_expires_at: string | null;
+};
+
+const { data } = await fetchQuery;
+const listings: Listing[] = (data ?? []) as Listing[];
 
   async function updateStatus(formData: FormData) {
     'use server';
@@ -95,7 +111,7 @@ export default async function AdminListings({
     // 3. Trigger Email if activating
     const vendorEmail = agent.profiles?.email;
     if (!isFeatured && vendorEmail) {
-      await sendFeaturedAlert(vendorEmail, agent.name, false);
+      await sendFeaturedAlert(vendorEmail, agent.name ?? 'Unknown Agent', false);
     }
 
     revalidatePath('/admin/listings');
@@ -166,7 +182,7 @@ export default async function AdminListings({
             </tr>
           </thead>
           <tbody>
-            {(listings || []).map(item => (
+            {listings.map((item) => (
               <tr key={item.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                 <td style={{ padding: '20px 24px', maxWidth: '300px' }}>
                   <div style={{ fontWeight: 700, color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={item.name || ''}>{item.name}</div>

@@ -25,7 +25,8 @@ export default async function ReviewModeration({
     fetchQuery = fetchQuery.eq('agent_id', agentId);
   }
 
-  const { data: reviews } = await fetchQuery;
+ const { data } = await fetchQuery;
+const reviews = Array.isArray(data) ? data : [];;
 
   async function resolveReview(formData: FormData) {
     'use server';

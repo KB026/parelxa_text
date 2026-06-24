@@ -2,22 +2,40 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 
+type AdminProfile = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string | null;
+  created_at: string;
+};
+
+type OtherProfile = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string | null;
+};
+
 export default async function AdminManagementPage() {
   const supabase = createClient();
   
   // Fetch all admins
-  const { data: adminProfiles } = await supabase
-    .from('profiles')
-    .select('id, full_name, email, role, created_at')
-    .eq('is_admin', true)
-    .order('created_at', { ascending: true });
+const { data: adminProfiles } = await supabase
+  .from('profiles')
+  .select('id, full_name, email, role, created_at')
+  .eq('is_admin', true)
+  .order('created_at', { ascending: true });
 
-  // Fetch all vendors to potentially promote
-  const { data: otherProfiles } = await supabase
-    .from('profiles')
-    .select('id, full_name, email, role')
-    .eq('is_admin', false)
-    .limit(20);
+const admins = (adminProfiles ?? []) as AdminProfile[];
+
+const { data: otherProfiles } = await supabase
+  .from('profiles')
+  .select('id, full_name, email, role')
+  .eq('is_admin', false)
+  .limit(20);
+
+const others = (otherProfiles ?? []) as OtherProfile[];
 
   async function toggleAdmin(formData: FormData) {
     'use server';
@@ -66,7 +84,7 @@ export default async function AdminManagementPage() {
               </tr>
             </thead>
             <tbody>
-              {(adminProfiles || []).map(admin => (
+              {admins.map((admin: AdminProfile) => (
                 <tr key={admin.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                   <td style={{ padding: '16px 24px' }}>
                     <div style={{ fontWeight: 600, color: 'white' }}>{admin.full_name}</div>
@@ -98,7 +116,7 @@ export default async function AdminManagementPage() {
           <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Add Admin</h3>
           <p style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '20px' }}>Select a user to promote to the admin team.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {(otherProfiles || []).map(profile => (
+            {others.map((profile: OtherProfile) => (
               <div key={profile.id} style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ overflow: 'hidden' }}>
                   <div style={{ color: 'white', fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{profile.full_name || 'No Name'}</div>

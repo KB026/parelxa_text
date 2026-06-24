@@ -4,6 +4,21 @@ import { sendVerificationUpdate } from '@/lib/email/actions';
 
 export const dynamic = 'force-dynamic';
 
+// A lightweight type specifically for mapping the UI
+type VerificationItem = {
+  id: number;
+  agent_id: number;
+  company_name: string;
+  gst_number: string;
+  company_website: string;
+  work_email: string;
+  product_demo_url: string;
+  press_mentions?: string | null;
+  status: string;
+  created_at: string;
+  agents?: { name: string; category: string; website: string } | null;
+};
+
 export default async function AdminVerifications() {
   const supabase = createClient();
 
@@ -14,7 +29,7 @@ export default async function AdminVerifications() {
     .in('status', ['submitted', 'under_review'])
     .order('created_at', { ascending: true });
 
-  const queue = requests || [];
+  const queue = (requests as unknown as VerificationItem[]) || [];
 
   async function approveVerification(formData: FormData) {
     'use server';
@@ -26,7 +41,7 @@ export default async function AdminVerifications() {
     const { error: reqError } = await supabase
       .from('verification_requests')
       .update({ status: 'verified', updated_at: new Date().toISOString() })
-      .eq('id', requestId);
+      .eq('id', Number(requestId));
 
     if (reqError) {
       console.error('Error approving verification:', reqError);
@@ -37,7 +52,7 @@ export default async function AdminVerifications() {
     const { error: agentError } = await supabase
       .from('agents')
       .update({ is_verified: true })
-      .eq('id', agentId);
+      .eq('id', Number(agentId));
 
     if (agentError) {
       console.error('Error updating agent verification:', agentError);
@@ -48,12 +63,22 @@ export default async function AdminVerifications() {
       const { data: req } = await supabase
         .from('verification_requests')
         .select('work_email, agents:agent_id(name)')
-        .eq('id', requestId)
+        .eq('id', Number(requestId))
         .single();
       
       if (req?.work_email) {
-        const agentName = (req.agents as unknown as { name: string })?.name || 'Your AI Agent';
-        await sendVerificationUpdate(req.work_email, agentName, true);
+        // Handle array or object relationship safely
+        const agentData = Array.isArray(req.agents) ? req.agents[0] : req.agents;
+        
+        // FIX: Removed 'any', explicitly defined the expected shape
+        const agentName = (agentData as { name?: string })?.name || 'Your AI Agent';
+
+        await sendVerificationUpdate(
+          req.work_email,
+          agentName,
+          true,
+          undefined 
+        );
       }
     } catch (e) {
       console.error('Email trigger failed:', e);
@@ -83,7 +108,7 @@ export default async function AdminVerifications() {
         rejection_reason: reason.trim(),
         updated_at: new Date().toISOString()
       })
-      .eq('id', requestId);
+      .eq('id', Number(requestId));
 
     if (error) {
       console.error('Error rejecting verification:', error);
@@ -94,11 +119,15 @@ export default async function AdminVerifications() {
       const { data: req } = await supabase
         .from('verification_requests')
         .select('work_email, agents:agent_id(name)')
-        .eq('id', requestId)
+        .eq('id', Number(requestId))
         .single();
       
       if (req?.work_email) {
-        const agentName = (req.agents as unknown as { name: string })?.name || 'Your AI Agent';
+        const agentData = Array.isArray(req.agents) ? req.agents[0] : req.agents;
+        
+        // FIX: Removed 'any', explicitly defined the expected shape
+        const agentName = (agentData as { name?: string })?.name || 'Your AI Agent';
+        
         await sendVerificationUpdate(req.work_email, agentName, false, reason);
       }
     } catch (e) {
@@ -125,19 +154,8 @@ export default async function AdminVerifications() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {queue.map((req: {
-              id: number;
-              agent_id: number;
-              company_name: string;
-              gst_number: string;
-              company_website: string;
-              work_email: string;
-              product_demo_url: string;
-              press_mentions?: string;
-              status: string;
-              created_at: string;
-              agents?: { id: number; name: string; category: string; website: string };
-            }) => (
+            {/* FIX: Replaced 'any' with the strictly typed VerificationItem */}
+            {queue.map((req: VerificationItem) => (
               <div
                 key={req.id}
                 style={{
@@ -178,7 +196,7 @@ export default async function AdminVerifications() {
                   </div>
                   <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '12px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Company Website</div>
-                    <a href={req.company_website} target="_blank" rel="noreferrer" style={{ fontSize: '14px', color: 'var(--cyan)' }}>{req.company_website.replace('https://', '')}</a>
+                    <a href={req.company_website} target="_blank" rel="noreferrer" style={{ fontSize: '14px', color: 'var(--cyan)' }}>{req.company_website?.replace('https://', '')}</a>
                   </div>
                   <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '12px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Product Demo</div>
@@ -195,8 +213,8 @@ export default async function AdminVerifications() {
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
                   <form action={approveVerification}>
-                    <input type="hidden" name="request_id" value={req.id} />
-                    <input type="hidden" name="agent_id" value={req.agent_id} />
+                    <input type="hidden" name="request_id" value={String(req.id)} />
+                    <input type="hidden" name="agent_id" value={String(req.agent_id)} />
                     <button
                       type="submit"
                       style={{
@@ -210,7 +228,7 @@ export default async function AdminVerifications() {
                     </button>
                   </form>
                   <form action={rejectVerification} style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flex: 1 }}>
-                    <input type="hidden" name="request_id" value={req.id} />
+                    <input type="hidden" name="request_id" value={String(req.id)} />
                     <div style={{ flex: 1 }}>
                       <label style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Rejection Reason (required)</label>
                       <input

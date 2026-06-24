@@ -8,7 +8,7 @@ export default async function EditListingPage({ params }: { params: { id: string
   const { data: listing } = await supabase
     .from('agents')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', Number(params.id))
     .single();
 
   if (!listing) {
@@ -18,22 +18,23 @@ export default async function EditListingPage({ params }: { params: { id: string
   async function updateListing(formData: FormData) {
     'use server';
     const supabase = createClient();
-    const id = formData.get('id');
+    const id = Number(formData.get('id') as string);
     
+    // Explicitly cast FormData to strings to satisfy Supabase JSON/Text column requirements
     const updates = {
-      name: formData.get('name'),
-      slug: formData.get('slug'),
-      website: formData.get('website'),
-      one_liner: formData.get('one_liner'),
-      description: formData.get('description'),
-      category: formData.get('category'),
-      sub_category: formData.get('sub_category'),
-      pricing: formData.get('pricing'),
-      founders: formData.get('founders'),
-      founder_linkedin: formData.get('founder_linkedin'),
-      founded_year: formData.get('founded_year') ? Number(formData.get('founded_year')) : null,
-      city: formData.get('city'),
-      logo_url: formData.get('logo_url'),
+      name: formData.get('name') as string,
+      slug: formData.get('slug') as string,
+      website: formData.get('website') as string,
+      one_liner: formData.get('one_liner') as string,
+      description: formData.get('description') as string,
+      category: formData.get('category') as string,
+      sub_category: formData.get('sub_category') as string,
+      pricing: formData.get('pricing') as string,
+      founders: formData.get('founders') as string,
+      founder_linkedin: formData.get('founder_linkedin') as string,
+      founded_year: formData.get('founded_year') ? Number(formData.get('founded_year') as string) : null,
+      city: formData.get('city') as string,
+      logo_url: formData.get('logo_url') as string,
       updated_at: new Date().toISOString()
     };
 
@@ -48,7 +49,7 @@ export default async function EditListingPage({ params }: { params: { id: string
     }
 
     revalidatePath('/admin/listings');
-    revalidatePath(`/products/${listing.slug}`);
+    revalidatePath(`/products/${listing?.slug}`);
     redirect('/admin/listings');
   }
 
@@ -68,22 +69,22 @@ export default async function EditListingPage({ params }: { params: { id: string
           
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Agent Name</label>
-            <input name="name" defaultValue={listing.name} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="name" defaultValue={listing.name || ''} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Slug (URL Name)</label>
-            <input name="slug" defaultValue={listing.slug} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="slug" defaultValue={listing.slug || ''} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Website URL</label>
-            <input name="website" defaultValue={listing.website} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="website" defaultValue={listing.website || ''} required style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Category</label>
-            <select name="category" defaultValue={listing.category} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }}>
+            <select name="category" defaultValue={listing.category || ''} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }}>
               <option value="Customer Support">Customer Support</option>
               <option value="Data & Analytics">Data & Analytics</option>
               <option value="Sales & Marketing">Sales & Marketing</option>
@@ -94,32 +95,32 @@ export default async function EditListingPage({ params }: { params: { id: string
 
           <div style={{ gridColumn: 'span 2' }}>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>One-liner (Tagline)</label>
-            <input name="one_liner" defaultValue={listing.one_liner} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="one_liner" defaultValue={listing.one_liner || ''} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div style={{ gridColumn: 'span 2' }}>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Description</label>
-            <textarea name="description" defaultValue={listing.description} rows={4} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white', fontFamily: 'inherit' }} />
+            <textarea name="description" defaultValue={listing.description || ''} rows={4} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white', fontFamily: 'inherit' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Founders / Team</label>
-            <input name="founders" defaultValue={listing.founders} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="founders" defaultValue={listing.founders || ''} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Pricing Model</label>
-            <input name="pricing" defaultValue={listing.pricing} placeholder="e.g. Freemium, Paid, Free Trial" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="pricing" defaultValue={listing.pricing || ''} placeholder="e.g. Freemium, Paid, Free Trial" style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Logo URL</label>
-            <input name="logo_url" defaultValue={listing.logo_url} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="logo_url" defaultValue={listing.logo_url || ''} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Founder LinkedIn</label>
-            <input name="founder_linkedin" defaultValue={listing.founder_linkedin} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
+            <input name="founder_linkedin" defaultValue={listing.founder_linkedin || ''} style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }} />
           </div>
 
           <div style={{ gridColumn: 'span 2', display: 'flex', gap: '12px', marginTop: '12px' }}>

@@ -1,37 +1,34 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { createNoopSupabaseClient } from './noop';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { Database } from '@/types/supabase'; // <-- 1. Import the generated types
 
 export function createClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const cookieStore = cookies();
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('CRITICAL: Missing Supabase env vars at runtime. NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'SET' : 'MISSING', 'NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'SET' : 'MISSING');
-    return createNoopSupabaseClient();
-  }
-
-  const url = supabaseUrl;
-  const key = supabaseAnonKey;
-
-  let cookieStore: ReturnType<typeof cookies>;
-  try {
-    cookieStore = cookies();
-  } catch {
-    return createNoopSupabaseClient();
-  }
-
-  return createServerClient(url, key, {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
+  // 2. Pass <Database> to createServerClient
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch {
+            // Handle cookie errors
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: '', ...options });
+          } catch {
+            // Handle cookie errors
+          }
+        },
       },
-      set(name: string, value: string, options: CookieOptions) {
-        try { cookieStore.set({ name, value, ...options }); } catch {}
-      },
-      remove(name: string, options: CookieOptions) {
-        try { cookieStore.set({ name, value: "", ...options }); } catch {}
-      },
-    },
-  });
+    }
+  );
 }

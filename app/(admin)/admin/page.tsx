@@ -54,29 +54,36 @@ export default async function AdminOverview() {
       { label: 'Total Reviews', value: totalReviewsRes?.count || 0, color: '#a78bfa' }
     ];
 
-    const activities = [
-      ...(recentAgents.data || []).map(a => ({
-        time: a.created_at,
-        action: `New ${a.approval_status} listing: ${a.name}`,
-        type: 'listing',
-        status: a.approval_status
-      })),
-      ...(recentReviews.data || []).map(r => ({
-        time: r.created_at,
-        action: `New feedback on ${(r.agents as unknown as { name: string })?.name || 'a tool'}`,
-        type: 'review'
-      })),
-      ...(recentVerifs.data || []).map(v => ({
-        time: v.created_at,
-        action: `Verif. requested by ${v.company_name}`,
-        type: 'verification'
-      })),
-      ...(recentReports.data || []).map(rep => ({
-        time: rep.created_at,
-        action: `Report filed: ${rep.reason} (${rep.target_type})`,
-        type: 'report'
-      }))
-    ].sort((a, b) => new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime()).slice(0, 10);
+    const recentAgentsData = Array.isArray(recentAgents.data) ? recentAgents.data : [];
+const recentReviewsData = Array.isArray(recentReviews.data) ? recentReviews.data : [];
+const recentVerifsData = Array.isArray(recentVerifs.data) ? recentVerifs.data : [];
+const recentReportsData = Array.isArray(recentReports.data) ? recentReports.data : [];
+
+const activities = [
+  ...recentAgentsData.map((a) => ({
+    time: a.created_at,
+    action: `New ${a.approval_status} listing: ${a.name}`,
+    type: 'listing',
+    status: a.approval_status
+  })),
+  ...recentReviewsData.map((r) => ({
+    time: r.created_at,
+    action: `New feedback on ${(r.agents as { name?: string })?.name || 'a tool'}`,
+    type: 'review'
+  })),
+  ...recentVerifsData.map((v) => ({
+    time: v.created_at,
+    action: `Verif. requested by ${v.company_name}`,
+    type: 'verification'
+  })),
+  ...recentReportsData.map((rep) => ({
+    time: rep.created_at,
+    action: `Report filed: ${rep.reason} (${rep.target_type})`,
+    type: 'report'
+  }))
+]
+  .sort((a, b) => new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime())
+  .slice(0, 10);
 
     return (
       <section>
