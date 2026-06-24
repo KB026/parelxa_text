@@ -1,0 +1,13 @@
+const { Client } = require('pg');
+const dotenv = require('dotenv');
+dotenv.config({ path: '.env.local' });
+const client = new Client({ connectionString: process.env.DATABASE_URL });
+async function run() {
+  await client.connect();
+  try {
+    const res = await client.query("SELECT name, description FROM agents WHERE name = 'Parlexa AI';");
+    console.log(res.rows[0]);
+  } catch (err) { console.error(err); }
+  finally { await client.end(); }
+}
+run();

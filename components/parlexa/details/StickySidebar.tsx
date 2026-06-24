@@ -1,0 +1,71 @@
+'use client';
+
+import { Agent, ReviewStats } from '@/lib/types';
+import { StarRating } from '../reviews/ReviewStats';
+
+interface StickySidebarProps {
+  agent: Agent;
+  stats: ReviewStats | null;
+  onVisitWebsite?: () => void;
+  onSave?: () => void;
+}
+
+export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySidebarProps) {
+  return (
+    <div style={{ position: 'sticky', top: '100px', alignSelf: 'start' }}>
+      <div style={{ 
+        padding: '32px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', 
+        borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+      }}>
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <StarRating rating={stats?.averageRating || 0} size="sm" />
+            <span style={{ fontWeight: 800, fontSize: '18px' }}>{stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</span>
+          </div>
+          <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+            Based on {stats?.totalReviews || 0} reviews
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '4px' }}>Pricing</div>
+          <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--cyan)' }}>{agent.pricing}</div>
+          <div style={{ fontSize: '13px', color: 'var(--cyan)', marginTop: '4px' }}>{agent.pricingModel || 'Subscription'}</div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+          <a 
+            href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => onVisitWebsite?.()}
+            className="btn-get-started"
+            style={{ padding: '16px', fontSize: '16px', width: '100%', display: 'inline-flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
+          >
+            Visit Website
+          </a>
+          <button 
+            onClick={() => onSave?.()}
+            style={{ 
+              padding: '16px', fontSize: '16px', width: '100%', borderRadius: '12px',
+              background: 'transparent', border: '1px solid var(--border-subtle)',
+              color: 'var(--text-white)', fontWeight: 600, cursor: 'pointer'
+            }}
+          >
+            Save to Wishlist
+          </button>
+        </div>
+
+        <div style={{ paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ color: 'var(--text-dim)', fontSize: '12px', textTransform: 'uppercase', marginBottom: '8px' }}>Categories</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '12px' }}>{agent.category}</span>
+              {agent.subCategory && <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '12px' }}>{agent.subCategory}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
