@@ -16,9 +16,9 @@ export default async function CustomerDashboard() {
   const recentAgents = await getRecentlyViewed(user.id);
   
   const stats = [
-    { label: 'Tools Saved', value: userStats.saved.toString(), icon: '🔖' },
-    { label: 'Reviews Written', value: userStats.reviews.toString(), icon: '⭐' },
-    { label: 'Comparisons Done', value: userStats.compares.toString(), icon: '⚖️' },
+    { label: 'Tools Saved', value: userStats.saved.toString(), icon: 'ðŸ”–' },
+    { label: 'Reviews Written', value: userStats.reviews.toString(), icon: 'â­' },
+    { label: 'Comparisons Done', value: userStats.compares.toString(), icon: 'âš–ï¸' },
   ];
 
   return (
@@ -30,7 +30,7 @@ export default async function CustomerDashboard() {
       }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
-            Welcome back, {user?.user_metadata?.full_name?.split(' ')[0] || 'Explorer'}! 👋
+            Welcome back, {user?.user_metadata?.full_name?.split(' ')[0] || 'Explorer'}! ðŸ‘‹
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '16px', margin: 0 }}>
             Track your AI evaluations and manage your shortlisted tools in one place.

@@ -112,7 +112,7 @@ export default async function AdminUsers({
                       display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
                       overflow: 'hidden'
                     }}>
-                      {profile.avatar_url ? <img src={profile.avatar_url} alt={`${profile.full_name || 'User'}'s avatar`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '👤'}
+                      {profile.avatar_url ? <img src={profile.avatar_url} alt={`${profile.full_name || 'User'}'s avatar`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : 'ðŸ‘¤'}
                     </div>
                     <div>
                       <div style={{ fontWeight: 700, color: 'white' }}>{profile.full_name || 'Anonymous User'}</div>
@@ -156,7 +156,7 @@ export default async function AdminUsers({
                         Verify
                       </button>
                     </form>
-                    <Link href={`/admin/users/${profile.id}`} style={{ fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>Detail →</Link>
+                    <Link href={`/admin/users/${profile.id}`} style={{ fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>Detail â†’</Link>
                   </div>
                 </td>
               </tr>

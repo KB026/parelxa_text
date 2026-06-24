@@ -99,7 +99,7 @@ export function HeroSection({
                 }}
                 title="Save to Wishlist"
               >
-                ♡
+                â™¡
               </button>
               <button 
                 onClick={() => onCompare?.()}
@@ -111,7 +111,7 @@ export function HeroSection({
                 }}
                 title="Add to Compare"
               >
-                ⇌
+                â‡Œ
               </button>
               <button 
                 onClick={() => onShare?.()}
@@ -123,7 +123,7 @@ export function HeroSection({
                 }}
                 title="Share"
               >
-                ⎙
+                âŽ™
               </button>
             </div>
           </div>

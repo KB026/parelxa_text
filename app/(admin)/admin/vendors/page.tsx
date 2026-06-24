@@ -4,7 +4,7 @@ export default function AdminVendors() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h1 className="page-title" style={{ marginBottom: 0 }}>Manage Vendors</h1>
         <div className="search-bar-large" style={{ margin: 0, width: '300px', background: 'var(--bg-card)' }}>
-          <span className="search-icon">🔍</span>
+          <span className="search-icon">ðŸ”</span>
           <input type="text" placeholder="Search vendors by name..." style={{ fontSize: '14px', padding: '10px 0' }} />
         </div>
       </div>

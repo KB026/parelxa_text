@@ -83,7 +83,7 @@ export function EditListingForm({ agent }: { agent: Agent }) {
     return (
       <div className="listing-wizard">
         <div className="listing-form-card" style={{ textAlign: 'center', padding: '60px' }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>✅</div>
+          <div style={{ fontSize: '48px', marginBottom: '20px' }}>âœ…</div>
           <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>Changes Submitted</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>
             Your updates for <strong>{form.name}</strong> have been saved and sent for re-moderation.
@@ -106,7 +106,7 @@ export function EditListingForm({ agent }: { agent: Agent }) {
         <div className="listing-progress" style={{ margin: 0, gap: '12px' }}>
           {STEPS.map((s, i) => (
             <div key={s} className={`listing-step-num ${i + 1 === step ? 'active' : i + 1 < step ? 'done' : ''}`} style={{ width: '32px', height: '32px', fontSize: '12px' }}>
-              {i + 1 < step ? '✓' : i + 1}
+              {i + 1 < step ? 'âœ“' : i + 1}
             </div>
           ))}
         </div>
@@ -217,7 +217,7 @@ export function EditListingForm({ agent }: { agent: Agent }) {
             {step === 1 ? 'Cancel' : 'Back'}
           </button>
           <button type="button" className="listing-btn-next" onClick={() => step < 5 ? setStep(step + 1) : handleSubmit()}>
-            {step === 5 ? 'Save Changes ✓' : 'Next Step →'}
+            {step === 5 ? 'Save Changes âœ“' : 'Next Step â†’'}
           </button>
         </div>
       </div>

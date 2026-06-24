@@ -12,6 +12,20 @@ export interface ExternalReview {
   last_fetched_at: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapToExternalReview(item: any): ExternalReview {
+  return {
+    id: item.id,
+    agent_id: item.agent_id || 0,
+    source: item.source || '',
+    rating: Number(item.rating) || 0,
+    reviews_count: Number(item.reviews_count) || 0,
+    snippet: item.snippet || '',
+    source_url: item.source_url || '',
+    last_fetched_at: item.last_fetched_at || new Date().toISOString()
+  };
+}
+
 export async function getExternalReviews(agentId: number, agentName: string): Promise<ExternalReview[]> {
   const supabase = createClient();
 
@@ -26,9 +40,9 @@ export async function getExternalReviews(agentId: number, agentName: string): Pr
   const cacheLimit = 24 * 60 * 60 * 1000; // 24 hours
 
   if (cached && cached.length > 0) {
-    const lastFetch = new Date(cached[0].last_fetched_at);
+    const lastFetch = new Date(cached[0].last_fetched_at || '');
     if (now.getTime() - lastFetch.getTime() < cacheLimit) {
-      return cached;
+      return cached.map(mapToExternalReview);
     }
   }
 
@@ -55,8 +69,9 @@ export async function getExternalReviews(agentId: number, agentName: string): Pr
       .insert(toInsert)
       .select();
     
-    return inserted || [];
+    return inserted ? inserted.map(mapToExternalReview) : [];
   }
 
-  return cached || [];
+  return cached ? cached.map(mapToExternalReview) : [];
 }
+

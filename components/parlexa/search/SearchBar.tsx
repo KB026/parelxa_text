@@ -91,7 +91,7 @@ export function SearchBar({ agents, categories, totalCount }: SearchBarProps) {
             transition: 'border-color 0.2s'
           }}
         />
-        <span style={{ position: 'absolute', left: '24px', fontSize: '24px', opacity: 0.5 }}>🔍</span>
+        <span style={{ position: 'absolute', left: '24px', fontSize: '24px', opacity: 0.5 }}>ðŸ”</span>
       </div>
 
       <div style={{ marginTop: '12px', fontSize: '14px', color: 'var(--text-dim)' }}>
@@ -117,7 +117,7 @@ export function SearchBar({ agents, categories, totalCount }: SearchBarProps) {
               style={{ padding: '12px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
               className="suggestion-item"
             >
-              <span style={{ opacity: 0.3 }}>🕒</span> {s}
+              <span style={{ opacity: 0.3 }}>ðŸ•’</span> {s}
             </div>
           ))}
 

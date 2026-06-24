@@ -19,11 +19,11 @@ export default async function VendorOverview() {
   }
 
   const kpis = [
-    { label: 'Profile Views', value: '3,450', trend: '+12.5%', icon: '👁️' },
-    { label: 'Website Clicks', value: '182', trend: '+5.2%', icon: '🖱️' },
-    { label: 'Avg Rating', value: '4.8', trend: '0.0%', icon: '⭐' },
-    { label: 'Total Reviews', value: '24', trend: '+2', icon: '📝' },
-    { label: 'Saves', value: '142', trend: '+18', icon: '🔖' },
+    { label: 'Profile Views', value: '3,450', trend: '+12.5%', icon: 'ðŸ‘ï¸' },
+    { label: 'Website Clicks', value: '182', trend: '+5.2%', icon: 'ðŸ–±ï¸' },
+    { label: 'Avg Rating', value: '4.8', trend: '0.0%', icon: 'â­' },
+    { label: 'Total Reviews', value: '24', trend: '+2', icon: 'ðŸ“' },
+    { label: 'Saves', value: '142', trend: '+18', icon: 'ðŸ”–' },
   ];
 
   // Simulated chart data (last 30 days)
@@ -55,7 +55,7 @@ export default async function VendorOverview() {
             <div>
               <div style={{ fontSize: '12px', fontWeight: 700, color: '#fb923c', textTransform: 'uppercase' }}>Active Boost</div>
               <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                {activePromotions[0].agents?.name} · Ends {new Date(activePromotions[0].end_date).toLocaleDateString()}
+                {activePromotions[0].agents?.name} Â· Ends {new Date(activePromotions[0].end_date).toLocaleDateString()}
               </div>
             </div>
           </div>
@@ -64,7 +64,7 @@ export default async function VendorOverview() {
             padding: '12px 20px', borderRadius: '12px', background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)',
             color: 'black', fontSize: '14px', fontWeight: 700, textDecoration: 'none', transition: 'transform 0.2s'
           }}>
-            🚀 Boost Visibility
+            ðŸš€ Boost Visibility
           </Link>
         )}
       </div>

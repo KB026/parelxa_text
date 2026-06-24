@@ -69,7 +69,7 @@ export function MediaSection({ screenshots = [], videoUrl }: MediaSectionProps) 
           <button 
             style={{ position: 'absolute', top: '24px', right: '24px', background: 'white', color: 'black', border: 'none', borderRadius: '50%', width: '40px', height: '40px', fontWeight: 700, cursor: 'pointer' }}
           >
-            ✕
+            âœ•
           </button>
         </div>
       )}

@@ -26,11 +26,19 @@ export async function processWeeklyDigest() {
 
   if (!newTools || newTools.length === 0) return { success: false, error: 'No new tools this week' };
 
+  const formattedTools = newTools.map(t => ({
+    name: t.name || 'Unnamed Tool',
+    category: t.category || 'AI & LLMs',
+    slug: t.slug || ''
+  }));
+
+  const typedUsers = users as unknown as { id: string; email: string; full_name: string | null }[];
+
   // 3. Send emails
-  const results = await Promise.all(users.map(user => {
+  const results = await Promise.all(typedUsers.map(user => {
     const unsubscribeLink = `https://parlexa.in/api/email/unsubscribe?userId=${user.id}&type=weekly_digest`;
-    const html = templates.weeklyDigest(user.full_name || 'User', newTools, unsubscribeLink);
-    return sendEmail({ to: user.email, subject: 'Weekly AI Insights: New Tools on Parlexa 🧠', html });
+    const html = templates.weeklyDigest(user.full_name || 'User', formattedTools, unsubscribeLink);
+    return sendEmail({ to: user.email, subject: 'Weekly AI Insights: New Tools on Parlexa ðŸ§ ', html });
   }));
 
   return { success: true, count: results.filter(r => r.success).length };
@@ -43,7 +51,7 @@ export async function triggerSavedToolVerificationAlert(agentId: string) {
   const { data: agent } = await supabase
     .from('agents')
     .select('name, slug')
-    .eq('id', agentId)
+    .eq('id', Number(agentId))
     .single();
 
   if (!agent) return;
@@ -54,7 +62,7 @@ export async function triggerSavedToolVerificationAlert(agentId: string) {
   const { data: saves } = await supabase
     .from('saved_tools')
     .select('user_id, profiles(email, notification_prefs)')
-    .eq('agent_id', agentId);
+    .eq('agent_id', Number(agentId));
 
   if (!saves) return;
 
@@ -62,8 +70,9 @@ export async function triggerSavedToolVerificationAlert(agentId: string) {
     const profile = save.profiles as unknown as { email: string; notification_prefs?: Record<string, boolean | undefined> } | null;
     if (profile?.email && profile?.notification_prefs?.verified_alert !== false) {
       const unsubscribeLink = `https://parlexa.in/api/email/unsubscribe?userId=${save.user_id}&type=verified_alert`;
-      const html = templates.savedToolVerified(agent.name, agent.slug, unsubscribeLink);
-      await sendEmail({ to: profile.email, subject: `✓ Verification Alert: ${agent.name}`, html });
+      const html = templates.savedToolVerified(agent.name || 'Unnamed Tool', agent.slug || '', unsubscribeLink);
+      await sendEmail({ to: profile.email, subject: `âœ“ Verification Alert: ${agent.name || 'Unnamed Tool'}`, html });
     }
   }
 }
+

@@ -98,7 +98,7 @@ const activities = [
               <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em', marginBottom: '12px' }}>{kpi.label}</div>
               <div style={{ fontSize: '32px', fontWeight: 800, color: kpi.color }}>{kpi.value}</div>
               {kpi.link && (
-                <Link href={kpi.link} style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>View →</Link>
+                <Link href={kpi.link} style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>View â†’</Link>
               )}
             </div>
           ))}
@@ -107,7 +107,7 @@ const activities = [
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
             <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span>⚡</span> Recent Activity
+              <span>âš¡</span> Recent Activity
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {activities.length === 0 ? (
@@ -118,7 +118,7 @@ const activities = [
                     width: '36px', height: '36px', borderRadius: '10px', background: 'var(--bg-secondary)', 
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' 
                   }}>
-                    {activity.type === 'listing' ? '📦' : activity.type === 'review' ? '💬' : '✓'}
+                    {activity.type === 'listing' ? 'ðŸ“¦' : activity.type === 'review' ? 'ðŸ’¬' : 'âœ“'}
                   </div>
                   <div>
                     <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-white)' }}>{activity.action}</p>
@@ -153,7 +153,7 @@ const activities = [
         background: 'var(--bg-card)', border: '1px solid #f87171', borderRadius: '24px', padding: '60px', 
         textAlign: 'center', marginTop: '40px' 
       }}>
-        <div style={{ fontSize: '64px', marginBottom: '24px' }}>⚠️</div>
+        <div style={{ fontSize: '64px', marginBottom: '24px' }}>âš ï¸</div>
         <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', marginBottom: '16px' }}>Platform Connectivity Issue</h2>
         <p style={{ color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto 32px' }}>
           {error.message === 'CONFIG_MISSING' 

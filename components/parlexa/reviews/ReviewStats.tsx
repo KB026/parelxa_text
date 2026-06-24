@@ -53,7 +53,7 @@ export function StarRating({
                 userSelect: 'none'
               }}
             >
-              ★
+              â˜…
             </span>
           );
         })}

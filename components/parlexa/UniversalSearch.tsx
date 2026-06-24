@@ -5,14 +5,14 @@ import { useState, useEffect, useRef } from 'react';
 
 // Static App Routing Map
 const INTERNAL_PAGES = [
-  { title: 'Dashboard', url: '/dashboard', type: 'System', icon: '🏠' },
-  { title: 'Admin Controls', url: '/admin', type: 'System', icon: '⚙️' },
-  { title: 'List Your Tool', url: '/vendor/listings/new', type: 'Vendor', icon: '🚀' },
-  { title: 'All AI Prompts / Tools', url: '/products', type: 'Directory', icon: '🤖' },
-  { title: 'Categories', url: '/products', type: 'Directory', icon: '📁' },
-  { title: 'Contact Support', url: '/contact', type: 'Page', icon: '📞' },
-  { title: 'Compare AI Tools', url: '/compare', type: 'Feature', icon: '⚖️' },
-  { title: 'Sign Out / Logout', url: '/login', type: 'Auth', icon: '🚪' }
+  { title: 'Dashboard', url: '/dashboard', type: 'System', icon: 'ðŸ ' },
+  { title: 'Admin Controls', url: '/admin', type: 'System', icon: 'âš™ï¸' },
+  { title: 'List Your Tool', url: '/vendor/listings/new', type: 'Vendor', icon: 'ðŸš€' },
+  { title: 'All AI Prompts / Tools', url: '/products', type: 'Directory', icon: 'ðŸ¤–' },
+  { title: 'Categories', url: '/products', type: 'Directory', icon: 'ðŸ“' },
+  { title: 'Contact Support', url: '/contact', type: 'Page', icon: 'ðŸ“ž' },
+  { title: 'Compare AI Tools', url: '/compare', type: 'Feature', icon: 'âš–ï¸' },
+  { title: 'Sign Out / Logout', url: '/login', type: 'Auth', icon: 'ðŸšª' }
 ];
 
 export function UniversalSearch() {
@@ -105,7 +105,7 @@ export function UniversalSearch() {
           boxShadow: isOpen ? '0 0 0 2px rgba(56, 189, 248, 0.4)' : 'none'
         }}
       >
-        <span style={{ fontSize: '14px', color: 'var(--text-dim)' }}>🔍</span>
+        <span style={{ fontSize: '14px', color: 'var(--text-dim)' }}>ðŸ”</span>
         <input 
           ref={inputRef}
           type="text" 
@@ -119,7 +119,7 @@ export function UniversalSearch() {
           }}
         />
         <div style={{ fontSize: '10px', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-dim)', fontWeight: 600 }}>
-          ⌘K
+          âŒ˜K
         </div>
       </div>
 
@@ -189,13 +189,13 @@ export function UniversalSearch() {
                       {tool.logo_url ? (
                         <img src={tool.logo_url} alt={tool.name} style={{ width: '24px', height: '24px', borderRadius: '6px', objectFit: 'cover' }} />
                       ) : (
-                        <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>🤖</div>
+                        <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>ðŸ¤–</div>
                       )}
                       
                       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span style={{ fontSize: '13px', color: 'var(--text-white)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{tool.name}</span>
-                          {tool.is_verified && <span style={{ color: 'var(--cyan)', fontSize: '10px' }}>✓</span>}
+                          {tool.is_verified && <span style={{ color: 'var(--cyan)', fontSize: '10px' }}>âœ“</span>}
                         </div>
                         {tool.one_liner && (
                           <span style={{ fontSize: '11px', color: 'var(--text-dim)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

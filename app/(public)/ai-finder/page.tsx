@@ -4,7 +4,7 @@ import { AIFinder } from "@/components/parlexa/search/AIFinder";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Tool Finder | Parlexa — The Global AI Agent Marketplace",
+  title: "AI Tool Finder | Parlexa â€” The Global AI Agent Marketplace",
   description: "Find the perfect AI solutions for your business using our intelligent matching engine.",
 };
 

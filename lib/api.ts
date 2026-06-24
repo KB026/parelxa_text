@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from './supabase/client';
 import { Agent, AgentDB, Category, Review, ReviewStats, ReviewDB, SearchParams, PromotionDB } from './types';
 
 export async function getCategories(): Promise<Category[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data, error } = await supabase.from('categories').select('*').order('id', { ascending: true });
   if (error || !data) {
     console.error('CRITICAL ERROR fetching categories:', error);
@@ -12,7 +13,7 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getAgents(category?: string): Promise<Agent[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   let query = supabase
     .from('agents')
     .select('*')
@@ -73,8 +74,8 @@ export async function getAgents(category?: string): Promise<Agent[]> {
 }
 
 export async function getAgentById(id: string): Promise<Agent | null> {
-  const supabase = createClient();
-  const { data: agent, error } = await supabase.from('agents').select('*').eq('id', id).eq('approval_status', 'approved').single();
+  const supabase = createClient() as any;
+  const { data: agent, error } = await supabase.from('agents').select('*').eq('id', Number(id)).eq('approval_status', 'approved').single();
   if (error || !agent) {
     console.error('Error fetching agent details:', error);
     return null;
@@ -121,7 +122,7 @@ export async function getAgentById(id: string): Promise<Agent | null> {
 }
 
 export async function getAgentBySlug(slug: string): Promise<Agent | null> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   
   let { data: agent, error } = await supabase.from('agents').select('*').eq('slug', slug).maybeSingle();
   
@@ -178,7 +179,7 @@ export async function getAgentBySlug(slug: string): Promise<Agent | null> {
 }
 
 export async function getSimilarAgents(category: string, currentId: number, limit: number = 4): Promise<Agent[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data, error } = await supabase
     .from('agents')
     .select('*')
@@ -207,7 +208,7 @@ export async function getSimilarAgents(category: string, currentId: number, limi
 
 export async function getAgentsByIds(ids: number[]): Promise<Agent[]> {
   if (ids.length === 0) return [];
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data, error } = await supabase
     .from('agents')
     .select('*')
@@ -254,7 +255,7 @@ export async function getReviews(
   page: number = 1,
   limit: number = 5
 ): Promise<Review[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   
   // Sort logic
   let orderColumn = 'created_at';
@@ -310,7 +311,7 @@ export async function getReviews(
 }
 
 export async function getReviewStats(agentId: number): Promise<ReviewStats | null> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   
   const { data, error } = await supabase
     .from('reviews')
@@ -329,7 +330,7 @@ export async function getReviewStats(agentId: number): Promise<ReviewStats | nul
   let sumRelevance = 0;
   let sumRecommend = 0;
 
-  data.forEach(r => {
+  data.forEach((r: any) => {
     const floorRating = Math.round(Number(r.rating_overall));
     breakdown[floorRating] = (breakdown[floorRating] || 0) + 1;
     sumOverall += Number(r.rating_overall);
@@ -355,7 +356,7 @@ export async function getReviewStats(agentId: number): Promise<ReviewStats | nul
 }
 
 export async function getUserReview(agentId: number, userId: string): Promise<Review | null> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
@@ -386,7 +387,7 @@ export async function getUserReview(agentId: number, userId: string): Promise<Re
 }
 
 export async function getFeaturedAgents(category?: string, type: 'featured_category' | 'featured_home' = 'featured_home'): Promise<Agent[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   let query = supabase
     .from('promotions')
     .select(`
@@ -441,7 +442,7 @@ export async function getFeaturedAgents(category?: string, type: 'featured_categ
 }
 
 export async function trackClick(promotionId: string) {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { error } = await supabase.rpc('increment_clicks', { promotion_id: promotionId });
   if (error) {
     // Fallback logic
@@ -453,7 +454,7 @@ export async function trackClick(promotionId: string) {
 }
 
 export async function searchAgents(params: SearchParams): Promise<{ agents: Agent[]; count: number }> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   
   let query = supabase
     .from('agents')
@@ -525,16 +526,16 @@ export async function searchAgents(params: SearchParams): Promise<{ agents: Agen
   if (offset === 0 && !params.featuredOnly) {
     const featured = await getFeaturedAgents(params.categories?.[0], params.categories ? 'featured_category' : 'featured_home');
     const featuredLimited = featured.slice(0, 3);
-    const featuredIds = new Set(featuredLimited.map(a => a.id));
+    const featuredIds = new Set(featuredLimited.map((a: any) => a.id));
     // Filter out featured agents from main list to avoid duplication
-    agents = [...featuredLimited, ...agents.filter(a => !featuredIds.has(a.id))];
+    agents = [...featuredLimited, ...agents.filter((a: any) => !featuredIds.has(a.id))];
   }
 
   return { agents, count: count || 0 };
 }
 
 export async function getUniqueIndustries(): Promise<string[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data, error } = await supabase
     .from('agents')
     .select('industries')
@@ -543,9 +544,9 @@ export async function getUniqueIndustries(): Promise<string[]> {
   if (error || !data) return [];
 
   const industries = new Set<string>();
-  data.forEach(item => {
+  data.forEach((item: any) => {
     if (item.industries && Array.isArray(item.industries)) {
-      item.industries.forEach(ind => industries.add(ind));
+      item.industries.forEach((ind: any) => industries.add(ind));
     }
   });
 
@@ -553,7 +554,7 @@ export async function getUniqueIndustries(): Promise<string[]> {
 }
 
 export async function getUserStats(userId: string) {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const [{ count: savedCount }, { count: reviewsCount }, { count: comparesCount }] = await Promise.all([
     supabase.from('saved_tools').select('*', { count: 'exact', head: true }).eq('user_id', userId),
     supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('user_id', userId).eq('approval_status', 'approved'),
@@ -567,7 +568,7 @@ export async function getUserStats(userId: string) {
 }
 
 export async function getRecentlyViewed(userId: string): Promise<Agent[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data } = await supabase
     .from('agent_interactions')
     .select('agent_id, agents(*)')
@@ -590,7 +591,7 @@ export async function getRecentlyViewed(userId: string): Promise<Agent[]> {
 }
 
 export async function getSavedToolsList(userId: string): Promise<Agent[]> {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data } = await supabase
     .from('saved_tools')
     .select('agent_id, agents(*)')
@@ -604,13 +605,13 @@ export async function getSavedToolsList(userId: string): Promise<Agent[]> {
 }
 
 export async function getVendorAnalytics(userId: string) {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data: agents } = await supabase.from('agents').select('id, name').eq('user_id', userId);
   if (!agents || agents.length === 0) return { views: 0, clicks: 0, saves: 0, topAgents: [] };
   
-  const agentIds = agents.map(a => a.id);
+  const agentIds = agents.map((a: any) => a.id);
   
-  // ✅ FIXED: Query for both 'click' and 'cta_click' for backward compatibility during migration
+  // âœ… FIXED: Query for both 'click' and 'cta_click' for backward compatibility during migration
   const [{ count: viewsCount }, clicksData, { count: savesCount }] = await Promise.all([
     supabase.from('agent_interactions').select('*', { count: 'exact', head: true }).in('agent_id', agentIds).eq('action_type', 'view'),
     supabase.from('agent_interactions').select('*', { count: 'exact', head: true }).in('agent_id', agentIds).or('action_type.eq.click,action_type.eq.cta_click'),
@@ -626,7 +627,7 @@ export async function getVendorAnalytics(userId: string) {
 }
 
 export async function getCompareHistory(userId: string) {
-  const supabase = createClient();
+  const supabase = createClient() as any;
   const { data } = await supabase
     .from('agent_interactions')
     .select('agent_id, created_at, agents(name)')

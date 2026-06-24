@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // ✅ INPUT VALIDATION: Validate incoming data
+    // âœ… INPUT VALIDATION: Validate incoming data
     const validation = safeValidate(verifySubscriptionSchema, body);
     if (!validation.ok) {
       return NextResponse.json({ error: `Invalid input: ${validation.error}` }, { status: 400 });
@@ -73,14 +73,14 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Record transaction with CORRECT status
-    // ✅ FIX: Changed from 'paid' to 'completed' to match admin reporting
+    // âœ… FIX: Changed from 'paid' to 'completed' to match admin reporting
     try {
       await supabase.from('transactions').insert([{
         user_id: user.id,
         agent_id: agent_id,
         amount: 2359,
         currency: 'INR',
-        status: 'completed', // ✅ FIXED: was 'paid', now 'completed' for consistent reporting
+        status: 'completed', // âœ… FIXED: was 'paid', now 'completed' for consistent reporting
         gateway: 'razorpay',
         gateway_payment_id: razorpay_payment_id,
         gateway_order_id: razorpay_subscription_id,

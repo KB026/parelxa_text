@@ -15,15 +15,15 @@ const stories = [
     category: 'D2C - FUNDRAISING',
     avatarStr: 'RK',
     name: 'Riya K.',
-    role: 'D2C Skincare Founder • Pre-Series A',
+    role: 'D2C Skincare Founder â€¢ Pre-Series A',
     headline: 'The founder who needed to raise, but didn\'t know where to start',
     steps: [
-      <React.Fragment key="1">Riya needs to raise ₹2Cr but doesn&apos;t know if she needs a pitch deck AI or investor database. <strong>She lands on Parlexa and searches &quot;fundraising&quot;.</strong></React.Fragment>,
-      <React.Fragment key="2">Parlexa surfaces a curated set of AI tools — pitch deck generators, investor CRMs, and valuation assistants — each tagged by funding stage.</React.Fragment>,
+      <React.Fragment key="1">Riya needs to raise â‚¹2Cr but doesn&apos;t know if she needs a pitch deck AI or investor database. <strong>She lands on Parlexa and searches &quot;fundraising&quot;.</strong></React.Fragment>,
+      <React.Fragment key="2">Parlexa surfaces a curated set of AI tools â€” pitch deck generators, investor CRMs, and valuation assistants â€” each tagged by funding stage.</React.Fragment>,
       <React.Fragment key="3">She picks a <strong>pitch deck AI</strong> built for early-stage consumer brands, connects her metrics, and gets an investor-ready narrative in under an hour.</React.Fragment>,
       <React.Fragment key="4">She walks into investor meetings with a polished deck and the confidence she was missing before.</React.Fragment>
     ],
-    outcome: 'Riya closes her seed round 6 weeks later. Parlexa helped her find the right tool for the right problem — fast.'
+    outcome: 'Riya closes her seed round 6 weeks later. Parlexa helped her find the right tool for the right problem â€” fast.'
   },
   {
     themeColor: 'blue',
@@ -35,7 +35,7 @@ const stories = [
     headline: 'The sales team with a pipeline problem they couldn\'t diagnose',
     steps: [
       <React.Fragment key="1">Arjun&apos;s team spends hours on cold outreach with poor conversion. <strong>He opens Parlexa and browses the &quot;lead generation&quot; category.</strong></React.Fragment>,
-      <React.Fragment key="2">He explores three tools — a prospecting engine, a LinkedIn automator, and a lead scoring platform — comparing them side by side with Parlexa&apos;s comparison view.</React.Fragment>,
+      <React.Fragment key="2">He explores three tools â€” a prospecting engine, a LinkedIn automator, and a lead scoring platform â€” comparing them side by side with Parlexa&apos;s comparison view.</React.Fragment>,
       <React.Fragment key="3">He selects the <strong>AI prospecting tool</strong> after reading reviews from similar B2B SaaS companies. Pilots it with his team in week one.</React.Fragment>,
       <React.Fragment key="4">The tool surfaces high-intent accounts his team had been missing entirely. Outreach volume drops, but <strong>qualified meetings double.</strong></React.Fragment>
     ],
@@ -51,11 +51,11 @@ const stories = [
     headline: 'The ops director scaling fast with no AI roadmap in place',
     steps: [
       <React.Fragment key="1">Priya&apos;s company is expanding to two new cities. Manual routing won&apos;t scale. <strong>She opens Parlexa and searches &quot;logistics AI&quot;.</strong></React.Fragment>,
-      <React.Fragment key="2">Parlexa surfaces tools for route optimisation, demand forecasting, warehouse automation, and fleet management — filterable by company size and deployment complexity.</React.Fragment>,
+      <React.Fragment key="2">Parlexa surfaces tools for route optimisation, demand forecasting, warehouse automation, and fleet management â€” filterable by company size and deployment complexity.</React.Fragment>,
       <React.Fragment key="3">She reads <strong>verified reviews</strong> from ops teams at similar-sized companies. Two tools rise to the top based on real deployment experiences.</React.Fragment>,
       <React.Fragment key="4">She shortlists a <strong>route optimisation AI</strong> and a <strong>demand forecasting platform</strong>, pilots both, and rolls out the winner across all three warehouses.</React.Fragment>
     ],
-    outcome: 'Delivery efficiency improves 22% in Q1. The expansion launches on schedule — no AI consultant needed.'
+    outcome: 'Delivery efficiency improves 22% in Q1. The expansion launches on schedule â€” no AI consultant needed.'
   }
 ];
 
@@ -68,14 +68,14 @@ export function RealStories() {
           border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: '20px', color: 'var(--cyan)', 
           fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '24px'
         }}>
-          <span>✦</span> <span style={{ marginLeft: '6px' }}>Real Stories</span>
+          <span>âœ¦</span> <span style={{ marginLeft: '6px' }}>Real Stories</span>
         </div>
         
         <h2 style={{ fontSize: 'clamp(36px, 5vw, 48px)', fontWeight: 800, color: '#fff', marginBottom: '16px', fontFamily: '"Space Grotesk", sans-serif' }}>
           How Businesses Win with Parlexa
         </h2>
         <p style={{ fontSize: '18px', color: 'var(--text-muted)' }}>
-          From founders raising funds to logistics teams scaling operations — see Parlexa in action
+          From founders raising funds to logistics teams scaling operations â€” see Parlexa in action
         </p>
       </div>
 
@@ -130,7 +130,7 @@ export function RealStories() {
 
               <div style={{ background: t.badgeBg, padding: '24px 32px', position: 'relative', zIndex: 1 }}>
                 <h5 style={{ color: t.main, fontSize: '11px', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>✦</span> OUTCOME
+                  <span>âœ¦</span> OUTCOME
                 </h5>
                 <p style={{ color: t.main, fontSize: '15px', fontWeight: 500, margin: 0, lineHeight: 1.6 }}>
                   {story.outcome}

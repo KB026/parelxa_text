@@ -9,7 +9,7 @@ export function BlogSection() {
       id: 1,
       title: "The Rise of AI Agents in Enterprise Ecosystems (2026)",
       excerpt: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\"",
-      content: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\" But misunderstanding how these agents deploy will severely handicap modern enterprise scalability. \n\nWe are shifting from generative AI that simply writes emails or drafts code, to Agentic AI that can take actions. Future ecosystems will consist of interconnected agents handling distinct vertical pipelines—from supply chain procurement to customer success routing.",
+      content: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\" But misunderstanding how these agents deploy will severely handicap modern enterprise scalability. \n\nWe are shifting from generative AI that simply writes emails or drafts code, to Agentic AI that can take actions. Future ecosystems will consist of interconnected agents handling distinct vertical pipelinesâ€”from supply chain procurement to customer success routing.",
       date: "20 APRIL 2026"
     },
     {
@@ -89,7 +89,7 @@ export function BlogSection() {
                   border: 'none', padding: 0, textAlign: 'left',
                   cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' 
               }}>
-                Read More <span>→</span>
+                Read More <span>â†’</span>
               </button>
             </div>
             
@@ -124,7 +124,7 @@ export function BlogSection() {
             style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: '24px', maxWidth: '800px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '40px', position: 'relative' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={() => setSelectedBlog(null)} style={{ position: 'absolute', top: '24px', right: '24px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-white)', width: '36px', height: '36px', borderRadius: '50%', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>×</button>
+            <button onClick={() => setSelectedBlog(null)} style={{ position: 'absolute', top: '24px', right: '24px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-white)', width: '36px', height: '36px', borderRadius: '50%', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>Ã—</button>
             
             <span style={{ color: 'var(--gold)', fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '16px', display: 'block' }}>
               Parlexa Editorials

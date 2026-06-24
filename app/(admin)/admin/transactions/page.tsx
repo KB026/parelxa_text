@@ -152,7 +152,7 @@ const {
                         {agent.name || `Agent #${transaction.agent_id}`}
                       </Link>
                     ) : (
-                      <span style={{ color: 'white' }}>{agent?.name || `Agent #${transaction.agent_id || '—'}`}</span>
+                      <span style={{ color: 'white' }}>{agent?.name || `Agent #${transaction.agent_id || 'â€”'}`}</span>
                     )}
                   </td>
                   <td style={{ padding: '18px 20px', color: 'white', fontWeight: 700 }}>

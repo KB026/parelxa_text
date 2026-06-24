@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,7 +20,7 @@ export default function PreferencesPage() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const supabase = createClient();
+  const supabase = createClient() as any;
 
   useEffect(() => {
     async function loadPrefs() {
@@ -100,7 +101,7 @@ export default function PreferencesPage() {
         <div>
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Preferred Budget Model</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
-            {['Any', 'Free', 'Under ₹5k', 'Enterprise'].map(b => {
+            {['Any', 'Free', 'Under â‚¹5k', 'Enterprise'].map(b => {
               const isActive = prefs.budget === b;
               return (
                 <button 
@@ -117,7 +118,7 @@ export default function PreferencesPage() {
                   }}
                 >
                   <span style={{ fontSize: '20px' }}>
-                    {b === 'Any' ? '📊' : b === 'Free' ? '🎁' : b === 'Under ₹5k' ? '💰' : '🏢'}
+                    {b === 'Any' ? 'ðŸ“Š' : b === 'Free' ? 'ðŸŽ' : b === 'Under â‚¹5k' ? 'ðŸ’°' : 'ðŸ¢'}
                   </span>
                   {b}
                 </button>
@@ -159,7 +160,7 @@ export default function PreferencesPage() {
                     background: isActive ? 'var(--cyan)' : 'transparent',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px'
                   }}>
-                    {isActive && '✓'}
+                    {isActive && 'âœ“'}
                   </div>
                   <span style={{ color: isActive ? 'var(--text-white)' : 'var(--text-muted)', fontWeight: 500 }}>{uc}</span>
                 </div>

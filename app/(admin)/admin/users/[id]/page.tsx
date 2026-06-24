@@ -24,7 +24,7 @@ export default async function UserDetailPage({ params }: { params: { id: string 
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
-  .eq('id', number(params.id))  
+    .eq('id', params.id)  
     .single();
 
   if (!profile) {

@@ -24,7 +24,7 @@ export async function submitVerificationRequest(formData: FormData) {
   const { data: agent } = await supabase
     .from('agents')
     .select('id, user_id')
-    .eq('id', agentId)
+    .eq('id', Number(agentId))
     .eq('user_id', user.id)
     .single();
 
@@ -36,7 +36,7 @@ export async function submitVerificationRequest(formData: FormData) {
   const { data: existing } = await supabase
     .from('verification_requests')
     .select('id')
-    .eq('agent_id', agentId)
+    .eq('agent_id', Number(agentId))
     .in('status', ['submitted', 'under_review'])
     .maybeSingle();
 

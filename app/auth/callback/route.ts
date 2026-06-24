@@ -31,7 +31,7 @@ export async function GET(request: Request) {
         .single();
 
       if (profile && email) {
-        const createdAt = new Date(profile.created_at).getTime();
+        const createdAt = new Date(profile.created_at || '').getTime();
         const now = new Date().getTime();
         if (now - createdAt < 10000) { // 10 seconds threshold
           try {
@@ -51,6 +51,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // Auth code exchange error — redirect to homepage
+  // Auth code exchange error â€” redirect to homepage
   return NextResponse.redirect(`${origin}/?auth_error=true`);
 }

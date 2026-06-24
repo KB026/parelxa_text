@@ -35,13 +35,13 @@ export async function Navbar() {
         <Link href="/products" className="nav-link">All Agents</Link>
         
         <div className="nav-categories">
-          <button className="nav-link">Categories <span style={{fontSize:'8px'}}>▼</span></button>
+          <button className="nav-link">Categories <span style={{fontSize:'8px'}}>â–¼</span></button>
           <div className="categories-dropdown">
-            <Link href="/products?cats=AI+%26+LLMs" className="dropdown-item"><span>🤖</span> AI &amp; LLMs</Link>
-            <Link href="/products?cats=Customer+Experience" className="dropdown-item"><span>💬</span> Customer Experience</Link>
-            <Link href="/products?cats=Marketing+%26+Sales" className="dropdown-item"><span>📣</span> Marketing &amp; Sales</Link>
-            <Link href="/products?cats=Enterprise+%26+Automation" className="dropdown-item"><span>⚙️</span> Enterprise &amp; Automation</Link>
-            <Link href="/products" className="dropdown-item" style={{justifyContent: 'center', color: 'var(--cyan)'}}>View All Categories →</Link>
+            <Link href="/products?cats=AI+%26+LLMs" className="dropdown-item"><span>ðŸ¤–</span> AI &amp; LLMs</Link>
+            <Link href="/products?cats=Customer+Experience" className="dropdown-item"><span>ðŸ’¬</span> Customer Experience</Link>
+            <Link href="/products?cats=Marketing+%26+Sales" className="dropdown-item"><span>ðŸ“£</span> Marketing &amp; Sales</Link>
+            <Link href="/products?cats=Enterprise+%26+Automation" className="dropdown-item"><span>âš™ï¸</span> Enterprise &amp; Automation</Link>
+            <Link href="/products" className="dropdown-item" style={{justifyContent: 'center', color: 'var(--cyan)'}}>View All Categories â†’</Link>
           </div>
         </div>
 

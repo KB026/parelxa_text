@@ -50,18 +50,18 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '48px' }}>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Total Platform Revenue</div>
-          <div style={{ fontSize: '36px', fontWeight: 800, color: '#fb923c' }}>₹{totalRevenue.toLocaleString()}</div>
-          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--green)' }}>💰 All-time earnings from visibility boosts</div>
+          <div style={{ fontSize: '36px', fontWeight: 800, color: '#fb923c' }}>â‚¹{totalRevenue.toLocaleString()}</div>
+          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--green)' }}>ðŸ’° All-time earnings from visibility boosts</div>
         </div>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Active Promotions</div>
           <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--text-white)' }}>{activeCount}</div>
-          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>📈 Active visibility slots occupied</div>
+          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>ðŸ“ˆ Active visibility slots occupied</div>
         </div>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Avg. Transaction</div>
-          <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--cyan)' }}>₹{(totalRevenue / (transactions?.length || 1)).toFixed(0)}</div>
-          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>🤝 Value per boosted tool</div>
+          <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--cyan)' }}>â‚¹{(totalRevenue / (transactions?.length || 1)).toFixed(0)}</div>
+          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>ðŸ¤ Value per boosted tool</div>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
         {/* Active Promotions List */}
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-             🚀 Active Promotions
+             ðŸš€ Active Promotions
           </h2>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '20px', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -122,7 +122,7 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
 
         {/* Manual Override Form */}
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>✨ Manual Visibility Boost</h2>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>âœ¨ Manual Visibility Boost</h2>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
             <p style={{ fontSize: '14px', color: 'var(--text-dim)', marginBottom: '24px' }}>Manual overrides are used for partner launches, marketing collaborations, or conflict resolution.</p>
             <form action={async (formData) => {
@@ -161,7 +161,7 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
               </div>
 
               <button type="submit" style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--cyan)', color: 'black', fontWeight: 700, border: 'none', marginTop: '12px' }}>
-                🚀 Authorize Visibility Boost
+                ðŸš€ Authorize Visibility Boost
               </button>
             </form>
           </div>

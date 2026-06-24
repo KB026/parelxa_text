@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -22,7 +23,7 @@ export default async function ReviewModeration({
   }
 
   if (agentId) {
-    fetchQuery = fetchQuery.eq('agent_id', agentId);
+    fetchQuery = fetchQuery.eq('agent_id', Number(agentId));
   }
 
  const { data } = await fetchQuery;
@@ -30,7 +31,7 @@ const reviews = Array.isArray(data) ? data : [];;
 
   async function resolveReview(formData: FormData) {
     'use server';
-    const id = formData.get('id');
+    const id = formData.get('id') as string;
     const action = formData.get('action'); // 'keep' or 'remove'
     const supabase = createClient();
 
@@ -78,7 +79,7 @@ const reviews = Array.isArray(data) ? data : [];;
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {(reviews || []).length === 0 ? (
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '60px', textAlign: 'center' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🛡️</div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>ðŸ›¡ï¸</div>
             <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'white' }}>Moderation queue empty</h3>
             <p style={{ color: 'var(--text-muted)' }}>Great job! There are no flagged reviews that require attention.</p>
           </div>
@@ -89,10 +90,10 @@ const reviews = Array.isArray(data) ? data : [];;
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ color: '#fbbf24' }}>★ {review.rating_overall}</span>
-                <span style={{ color: 'var(--text-dim)' }}>·</span>
+                <span style={{ color: '#fbbf24' }}>â˜… {review.rating_overall}</span>
+                <span style={{ color: 'var(--text-dim)' }}>Â·</span>
                 <span style={{ color: 'var(--text-white)', fontWeight: 600 }}>{(review.agents as unknown as { name: string })?.name}</span>
-                <span style={{ color: 'var(--text-dim)' }}>·</span>
+                <span style={{ color: 'var(--text-dim)' }}>Â·</span>
                 <span style={{ color: 'var(--text-dim)', fontSize: '13px' }}>by {(review.profiles as unknown as { full_name: string })?.full_name || 'Anonymous'}</span>
               </div>
               <p style={{ color: 'var(--text-white)', lineHeight: 1.6, marginBottom: '16px' }}>{review.content}</p>

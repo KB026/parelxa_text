@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,7 +11,7 @@ export default function VendorReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState<Record<string, boolean>>({});
-  const supabase = createClient();
+  const supabase = createClient() as any;
 
   useEffect(() => {
     async function loadVendorReviews() {
@@ -28,7 +29,7 @@ export default function VendorReviewsPage() {
         return;
       }
 
-      const agentIds = agents.map(a => a.id);
+      const agentIds = agents.map((a: any) => a.id);
 
       const { data, error } = await supabase
         .from('reviews')
@@ -43,12 +44,25 @@ export default function VendorReviewsPage() {
       if (error) {
         console.error('Error loading vendor reviews:', error);
       } else if (data) {
-        setReviews(data.map(r => ({
-          ...r,
+        setReviews(data.map((r: any) => ({
+          id: r.id,
+          agentId: r.agent_id,
+          userId: r.user_id,
           ratingOverall: Number(r.rating_overall),
+          ratingEaseUse: Number(r.rating_ease_use),
+          ratingValue: Number(r.rating_value),
+          ratingSupport: Number(r.rating_support),
+          ratingRelevance: Number(r.rating_relevance),
+          content: r.content || '',
+          recommend: !!r.recommend,
+          helpfulVotes: Number(r.helpful_count) || 0,
+          unhelpfulVotes: Number(r.unhelpful_count) || 0,
+          approvalStatus: r.approval_status || 'approved',
+          isReported: !!r.is_reported,
+          createdAt: r.created_at || '',
           agent: r.agent,
-          response: r.response?.[0]
-        })));
+          response: Array.isArray(r.response) ? r.response[0] : r.response
+        } as unknown as (Review & { agent?: Agent }))));
       }
       setLoading(false);
     }
@@ -103,7 +117,7 @@ export default function VendorReviewsPage() {
                   <StarRating rating={review.ratingOverall} size="sm" />
                 </div>
                 <button style={{ color: '#ef4444', background: 'none', border: 'none', fontSize: '13px', cursor: 'pointer', fontWeight: 600 }}>
-                  🚩 Flag Review
+                  ðŸš© Flag Review
                 </button>
               </div>
 

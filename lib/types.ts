@@ -262,7 +262,7 @@ export interface Interaction {
   id: string;
   agentId: number;
   userId?: string;
-  actionType: 'view' | 'click' | 'cta_click'; // ✅ Support both 'click' and 'cta_click' for backward compatibility
+  actionType: 'view' | 'click' | 'cta_click'; // âœ… Support both 'click' and 'cta_click' for backward compatibility
   createdAt: string;
 }
 
@@ -270,7 +270,7 @@ export interface InteractionDB {
   id: string;
   agent_id: number;
   user_id?: string;
-  action_type: 'view' | 'click' | 'cta_click'; // ✅ Support both 'click' and 'cta_click' for backward compatibility
+  action_type: 'view' | 'click' | 'cta_click'; // âœ… Support both 'click' and 'cta_click' for backward compatibility
   created_at: string;
 }
 

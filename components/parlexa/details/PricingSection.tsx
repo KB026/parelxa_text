@@ -72,7 +72,7 @@ export function PricingSection({
             
             <div>
               <div style={{ color: 'var(--cyan)', fontSize: '14px', fontWeight: 700, marginBottom: '8px' }}>
-                🌍 International Pricing
+                ðŸŒ International Pricing
               </div>
               <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--text-white)' }}>
                 {usdPrice || '$ Custom Plans'}
@@ -84,13 +84,13 @@ export function PricingSection({
 
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
               <li style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span>✦</span> Multi-currency support
+                <span>âœ¦</span> Multi-currency support
               </li>
               <li style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span>✦</span> Global tax & compliance ready
+                <span>âœ¦</span> Global tax & compliance ready
               </li>
               <li style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span>✦</span> Multiple payment gateways
+                <span>âœ¦</span> Multiple payment gateways
               </li>
             </ul>
           </div>

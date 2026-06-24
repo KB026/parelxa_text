@@ -45,7 +45,7 @@ export default function ResetPasswordPage({ searchParams }: { searchParams: { me
               name="password"
               id="password"
               required
-              placeholder="••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               style={{ width: '100%', padding: '14px 16px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-subtle)', borderRadius: '12px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
@@ -57,7 +57,7 @@ export default function ResetPasswordPage({ searchParams }: { searchParams: { me
               name="passwordConfirm"
               id="passwordConfirm"
               required
-              placeholder="••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               style={{ width: '100%', padding: '14px 16px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-subtle)', borderRadius: '12px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
@@ -69,7 +69,7 @@ export default function ResetPasswordPage({ searchParams }: { searchParams: { me
       </div>
       
       <div style={{ marginTop: '32px', color: 'var(--text-dim)', fontSize: '13px' }}>
-         Parlexa Marketplace © 2026
+         Parlexa Marketplace Â© 2026
       </div>
     </div>
   );

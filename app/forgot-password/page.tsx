@@ -63,7 +63,7 @@ export default function ForgotPasswordPage({ searchParams }: { searchParams: { m
       </div>
       
       <div style={{ marginTop: '32px', color: 'var(--text-dim)', fontSize: '13px' }}>
-         Parlexa Marketplace © 2026
+         Parlexa Marketplace Â© 2026
       </div>
     </div>
   );

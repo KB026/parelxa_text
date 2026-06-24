@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -27,7 +28,7 @@ export default async function ListingReviews() {
   async function approveListing(formData: FormData) {
     'use server';
 
-    const id = formData.get('id');
+    const id = Number(formData.get('id'));
     const supabase = createClient();
 
     const { error } = await supabase
@@ -48,7 +49,7 @@ export default async function ListingReviews() {
   async function flagListing(formData: FormData) {
     'use server';
 
-    const id = formData.get('id');
+    const id = Number(formData.get('id'));
     const supabase = createClient();
 
     const { error } = await supabase
@@ -88,7 +89,7 @@ export default async function ListingReviews() {
       >
         {pendingQueue.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>ðŸŽ‰</div>
             <h3
               style={{
                 fontSize: '18px',

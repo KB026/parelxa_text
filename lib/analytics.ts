@@ -3,7 +3,7 @@
 import { createClient } from './supabase/server';
 
 export async function trackInteraction(agentId: number, type: 'view' | 'click' | 'cta_click', userId?: string) {
-  // ✅ FIXED: Changed from 'cta_click' to 'click' to match queries in lib/api.ts
+  // âœ… FIXED: Changed from 'cta_click' to 'click' to match queries in lib/api.ts
   // Now support both 'click' and 'cta_click' for backward compatibility, but standardize on 'click'
   // Normalize 'cta_click' to 'click' for consistency
   const normalizedType = type === 'cta_click' ? 'click' : type;

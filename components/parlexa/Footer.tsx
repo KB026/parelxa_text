@@ -22,9 +22,9 @@ export async function Footer() {
             The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.
           </p>
           <div style={{display: 'flex', gap: '12px'}}>
-            <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-white)', cursor: 'pointer'}}>𝕏</div>
+            <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-white)', cursor: 'pointer'}}>ð•</div>
             <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-white)', cursor: 'pointer'}}>in</div>
-            <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-white)', cursor: 'pointer'}}>✉</div>
+            <div style={{width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-white)', cursor: 'pointer'}}>âœ‰</div>
           </div>
         </div>
         
@@ -55,7 +55,7 @@ export async function Footer() {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-dim)', fontSize: '14px', flexWrap: 'wrap', gap: '16px'
       }}>
         <p>A Global Ecosystem for AI</p>
-        <p>© 2026 Parlexa. All rights reserved.</p>
+        <p>Â© 2026 Parlexa. All rights reserved.</p>
         <div style={{display: 'flex', gap: '24px'}}>
           <span style={{cursor: 'pointer', transition: 'color 0.2s'}}>Privacy Policy</span>
           <span style={{cursor: 'pointer', transition: 'color 0.2s'}}>Terms</span>

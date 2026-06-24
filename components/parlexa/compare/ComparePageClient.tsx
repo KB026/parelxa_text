@@ -107,7 +107,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
   if (agents.length === 0 && !loading) {
     return (
       <div style={{ textAlign: 'center', padding: '80px 40px', background: 'var(--bg-card)', borderRadius: '32px', border: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: '48px', marginBottom: '24px' }}>🔍</div>
+        <div style={{ fontSize: '48px', marginBottom: '24px' }}>ðŸ”</div>
         <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>Start your comparison</h2>
         <p style={{ color: 'var(--text-dim)', marginBottom: '32px' }}>Select tools from the marketplace or search for them here.</p>
         <button 
@@ -131,7 +131,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
           border: '1px solid var(--border-subtle)', color: 'var(--text-white)', fontSize: '14px',
           display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'
         }}>
-          <span>🔗</span> Share Comparison
+          <span>ðŸ”—</span> Share Comparison
         </button>
         <button 
           onClick={handleSave}
@@ -143,7 +143,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
             transition: 'all 0.3s'
           }}
         >
-          <span>{saveStatus === 'saving' ? '...' : saveStatus === 'success' ? '✓' : '💾'}</span> 
+          <span>{saveStatus === 'saving' ? '...' : saveStatus === 'success' ? 'âœ“' : 'ðŸ’¾'}</span> 
           {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'success' ? 'Saved' : 'Save to Dashboard'}
         </button>
       </div>
@@ -169,7 +169,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
                           <div style={{ position: 'relative' }}>
                             <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'var(--bg-secondary)', overflow: 'hidden' }}>
-                              {agent.logoUrl ? <img src={agent.logoUrl} alt={`${agent.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontSize: '32px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🤖</div>}
+                              {agent.logoUrl ? <img src={agent.logoUrl} alt={`${agent.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontSize: '32px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>ðŸ¤–</div>}
                             </div>
                             <button 
                               onClick={() => toggleCompare(agent.id)}
@@ -178,7 +178,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                                 width: '24px', height: '24px', borderRadius: '50%', background: '#ef4444', 
                                 color: 'white', border: 'none', cursor: 'pointer' 
                               }}
-                            >✕</button>
+                            >âœ•</button>
                           </div>
                           <div>
                             <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-white)', marginBottom: '4px' }}>{agent.name}</div>
@@ -224,7 +224,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                   }}>
                     <td style={{ padding: '20px 24px', fontWeight: 600, color: 'var(--text-dim)', fontSize: '14px', background: 'rgba(255,255,255,0.01)', position: 'sticky', left: 0, zIndex: 1 }}>
                       {row.label}
-                      {diff && <span style={{ marginLeft: '8px', color: '#fb923c', fontSize: '10px' }}>●</span>}
+                      {diff && <span style={{ marginLeft: '8px', color: '#fb923c', fontSize: '10px' }}>â—</span>}
                     </td>
                     {[0, 1, 2].map(i => {
                       const agent = agents[i];
@@ -234,9 +234,9 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                       return (
                         <td key={i} style={{ padding: '20px 24px', textAlign: 'center', color: 'var(--text-white)', fontSize: '14px' }}>
                           {row.type === 'boolean' ? (
-                            <span style={{ color: val ? '#10b981' : '#ef4444' }}>{val ? '✓ Yes' : '✕ No'}</span>
+                            <span style={{ color: val ? '#10b981' : '#ef4444' }}>{val ? 'âœ“ Yes' : 'âœ• No'}</span>
                           ) : row.type === 'rating' ? (
-                            <div style={{ fontWeight: 700, color: '#f59e0b' }}>⭐ {Number(val || 0).toFixed(1)}</div>
+                            <div style={{ fontWeight: 700, color: '#f59e0b' }}>â­ {Number(val || 0).toFixed(1)}</div>
                           ) : row.type === 'list' ? (
                             <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', justifyContent: 'center' }}>
                               {((val as string[]) || []).slice(0, 4).map((f: string) => (

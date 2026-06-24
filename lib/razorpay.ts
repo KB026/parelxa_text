@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 export const isMockMode = !process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_MOCK_PAYMENTS === 'true';
 
 if (isMockMode) {
-  console.log('💳 Razorpay: Operating in MOCK MODE (No active gateway)');
+  console.log('ðŸ’³ Razorpay: Operating in MOCK MODE (No active gateway)');
 } else if (!process.env.RAZORPAY_KEY_ID) {
   console.warn('RAZORPAY_KEY_ID is missing from environment variables');
 }

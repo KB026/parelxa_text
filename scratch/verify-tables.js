@@ -35,7 +35,7 @@ async function verifyTables() {
       `, [table]);
       
       const exists = res.rows[0].exists;
-      console.log(`${table.padEnd(25)}: ${exists ? '✅ EXISTS' : '❌ MISSING'}`);
+      console.log(`${table.padEnd(25)}: ${exists ? 'âœ… EXISTS' : 'âŒ MISSING'}`);
     }
 
   } catch (err) {

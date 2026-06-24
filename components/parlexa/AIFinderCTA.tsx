@@ -27,7 +27,7 @@ export function AIFinderCTA() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      Try AI Matching Engine <span style={{ fontSize: '20px' }}>→</span>
+      Try AI Matching Engine <span style={{ fontSize: '20px' }}>â†’</span>
     </Link>
   );
 }

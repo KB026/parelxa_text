@@ -30,7 +30,7 @@ export function ClaimBanner({ agent, userId, submitClaim }: ClaimBannerProps) {
         transition: 'all 0.3s ease'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <span style={{ fontSize: '20px', filter: 'grayscale(1) brightness(1.5)' }}>🛡️</span>
+          <span style={{ fontSize: '20px', filter: 'grayscale(1) brightness(1.5)' }}>ðŸ›¡ï¸</span>
           <div>
             <div style={{ fontWeight: 600, fontSize: '14px' }}>Are you the maker of {agent.name}?</div>
             <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Claim this listing to manage details, respond to reviews, and access insights.</div>

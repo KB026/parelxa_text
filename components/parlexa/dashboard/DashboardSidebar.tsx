@@ -7,13 +7,13 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'Overview', href: '/dashboard', icon: '📊' },
-    { label: 'My Listings', href: '/vendor/listings', icon: '🚀' },
-    { label: 'Saved Tools', href: '/dashboard/saved', icon: '🔖' },
-    { label: 'My Reviews', href: '/dashboard/reviews', icon: '⭐' },
-    { label: 'Compare History', href: '/dashboard/history', icon: '⚖️' },
-    { label: 'Profile Settings', href: '/dashboard/settings', icon: '👤' },
-    { label: 'AI Preferences', href: '/dashboard/preferences', icon: '🧠' },
+    { label: 'Overview', href: '/dashboard', icon: 'ðŸ“Š' },
+    { label: 'My Listings', href: '/vendor/listings', icon: 'ðŸš€' },
+    { label: 'Saved Tools', href: '/dashboard/saved', icon: 'ðŸ”–' },
+    { label: 'My Reviews', href: '/dashboard/reviews', icon: 'â­' },
+    { label: 'Compare History', href: '/dashboard/history', icon: 'âš–ï¸' },
+    { label: 'Profile Settings', href: '/dashboard/settings', icon: 'ðŸ‘¤' },
+    { label: 'AI Preferences', href: '/dashboard/preferences', icon: 'ðŸ§ ' },
   ];
 
   return (
@@ -68,7 +68,7 @@ export function DashboardSidebar() {
               color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
             }}
           >
-            <span>📦</span> My Orders
+            <span>ðŸ“¦</span> My Orders
           </Link>
         </div>
       </div>

@@ -27,10 +27,10 @@ async function testAuthSignup() {
   });
 
   if (error) {
-    console.error('❌ Signup FAILED:', error.message);
+    console.error('âŒ Signup FAILED:', error.message);
     if (error.status === 400) console.log('TIP: Check if "Email Auth" is enabled in Supabase Authentication settings.');
   } else {
-    console.log('✅ Signup SUCCESS!');
+    console.log('âœ… Signup SUCCESS!');
     console.log('User ID:', data.user.id);
   }
 }

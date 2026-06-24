@@ -56,16 +56,16 @@ export function NavbarClient({ user }: NavbarClientProps) {
           style={{ display: 'flex', alignItems: 'center', gap: '8px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
         >
           <span>Sign In</span>
-          <span style={{ fontSize: '16px' }}>→</span>
+          <span style={{ fontSize: '16px' }}>â†’</span>
         </button>
       )}
       </div>
 
-      <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>☰</button>
+      <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>â˜°</button>
 
       {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
         <div style={{ position: 'fixed', inset: 0, background: 'var(--bg-primary)', zIndex: 3000, padding: '40px', display: 'flex', flexDirection: 'column' }}>
-          <button onClick={() => setMobileMenuOpen(false)} style={{ alignSelf: 'flex-end', background: 'none', border: 'none', color: '#fff', fontSize: '32px', cursor: 'pointer', marginBottom: '40px' }}>✕</button>
+          <button onClick={() => setMobileMenuOpen(false)} style={{ alignSelf: 'flex-end', background: 'none', border: 'none', color: '#fff', fontSize: '32px', cursor: 'pointer', marginBottom: '40px' }}>âœ•</button>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', fontSize: '24px' }}>
             <Link href="/products" onClick={() => setMobileMenuOpen(false)}>All Agents</Link>
             <Link href="/ai-finder" onClick={() => setMobileMenuOpen(false)}>AI Finder</Link>

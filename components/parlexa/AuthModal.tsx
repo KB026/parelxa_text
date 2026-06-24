@@ -77,7 +77,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
 
   if (!mounted || !isOpen) return null;
 
-  // ── Sign In ──
+  // â”€â”€ Sign In â”€â”€
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -119,7 +119,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     }
   }
 
-  // ── Sign Up ──
+  // â”€â”€ Sign Up â”€â”€
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -167,7 +167,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     }
   }
 
-  // ── Forgot Password ──
+  // â”€â”€ Forgot Password â”€â”€
   async function handleForgotPassword(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -199,7 +199,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     }
   }
 
-  // ── Google SSO ──
+  // â”€â”€ Google SSO â”€â”€
   async function handleGoogleSignIn() {
     try {
       const supabase = createClient();
@@ -222,7 +222,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     <div className="auth-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="auth-modal">
         <div className="auth-glow" />
-        <button className="auth-close-btn" onClick={onClose} aria-label="Close">×</button>
+        <button className="auth-close-btn" onClick={onClose} aria-label="Close">Ã—</button>
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
@@ -241,7 +241,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         {error && <div className="auth-error">{error}</div>}
         {success && <div className="auth-success">{success}</div>}
 
-        {/* ── FORGOT PASSWORD VIEW ── */}
+        {/* â”€â”€ FORGOT PASSWORD VIEW â”€â”€ */}
         {view === 'forgot' && !success && (
           <form onSubmit={handleForgotPassword}>
             <div className="auth-field">
@@ -253,7 +253,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
             </button>
             <div style={{ textAlign: 'center', marginTop: '16px' }}>
               <button type="button" className="auth-footer-link" onClick={() => { setView('signin'); resetForm(); }}>
-                ← Back to Sign In
+                â† Back to Sign In
               </button>
             </div>
           </form>
@@ -261,12 +261,12 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         {view === 'forgot' && success && (
           <div style={{ textAlign: 'center', marginTop: '8px' }}>
             <button type="button" className="auth-footer-link" onClick={() => { setView('signin'); resetForm(); }}>
-              ← Back to Sign In
+              â† Back to Sign In
             </button>
           </div>
         )}
 
-        {/* ── SIGN IN / REGISTER VIEWS ── */}
+        {/* â”€â”€ SIGN IN / REGISTER VIEWS â”€â”€ */}
         {view !== 'forgot' && (
           <>
             {/* Tab Switcher */}
@@ -283,7 +283,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
 
             <div className="auth-divider">or</div>
 
-            {/* ── SIGN IN FORM ── */}
+            {/* â”€â”€ SIGN IN FORM â”€â”€ */}
             {view === 'signin' && (
               <form onSubmit={handleSignIn}>
                 <div className="auth-field">
@@ -292,7 +292,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
                 </div>
                 <div className="auth-field">
                   <label className="auth-label">Password</label>
-                  <input className="auth-input" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                  <input className="auth-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={password} onChange={e => setPassword(e.target.value)} required />
                 </div>
                 <div className="auth-remember-row">
                   <label>
@@ -317,18 +317,18 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
               </form>
             )}
 
-            {/* ── REGISTER FORM ── */}
+            {/* â”€â”€ REGISTER FORM â”€â”€ */}
             {view === 'register' && !success && (
               <form onSubmit={handleSignUp}>
                 {/* User Type Selector */}
                 <div className="auth-type-selector">
                   <div className={`auth-type-card ${role === 'user' ? 'selected' : ''}`} onClick={() => setRole('user')}>
-                    <span className="auth-type-icon">🔍</span>
+                    <span className="auth-type-icon">ðŸ”</span>
                     <span className="auth-type-label">Find AI Tools</span>
                     <span className="auth-type-desc">I&apos;m looking for AI solutions</span>
                   </div>
                   <div className={`auth-type-card ${role === 'vendor' ? 'selected' : ''}`} onClick={() => setRole('vendor')}>
-                    <span className="auth-type-icon">🚀</span>
+                    <span className="auth-type-icon">ðŸš€</span>
                     <span className="auth-type-label">List My Tool</span>
                     <span className="auth-type-desc">I want to sell on Parlexa</span>
                   </div>
@@ -355,7 +355,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
                 </div>
                 <div className="auth-field">
                   <label className="auth-label">Confirm Password</label>
-                  <input className="auth-input" type="password" placeholder="••••••••" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required />
+                  <input className="auth-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required />
                 </div>
                 <button className="auth-submit-btn" type="submit" disabled={loading}>
                   {loading ? <span className="auth-spinner" /> : 'Create Account'}

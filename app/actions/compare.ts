@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -5,7 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 export async function saveComparison(agentIds: number[]) {
   if (agentIds.length === 0) return { error: 'No tools selected' };
   
-  const supabase = createClient();
+  const supabase = createClient() as any;
   
   // Check auth
   const { data: { user }, error: authError } = await supabase.auth.getUser();

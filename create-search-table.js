@@ -14,7 +14,7 @@ async function run() {
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
-    console.log("✓ 'search_queries' table created successfully.");
+    console.log("âœ“ 'search_queries' table created successfully.");
   } catch (err) { console.error(err); }
   finally { await client.end(); }
 }

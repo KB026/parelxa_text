@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     if (insertError) {
       console.error('Listing insert after payment error:', insertError);
-      // Payment was verified but DB insert failed — log this critically
+      // Payment was verified but DB insert failed â€” log this critically
       return NextResponse.json(
         { error: 'Payment verified but listing creation failed. Contact support with payment ID: ' + razorpay_payment_id },
         { status: 500 }
@@ -112,14 +112,14 @@ export async function POST(req: NextRequest) {
     }
 
     // 6. Record transaction with correct status
-    // ✅ FIX: Use 'completed' instead of 'paid' for consistent revenue reporting
+    // âœ… FIX: Use 'completed' instead of 'paid' for consistent revenue reporting
     try {
       await supabase.from('transactions').insert([{
         user_id: user.id,
         agent_id: listing_data.agent_id || null,
         amount: listing_data.amount || 0,
         currency: listing_data.currency || 'INR',
-        status: 'completed', // ✅ FIXED: was potentially 'paid', now 'completed'
+        status: 'completed', // âœ… FIXED: was potentially 'paid', now 'completed'
         gateway: 'razorpay',
         gateway_payment_id: razorpay_payment_id,
         gateway_order_id: razorpay_order_id,
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
       }
     } catch (e) {
       console.error('Email trigger failed:', e);
-      // Non-fatal — listing is already created
+      // Non-fatal â€” listing is already created
     }
 
     // 8. Revalidate paths

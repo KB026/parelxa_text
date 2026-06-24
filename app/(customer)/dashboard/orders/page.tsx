@@ -17,8 +17,8 @@ export default function CustomerOrders() {
           </thead>
           <tbody>
             {[
-              { id: '#ORD-1152', date: '2026-04-01', agent: 'Krutrim', amount: '₹0 (Free tier)', status: 'Active', statusColor: '#34d399', statusBg: '#064e3b' },
-              { id: '#ORD-1108', date: '2026-03-15', agent: 'Sarvam AI', amount: '₹10,000/mo', status: 'Active', statusColor: '#34d399', statusBg: '#064e3b' },
+              { id: '#ORD-1152', date: '2026-04-01', agent: 'Krutrim', amount: 'â‚¹0 (Free tier)', status: 'Active', statusColor: '#34d399', statusBg: '#064e3b' },
+              { id: '#ORD-1108', date: '2026-03-15', agent: 'Sarvam AI', amount: 'â‚¹10,000/mo', status: 'Active', statusColor: '#34d399', statusBg: '#064e3b' },
             ].map(order => (
               <tr key={order.id}>
                 <td style={{ padding: '16px 0', color: 'var(--cyan)' }}>{order.id}</td>

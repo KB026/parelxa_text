@@ -55,7 +55,7 @@ export function ReviewForm({ agentId, existingReview, onSuccess }: ReviewFormPro
   if (success) {
     return (
       <div style={{ padding: '40px', textAlign: 'center', background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>âœ…</div>
         <h3 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-white)' }}>Review Submitted!</h3>
         <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Thank you for sharing your feedback with the Parlexa community.</p>
         <button 

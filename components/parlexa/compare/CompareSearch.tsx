@@ -71,7 +71,7 @@ export function CompareSearch() {
           }}
           onFocus={() => query.length >=2 && setIsOpen(true)}
         />
-        <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+        <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>ðŸ”</span>
         {loading && <span style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: 'var(--cyan)' }}>...</span>}
       </div>
 
@@ -97,7 +97,7 @@ export function CompareSearch() {
               onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
             >
               <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--bg-secondary)', overflow: 'hidden' }}>
-                {agent.logoUrl ? <img src={agent.logoUrl} alt={`${agent.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>🤖</div>}
+                {agent.logoUrl ? <img src={agent.logoUrl} alt={`${agent.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>ðŸ¤–</div>}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-white)' }}>{agent.name}</div>

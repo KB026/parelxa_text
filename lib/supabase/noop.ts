@@ -39,7 +39,7 @@ function createQueryResult(data: unknown[] = [], count: number = 0): Promise<Que
 }
 
 function createNoopBuilder(): NoopQueryBuilder {
-  const builder = {
+  const builder: NoopQueryBuilder = {
     select() { return builder; },
     eq() { return builder; },
     neq() { return builder; },
@@ -68,7 +68,7 @@ function createNoopBuilder(): NoopQueryBuilder {
     ) {
       return createQueryResult().then(onFulfilled, onRejected);
     },
-  } satisfies NoopQueryBuilder;
+  };
 
   return builder;
 }
@@ -79,12 +79,19 @@ export function createNoopSupabaseClient() {
       getUser: async () => ({ data: { user: null }, error: null }),
       getSession: async () => ({ data: { session: null }, error: null }),
       signOut: async () => ({ error: null }),
+      signUp: async () => ({ data: { user: null, session: null }, error: null }),
+      signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
+      resetPasswordForEmail: async () => ({ data: {}, error: null }),
+      signInWithOAuth: async () => ({ data: { provider: '', url: '' }, error: null }),
+      exchangeCodeForSession: async () => ({ data: { user: null, session: null }, error: null }),
+      updateUser: async () => ({ data: { user: null }, error: null }),
     },
     from() {
       return createNoopBuilder();
     },
     rpc() {
-      return createQueryResult(null, 0);
+      return createQueryResult([], 0);
     },
   } as const;
 }
+

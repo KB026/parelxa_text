@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ import Link from 'next/link';
 export default function MyReviewsPage() {
   const [reviews, setReviews] = useState<(Review & { agent?: Agent })[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const supabase = createClient() as any;
 
   useEffect(() => {
     async function loadReviews() {
@@ -29,12 +30,24 @@ export default function MyReviewsPage() {
       if (error) {
         console.error('Error loading reviews:', error);
       } else if (data) {
-        setReviews(data.map(r => ({
-          ...r,
+        setReviews(data.map((r: any) => ({
+          id: r.id,
+          agentId: r.agent_id,
+          userId: r.user_id,
           ratingOverall: Number(r.rating_overall),
+          ratingEaseUse: Number(r.rating_ease_use) || 0,
+          ratingValue: Number(r.rating_value) || 0,
+          ratingSupport: Number(r.rating_support) || 0,
+          ratingRelevance: Number(r.rating_relevance) || 0,
+          content: r.content || '',
+          recommend: !!r.recommend,
           helpfulVotes: r.helpful_count?.[0]?.count || 0,
+          unhelpfulVotes: 0,
+          approvalStatus: r.approval_status || 'approved',
+          isReported: !!r.is_reported,
+          createdAt: r.created_at || '',
           agent: r.agent
-        })));
+        } as unknown as (Review & { agent?: Agent }))));
       }
       setLoading(false);
     }
@@ -61,7 +74,7 @@ export default function MyReviewsPage() {
               borderRadius: '20px', marginBottom: '16px' 
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '24px' }}>🏆</span>
+                <span style={{ fontSize: '24px' }}>ðŸ†</span>
                 <span style={{ fontWeight: 700, color: 'var(--cyan)' }}>Most Helpful Review</span>
               </div>
               <p style={{ margin: 0, fontSize: '15px' }}>
@@ -100,7 +113,7 @@ export default function MyReviewsPage() {
                   Submitted on {new Date(review.createdAt || '').toLocaleDateString()}
                 </div>
                 <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--cyan)' }}>
-                  👍 {review.helpfulVotes} helpful votes
+                  ðŸ‘ {review.helpfulVotes} helpful votes
                 </div>
               </div>
             </div>

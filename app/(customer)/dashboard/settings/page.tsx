@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -34,7 +35,14 @@ export default function ProfileSettingsPage() {
         .eq('id', user.id)
         .single();
 
-      if (data) setProfile(data as Profile);
+      if (data) {
+        setProfile({
+          full_name: data.full_name || '',
+          email: data.email || '',
+          avatar_url: data.avatar_url || '',
+          notification_prefs: (data as any).notification_prefs || { new_tools: true, price_drops: true, review_responses: true }
+        });
+      }
       else {
         // Fallback for new users if trigger didn't run
         setProfile({
@@ -88,7 +96,7 @@ export default function ProfileSettingsPage() {
             }}>
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt={profile.full_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : '👤'}
+              ) : 'ðŸ‘¤'}
             </div>
             <button type="button" className="btn-secondary" style={{ padding: '10px 16px', borderRadius: '8px' }}>Change Photo</button>
           </div>

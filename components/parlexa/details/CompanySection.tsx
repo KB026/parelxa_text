@@ -42,7 +42,7 @@ export function CompanySection({
           <div>
             <div style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '4px' }}>Presence</div>
             <div style={{ fontSize: '14px', fontWeight: 700 }}>
-              <a href={companyLinkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--cyan)' }}>LinkedIn ↗</a>
+              <a href={companyLinkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--cyan)' }}>LinkedIn â†—</a>
             </div>
           </div>
         </div>

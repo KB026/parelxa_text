@@ -22,15 +22,15 @@ export function AIFinder({ agents, categories }: AIFinderProps) {
 
   const industries = categories.map(c => c.name);
   const budgets = [
-    { label: 'Free / Community', value: 'free', icon: '🎁' },
-    { label: 'Budget-friendly (Under ₹10k)', value: 'budget', icon: '🎟️' },
-    { label: 'Mid-range (₹10k - ₹50k)', value: 'mid', icon: '🏢' },
-    { label: 'Enterprise / Custom', value: 'enterprise', icon: '🏛️' }
+    { label: 'Free / Community', value: 'free', icon: 'ðŸŽ' },
+    { label: 'Budget-friendly (Under â‚¹10k)', value: 'budget', icon: 'ðŸŽŸï¸' },
+    { label: 'Mid-range (â‚¹10k - â‚¹50k)', value: 'mid', icon: 'ðŸ¢' },
+    { label: 'Enterprise / Custom', value: 'enterprise', icon: 'ðŸ›ï¸' }
   ];
   const techLevels = [
-    { label: 'Non-Technical (No Code)', value: 'low', icon: '🧒' },
-    { label: 'Semi-Technical (Low Code)', value: 'mid', icon: '👨‍💻' },
-    { label: 'Advanced (Full API/Dev)', value: 'high', icon: '🧙' }
+    { label: 'Non-Technical (No Code)', value: 'low', icon: 'ðŸ§’' },
+    { label: 'Semi-Technical (Low Code)', value: 'mid', icon: 'ðŸ‘¨â€ðŸ’»' },
+    { label: 'Advanced (Full API/Dev)', value: 'high', icon: 'ðŸ§™' }
   ];
   const commonChallenges = [
     'Automating customer support',
@@ -55,7 +55,7 @@ export function AIFinder({ agents, categories }: AIFinderProps) {
         
         // Budget match
         const pricing = (agent.pricing || '').toLowerCase();
-        if (answers.budget === 'free' && (pricing.includes('free') || pricing.includes('₹0'))) score += 5;
+        if (answers.budget === 'free' && (pricing.includes('free') || pricing.includes('â‚¹0'))) score += 5;
         if (answers.budget === 'enterprise' && (pricing.includes('contact') || pricing.includes('custom'))) score += 5;
         
         // Challenge match (keyword search in summary/use cases)
@@ -93,7 +93,7 @@ export function AIFinder({ agents, categories }: AIFinderProps) {
             marginTop: '24px', background: 'transparent', border: '1px solid var(--border)', 
             color: 'var(--text-dim)', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer' 
           }}>
-            ← Start Over
+            â† Start Over
           </button>
         </div>
         
@@ -207,7 +207,7 @@ export function AIFinder({ agents, categories }: AIFinderProps) {
                     fontSize: '14px', transition: 'all 0.2s'
                   }}
                 >
-                  {answers.challenges.includes(c) ? '✓ ' : '+ '} {c}
+                  {answers.challenges.includes(c) ? 'âœ“ ' : '+ '} {c}
                 </button>
               ))}
             </div>
@@ -219,7 +219,7 @@ export function AIFinder({ agents, categories }: AIFinderProps) {
                 borderRadius: '12px', fontWeight: 700, fontSize: '16px', opacity: answers.challenges.length === 0 ? 0.5 : 1
               }}
             >
-              Show Recommendations →
+              Show Recommendations â†’
             </button>
           </div>
         )}
@@ -229,7 +229,7 @@ export function AIFinder({ agents, categories }: AIFinderProps) {
             display: 'block', margin: '32px auto 0', background: 'transparent', 
             border: 'none', color: 'var(--text-dim)', cursor: 'pointer', fontSize: '14px' 
           }}>
-            ← Back
+            â† Back
           </button>
         )}
       </div>

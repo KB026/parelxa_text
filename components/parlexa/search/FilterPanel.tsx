@@ -179,7 +179,7 @@ export function FilterPanel({ categories, industries }: FilterPanelProps) {
           display: 'none', cursor: 'pointer'
         }}
       >
-        Filters {searchParams.toString() && '•'}
+        Filters {searchParams.toString() && 'â€¢'}
       </div>
 
       {/* Mobile Bottom Sheet */}
@@ -193,7 +193,7 @@ export function FilterPanel({ categories, industries }: FilterPanelProps) {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
               <h3 style={{ fontSize: '24px', fontWeight: 800 }}>Filters</h3>
-              <button onClick={() => setIsMobileOpen(false)} style={{ fontSize: '24px', background: 'none', border: 'none', color: 'white' }}>✕</button>
+              <button onClick={() => setIsMobileOpen(false)} style={{ fontSize: '24px', background: 'none', border: 'none', color: 'white' }}>âœ•</button>
             </div>
             {/* Same content as desktop sidebar but bigger for touch */}
             <div style={{ transform: 'scale(1.1)', transformOrigin: 'top left', paddingBottom: '40px' }}>

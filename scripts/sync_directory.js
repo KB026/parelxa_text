@@ -115,7 +115,7 @@ async function run() {
 
       const slug = slugify(name);
       const category = mapping[raw_industry] || mapping[sub_category] || mapping[sub_category.split(' / ')[0]] || 'AI & LLMs';
-      const has_india_pricing = has_india_pricing_raw.includes('✅') || has_india_pricing_raw.toLowerCase().includes('yes');
+      const has_india_pricing = has_india_pricing_raw.includes('âœ…') || has_india_pricing_raw.toLowerCase().includes('yes');
       const pricing_model = pricing_model_raw.toLowerCase().includes('contact') ? 'contact' : 'paid';
       const features = (key_features || '').split(';').map(f => f.trim()).filter(f => f.length > 0);
       const tags = [target_segment, deployment].filter(t => t && t.length > 0);

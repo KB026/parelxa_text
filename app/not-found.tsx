@@ -7,7 +7,7 @@ export default function NotFound() {
     <div className="not-found-container">
       <div className="not-found-content">
         <div className="status-code">404</div>
-        <div className="ai-icon">🛸</div>
+        <div className="ai-icon">ðŸ›¸</div>
         <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '16px', color: 'var(--text-white)' }}>
           Lost in the latent space?
         </h1>

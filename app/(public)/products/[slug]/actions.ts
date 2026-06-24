@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -68,7 +69,7 @@ export async function submitClaim(
     // Notify all existing claimants of the new dispute
     for (const claim of existingClaims || []) {
        if (claim.user_id !== user.id) {
-         const { data: prof } = await supabase.from('profiles').select('email').eq('id', claim.user_id).single();
+         const { data: prof } = await supabase.from('profiles').select('email').eq('id', claim.user_id || '').single();
          if (prof?.email) await sendClaimDisputed(prof.email, agent?.name || 'Your Tool');
        }
     }
@@ -139,7 +140,7 @@ export async function verifyClaim(token: string) {
           is_maker_claimed: true,
           updated_at: new Date().toISOString() 
       })
-      .eq('id', claim.agent_id);
+      .eq('id', claim.agent_id || 0);
     
     await sendClaimApproved(claim.work_email, agentData?.name || 'Your Tool');
   }

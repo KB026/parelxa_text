@@ -58,7 +58,7 @@ async function enrichAgent(agent) {
 
     // Update agent description
     await client.query('UPDATE agents SET description = $1, updated_at = NOW() WHERE id = $2', [data.formatted_description, agent.id]);
-    console.log(`✓ Updated description for ${agent.name}`);
+    console.log(`âœ“ Updated description for ${agent.name}`);
 
     // Update external reviews (upsert)
     for (const rev of data.external_reviews) {
@@ -72,7 +72,7 @@ async function enrichAgent(agent) {
           updated_at = NOW();
       `, [agent.id, rev.source, rev.rating, rev.count, rev.snippet, 'https://google.com/search?q=' + encodeURIComponent(agent.name + ' ' + rev.source)]);
     }
-    console.log(`✓ Added ${data.external_reviews.length} external reviews for ${agent.name}`);
+    console.log(`âœ“ Added ${data.external_reviews.length} external reviews for ${agent.name}`);
 
   } catch (err) {
     console.error(`Enrichment failed for ${agent.name}:`, err.message);

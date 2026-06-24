@@ -29,8 +29,8 @@ import { CompareBar } from "@/components/parlexa/CompareBar";
 export const metadata: Metadata = {
   metadataBase: new URL('https://parlexa.com'),
   title: {
-    default: "Parlexa — The Global AI Agent Marketplace",
-    template: "%s | Parlexa — The Global AI Agent Marketplace"
+    default: "Parlexa â€” The Global AI Agent Marketplace",
+    template: "%s | Parlexa â€” The Global AI Agent Marketplace"
   },
   description: "The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.",
   keywords: ["AI Agents", "B2B AI Tools", "SaaS Marketplace", "AI Automation", "Parlexa"],
@@ -44,12 +44,12 @@ export const metadata: Metadata = {
       url: "/og-image.png",
       width: 1200,
       height: 630,
-      alt: "Parlexa — The Global AI Agent Marketplace"
+      alt: "Parlexa â€” The Global AI Agent Marketplace"
     }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Parlexa — The Global AI Agent Marketplace",
+    title: "Parlexa â€” The Global AI Agent Marketplace",
     description: "The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.",
     images: ["/og-image.png"],
   },

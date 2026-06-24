@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
@@ -27,7 +28,7 @@ export default async function AdminListings({
   }
 
   type Listing = {
-  id: string;
+  id: number;
   name: string | null;
   category: string | null;
   website: string | null;
@@ -56,7 +57,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
     const { error: updateError } = await supabase.from('agents').update({ 
       approval_status: status,
       admin_feedback: feedback || null
-    }).eq('id', id);
+    }).eq('id', Number(id));
 
     if (updateError) {
       console.error('Status Update Failed:', updateError);
@@ -67,7 +68,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
     const { data: agentData } = await supabase
       .from('agents')
       .select('name, user_id')
-      .eq('id', id)
+      .eq('id', Number(id))
       .single();
 
     const agent = agentData as { name?: string; user_id?: string | null } | null;
@@ -98,7 +99,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
     const { data: agentData } = await supabase
       .from('agents')
       .select('name, user_id, profiles(email)')
-      .eq('id', id)
+      .eq('id', Number(id))
       .single();
 
     const agent = agentData as { name?: string; user_id?: string | null; profiles?: { email?: string } | null } | null;
@@ -106,7 +107,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
     if (!agent) return;
 
     // 2. Update status
-    await supabase.from('agents').update({ is_featured: !isFeatured }).eq('id', id);
+    await supabase.from('agents').update({ is_featured: !isFeatured }).eq('id', Number(id));
     
     // 3. Trigger Email if activating
     const vendorEmail = agent.profiles?.email;
@@ -123,7 +124,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
     if (!id) return;
     const isPinned = formData.get('is_pinned') === 'true';
     const supabase = createClient();
-    await supabase.from('agents').update({ is_pinned_trending: !isPinned }).eq('id', id);
+    await supabase.from('agents').update({ is_pinned_trending: !isPinned }).eq('id', Number(id));
     revalidatePath('/admin/listings');
     revalidatePath('/');
   }
@@ -133,7 +134,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
     const id = formData.get('id') as string;
     if (!id) return;
     const supabase = createClient();
-    await supabase.from('agents').delete().eq('id', id);
+    await supabase.from('agents').delete().eq('id', Number(id));
     revalidatePath('/admin/listings');
   }
 
@@ -225,7 +226,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
                       background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px',
                       color: item.is_pinned_trending ? '#fb923c' : 'var(--text-dim)'
                     }}>
-                      {item.is_pinned_trending ? '🔥' : '⏻'}
+                      {item.is_pinned_trending ? 'ðŸ”¥' : 'â»'}
                     </button>
                   </form>
                 </td>
@@ -237,7 +238,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
                       background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px',
                       color: item.is_featured ? '#fb923c' : 'var(--text-dim)'
                     }}>
-                      {item.is_featured ? '★' : '☆'}
+                      {item.is_featured ? 'â˜…' : 'â˜†'}
                     </button>
                   </form>
                 </td>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import { EditListingForm } from '@/components/parlexa/vendor/EditListingForm';
@@ -15,7 +16,7 @@ export default async function EditListingPage({ params }: { params: { id: string
   const { data: agent, error } = await supabase
     .from('agents')
     .select('*')
-    .eq('id', number(params.id))
+    .eq('id', Number(params.id))
     .single();
 
   if (error || !agent) {
@@ -30,7 +31,7 @@ export default async function EditListingPage({ params }: { params: { id: string
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-      <EditListingForm agent={agent} />
+      <EditListingForm agent={agent as any} />
     </div>
   );
 }

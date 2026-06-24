@@ -61,7 +61,7 @@ export function ActiveFilters() {
           className="filter-chip-active"
         >
           <span>{f.label}</span>
-          <span style={{ fontSize: '10px', opacity: 0.5 }}>✕</span>
+          <span style={{ fontSize: '10px', opacity: 0.5 }}>âœ•</span>
         </div>
       ))}
       <button 

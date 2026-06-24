@@ -13,7 +13,7 @@ export async function generateMetadata({ searchParams }: { searchParams: { [key:
   const category = normalize(searchParams.cats);
   const query = normalize(searchParams.q);
   
-  let title = "Explore AI Agents | Parlexa — The Global AI Agent Marketplace";
+  let title = "Explore AI Agents | Parlexa â€” The Global AI Agent Marketplace";
   let description = "The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.";
 
   if (category) {

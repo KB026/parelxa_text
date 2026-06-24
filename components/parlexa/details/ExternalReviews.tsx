@@ -9,13 +9,13 @@ export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
   if (!reviews || reviews.length === 0) return null;
 
   const sourceIcons: Record<string, string> = {
-    'G2': '🏆',
-    'Product Hunt': '😸',
-    'Trustpilot': '⭐',
-    'Capterra': '🛡️',
-    'Gartner': '📈',
-    'SourceForge': '💻',
-    'AppSumo': '🌮',
+    'G2': 'ðŸ†',
+    'Product Hunt': 'ðŸ˜¸',
+    'Trustpilot': 'â­',
+    'Capterra': 'ðŸ›¡ï¸',
+    'Gartner': 'ðŸ“ˆ',
+    'SourceForge': 'ðŸ’»',
+    'AppSumo': 'ðŸŒ®',
   };
 
   const sourceColors: Record<string, string> = {
@@ -63,12 +63,12 @@ export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '20px' }}>{sourceIcons[review.source] || '🌐'}</span>
+                <span style={{ fontSize: '20px' }}>{sourceIcons[review.source] || 'ðŸŒ'}</span>
                 <span style={{ fontWeight: 700, fontSize: '14px', color: 'white' }}>{review.source}</span>
               </div>
               {review.rating > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#fbbf24', fontSize: '14px', fontWeight: 700 }}>
-                  ★ {review.rating ? review.rating.toFixed(1) : '0.0'}
+                  â˜… {review.rating ? review.rating.toFixed(1) : '0.0'}
                 </div>
               )}
             </div>
@@ -83,14 +83,14 @@ export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden'
             }}>
-              &quot;{review.snippet.replace(/Rating: [0-9.]+ · ‎[0-9,]+ reviews/i, '').trim()}&quot;
+              &quot;{review.snippet.replace(/Rating: [0-9.]+ Â· â€Ž[0-9,]+ reviews/i, '').trim()}&quot;
             </p>
 
             <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase' }}>
                 {review.reviews_count > 0 ? `${review.reviews_count.toLocaleString()} Reviews` : 'Verified Source'}
               </span>
-              <span style={{ color: 'var(--cyan)', fontSize: '12px', fontWeight: 700 }}>Read More →</span>
+              <span style={{ color: 'var(--cyan)', fontSize: '12px', fontWeight: 700 }}>Read More â†’</span>
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `

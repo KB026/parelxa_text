@@ -19,7 +19,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
   const reviews = (agent?.reviews_count ?? agent?.reviews ?? 0).toLocaleString();
   const pricing = agent?.pricing || 'Contact for pricing';
   const isVerified = agent?.isVerified === true;
-  const hasIndiaPricing = agent?.pricing?.toLowerCase().includes('inr') || agent?.pricing?.toLowerCase().includes('₹');
+  const hasIndiaPricing = agent?.pricing?.toLowerCase().includes('inr') || agent?.pricing?.toLowerCase().includes('â‚¹');
   
   const isInCompare = selectedIds.includes(agent?.id);
 
@@ -53,7 +53,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
           boxShadow: '0 4px 15px rgba(249, 115, 22, 0.4)', border: '1px solid rgba(255,255,255,0.3)',
           letterSpacing: '0.05em'
         }}>
-          ✨ FEATURED
+          âœ¨ FEATURED
         </span>
       )}
 
@@ -104,7 +104,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
       >
         <div className="card-top" style={{ paddingRight: '40px' }}>
           <span className="cat-pill" style={{ background: isFeatured ? '#f97316' : '#1d4ed8' }}>{category}</span>
-          <div className="rating-badge">★ {rating}</div>
+          <div className="rating-badge">â˜… {rating}</div>
         </div>
         <div>
           <div className="card-name" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -126,7 +126,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
             border: '1px solid rgba(251, 146, 60, 0.2)', borderRadius: '6px', 
             fontSize: '11px', fontWeight: 600, color: '#fb923c', marginBottom: '8px', width: 'fit-content'
           }}>
-            🇮🇳 Special India Pricing Available
+            ðŸ‡®ðŸ‡³ Special India Pricing Available
           </div>
         )}
 

@@ -63,7 +63,7 @@ export function ReviewCard({ review, isVendor = false }: ReviewCardProps) {
         </div>
         <div style={{ display: 'flex', gap: '4px', alignItems: 'center', background: review.recommend ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding: '4px 10px', borderRadius: '12px' }}>
           <span style={{ fontSize: '12px', color: review.recommend ? '#10b981' : '#ef4444', fontWeight: 600 }}>
-            {review.recommend ? '✓ Recommended' : '✕ Not Recommended'}
+            {review.recommend ? 'âœ“ Recommended' : 'âœ• Not Recommended'}
           </span>
         </div>
       </div>
@@ -90,14 +90,14 @@ export function ReviewCard({ review, isVendor = false }: ReviewCardProps) {
               disabled={hasVoted}
               style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'transparent', cursor: hasVoted ? 'default' : 'pointer', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              👍 {votes > 0 && votes}
+              ðŸ‘ {votes > 0 && votes}
             </button>
             <button 
               onClick={() => handleVote('unhelpful')}
               disabled={hasVoted}
               style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'transparent', cursor: hasVoted ? 'default' : 'pointer', fontSize: '12px', color: 'var(--text-dim)' }}
             >
-              👎
+              ðŸ‘Ž
             </button>
           </div>
         </div>

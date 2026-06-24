@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { razorpay, isMockMode } from '@/lib/razorpay';
 import { createClient } from '@/lib/supabase/server';
 
-// ₹1,999 base + 18% GST = ₹2,358.82 → rounded to ₹2,359
+// â‚¹1,999 base + 18% GST = â‚¹2,358.82 â†’ rounded to â‚¹2,359
 const LISTING_FEE_BASE = 1999;
 const GST_RATE = 0.18;
-const LISTING_FEE_TOTAL = Math.round(LISTING_FEE_BASE * (1 + GST_RATE)); // ₹2,359
+const LISTING_FEE_TOTAL = Math.round(LISTING_FEE_BASE * (1 + GST_RATE)); // â‚¹2,359
 const LISTING_FEE_PAISE = LISTING_FEE_TOTAL * 100; // 235900 paise
 
 export async function POST(req: NextRequest) {

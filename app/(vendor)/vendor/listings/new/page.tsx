@@ -71,7 +71,7 @@ export default function NewListingPage() {
   const [lastSaved, setLastSaved] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Load draft from localStorage — but clear it if ?fresh=true
+  // Load draft from localStorage â€” but clear it if ?fresh=true
   useEffect(() => {
     const isFresh = searchParams.get('fresh') === 'true';
     if (isFresh) {
@@ -150,36 +150,36 @@ export default function NewListingPage() {
     }
   }
 
-  // ── CONFIRMATION SCREEN ──
+  // â”€â”€ CONFIRMATION SCREEN â”€â”€
   if (submitted) {
     return (
       <div className="listing-wizard">
         <div className="listing-form-card">
           <div className="listing-confirmation">
-            <div className="icon">🎉</div>
+            <div className="icon">ðŸŽ‰</div>
             <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>Listing Submitted!</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '15px', maxWidth: '400px', margin: '0 auto 24px', lineHeight: 1.7 }}>
-              Your AI tool <strong style={{ color: 'var(--text-white)' }}>{form.name}</strong> is now under review. Our team will evaluate it within <strong style={{ color: 'var(--cyan)' }}>2–3 business days</strong>.
+              Your AI tool <strong style={{ color: 'var(--text-white)' }}>{form.name}</strong> is now under review. Our team will evaluate it within <strong style={{ color: 'var(--cyan)' }}>2â€“3 business days</strong>.
             </p>
             <div style={{ background: 'var(--bg-secondary)', borderRadius: '12px', padding: '16px', marginBottom: '24px', textAlign: 'left' }}>
               <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginBottom: '12px', fontWeight: 600 }}>WHAT HAPPENS NEXT</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
-                  <span style={{ color: 'var(--green)' }}>✓</span>
+                  <span style={{ color: 'var(--green)' }}>âœ“</span>
                   <span style={{ color: 'var(--text-muted)' }}>Listing received and queued for review</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
-                  <span style={{ color: 'var(--text-dim)' }}>○</span>
+                  <span style={{ color: 'var(--text-dim)' }}>â—‹</span>
                   <span style={{ color: 'var(--text-dim)' }}>Team reviews content, links, and product</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
-                  <span style={{ color: 'var(--text-dim)' }}>○</span>
+                  <span style={{ color: 'var(--text-dim)' }}>â—‹</span>
                   <span style={{ color: 'var(--text-dim)' }}>Listing goes live on the marketplace</span>
                 </div>
               </div>
             </div>
             <Link href="/vendor/listings" className="listing-btn-next" style={{ textDecoration: 'none', display: 'inline-block' }}>
-              ← Back to My Listings
+              â† Back to My Listings
             </Link>
           </div>
         </div>
@@ -207,17 +207,17 @@ export default function NewListingPage() {
       <div className="listing-progress">
         {STEPS.map((s, i) => (
           <div key={s} className={`listing-step-item ${i + 1 === step ? 'active' : i + 1 < step ? 'done' : ''}`}>
-            <div className="listing-step-num">{i + 1 < step ? '✓' : i + 1}</div>
+            <div className="listing-step-num">{i + 1 < step ? 'âœ“' : i + 1}</div>
             <div className="listing-step-label">{s}</div>
           </div>
         ))}
       </div>
 
       <div className="listing-form-card">
-        {/* ═══ STEP 1: BASIC INFO ═══ */}
+        {/* â•â•â• STEP 1: BASIC INFO â•â•â• */}
         {step === 1 && (
           <>
-            <div className="listing-form-title">📝 Basic Information</div>
+            <div className="listing-form-title">ðŸ“ Basic Information</div>
             <div className="listing-form-desc">Tell us about your AI tool. This is what users see first.</div>
 
             <div className="listing-field">
@@ -254,17 +254,17 @@ export default function NewListingPage() {
                 <input className="listing-input" type="url" placeholder="YouTube or Loom link" value={form.video_url} onChange={e => updateField('video_url', e.target.value)} />
               </div>
               <div className="listing-field">
-                <label className="listing-label">Logo URL <span className="optional">(square, min 200×200)</span></label>
+                <label className="listing-label">Logo URL <span className="optional">(square, min 200Ã—200)</span></label>
                 <input className="listing-input" type="url" placeholder="https://example.com/logo.png" value={form.logo_url} onChange={e => updateField('logo_url', e.target.value)} />
               </div>
             </div>
           </>
         )}
 
-        {/* ═══ STEP 2: CLASSIFICATION ═══ */}
+        {/* â•â•â• STEP 2: CLASSIFICATION â•â•â• */}
         {step === 2 && (
           <>
-            <div className="listing-form-title">🏷️ Classification</div>
+            <div className="listing-form-title">ðŸ·ï¸ Classification</div>
             <div className="listing-form-desc">Help users discover your tool with the right categories and tags.</div>
 
             <div className="listing-field">
@@ -285,7 +285,7 @@ export default function NewListingPage() {
                 {form.tags.map((tag, i) => (
                   <span key={i} className="listing-tag">
                     {tag}
-                    <button className="listing-tag-remove" onClick={() => removeTag(i)}>×</button>
+                    <button className="listing-tag-remove" onClick={() => removeTag(i)}>Ã—</button>
                   </span>
                 ))}
                 {form.tags.length < 10 && (
@@ -319,20 +319,20 @@ export default function NewListingPage() {
           </>
         )}
 
-        {/* ═══ STEP 3: PRICING ═══ */}
+        {/* â•â•â• STEP 3: PRICING â•â•â• */}
         {step === 3 && (
           <>
-            <div className="listing-form-title">💰 Pricing & Availability</div>
+            <div className="listing-form-title">ðŸ’° Pricing & Availability</div>
             <div className="listing-form-desc">Let users know how your pricing works.</div>
 
             <div className="listing-field">
               <label className="listing-label">Pricing Model *</label>
               <div className="listing-pricing-grid">
                 {[
-                  { id: 'free', emoji: '🆓', label: 'Free' },
-                  { id: 'freemium', emoji: '⭐', label: 'Freemium' },
-                  { id: 'paid', emoji: '💳', label: 'Paid' },
-                  { id: 'contact', emoji: '📞', label: 'Contact for Pricing' },
+                  { id: 'free', emoji: 'ðŸ†“', label: 'Free' },
+                  { id: 'freemium', emoji: 'â­', label: 'Freemium' },
+                  { id: 'paid', emoji: 'ðŸ’³', label: 'Paid' },
+                  { id: 'contact', emoji: 'ðŸ“ž', label: 'Contact for Pricing' },
                 ].map(opt => (
                   <div key={opt.id} className={`listing-pricing-card ${form.pricing_model === opt.id ? 'selected' : ''}`} onClick={() => {
                     updateField('pricing_model', opt.id);
@@ -350,7 +350,7 @@ export default function NewListingPage() {
             {(form.pricing_model === 'paid' || form.pricing_model === 'freemium') && (
               <div className="listing-field">
                 <label className="listing-label">Price / Price Range *</label>
-                <input className="listing-input" placeholder="e.g. $29/month, ₹2,999/month, $99-299/month" value={form.pricing} onChange={e => updateField('pricing', e.target.value)} />
+                <input className="listing-input" placeholder="e.g. $29/month, â‚¹2,999/month, $99-299/month" value={form.pricing} onChange={e => updateField('pricing', e.target.value)} />
               </div>
             )}
 
@@ -370,7 +370,7 @@ export default function NewListingPage() {
             <div className="listing-field">
               <div className="listing-toggle-row">
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-white)' }}>🇮🇳 India-specific Pricing</div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-white)' }}>ðŸ‡®ðŸ‡³ India-specific Pricing</div>
                   <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '2px' }}>Do you offer pricing in INR?</div>
                 </div>
                 <button type="button" className={`listing-toggle ${form.has_india_pricing ? 'on' : ''}`} onClick={() => updateField('has_india_pricing', !form.has_india_pricing)} />
@@ -380,16 +380,16 @@ export default function NewListingPage() {
             {form.has_india_pricing && (
               <div className="listing-field">
                 <label className="listing-label">INR Price</label>
-                <input className="listing-input" placeholder="e.g. ₹2,999/month" value={form.inr_price} onChange={e => updateField('inr_price', e.target.value)} />
+                <input className="listing-input" placeholder="e.g. â‚¹2,999/month" value={form.inr_price} onChange={e => updateField('inr_price', e.target.value)} />
               </div>
             )}
           </>
         )}
 
-        {/* ═══ STEP 4: COMPANY ═══ */}
+        {/* â•â•â• STEP 4: COMPANY â•â•â• */}
         {step === 4 && (
           <>
-            <div className="listing-form-title">🏢 Company Information</div>
+            <div className="listing-form-title">ðŸ¢ Company Information</div>
             <div className="listing-form-desc">Tell us about the company behind this tool.</div>
 
             <div className="listing-grid-2">
@@ -408,10 +408,10 @@ export default function NewListingPage() {
                 <label className="listing-label">Team Size</label>
                 <select className="listing-input listing-select" value={form.team_size} onChange={e => updateField('team_size', e.target.value)}>
                   <option value="">Select...</option>
-                  <option value="1-10">1–10</option>
-                  <option value="11-50">11–50</option>
-                  <option value="51-200">51–200</option>
-                  <option value="201-500">201–500</option>
+                  <option value="1-10">1â€“10</option>
+                  <option value="11-50">11â€“50</option>
+                  <option value="51-200">51â€“200</option>
+                  <option value="201-500">201â€“500</option>
                   <option value="500+">500+</option>
                 </select>
               </div>
@@ -450,10 +450,10 @@ export default function NewListingPage() {
           </>
         )}
 
-        {/* ═══ STEP 5: REVIEW ═══ */}
+        {/* â•â•â• STEP 5: REVIEW â•â•â• */}
         {step === 5 && (
           <>
-            <div className="listing-form-title">👁️ Review Your Listing</div>
+            <div className="listing-form-title">ðŸ‘ï¸ Review Your Listing</div>
             <div className="listing-form-desc">Here&apos;s how your tool will appear on Parlexa. Make sure everything looks good!</div>
 
             <div className="listing-preview">
@@ -485,32 +485,32 @@ export default function NewListingPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
                 <div>
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase' }}>Pricing</div>
-                  <div style={{ fontSize: '14px', color: form.pricing_model === 'free' ? 'var(--green)' : 'var(--text-white)', marginTop: '2px' }}>{form.pricing || '—'}</div>
+                  <div style={{ fontSize: '14px', color: form.pricing_model === 'free' ? 'var(--green)' : 'var(--text-white)', marginTop: '2px' }}>{form.pricing || 'â€”'}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase' }}>Location</div>
-                  <div style={{ fontSize: '14px', color: 'var(--text-white)', marginTop: '2px' }}>{form.city || '—'}, India</div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-white)', marginTop: '2px' }}>{form.city || 'â€”'}, India</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase' }}>Founded</div>
-                  <div style={{ fontSize: '14px', color: 'var(--text-white)', marginTop: '2px' }}>{form.founded_year || '—'}</div>
+                  <div style={{ fontSize: '14px', color: 'var(--text-white)', marginTop: '2px' }}>{form.founded_year || 'â€”'}</div>
                 </div>
               </div>
             </div>
           </>
         )}
 
-        {/* ═══ NAVIGATION ═══ */}
+        {/* â•â•â• NAVIGATION â•â•â• */}
         <div className="listing-nav">
           {step > 1 ? (
-            <button type="button" className="listing-btn-back" onClick={() => setStep(step - 1)}>← Back</button>
+            <button type="button" className="listing-btn-back" onClick={() => setStep(step - 1)}>â† Back</button>
           ) : (
             <Link href="/vendor/listings" className="listing-btn-back" style={{ textDecoration: 'none' }}>Cancel</Link>
           )}
 
           {step < 5 ? (
             <button type="button" className="listing-btn-next" onClick={() => setStep(step + 1)}>
-              Next Step →
+              Next Step â†’
             </button>
           ) : (
             <button 
@@ -520,7 +520,7 @@ export default function NewListingPage() {
               disabled={isSubmitting}
               style={{ opacity: isSubmitting ? 0.7 : 1 }}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit for Review ✓'}
+              {isSubmitting ? 'Submitting...' : 'Submit for Review âœ“'}
             </button>
           )}
         </div>

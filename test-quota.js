@@ -8,9 +8,9 @@ async function run() {
     try {
       const model = genAI.getGenerativeModel({ model: m });
       await model.generateContent('ping');
-      console.log(`✓ ${m} is working`);
+      console.log(`âœ“ ${m} is working`);
     } catch (err) {
-      console.log(`✗ ${m}: ${err.message}`);
+      console.log(`âœ— ${m}: ${err.message}`);
     }
   }
 }

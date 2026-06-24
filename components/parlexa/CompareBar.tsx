@@ -71,7 +71,7 @@ export function CompareBar() {
               {agent?.logoUrl ? (
                 <img src={agent.logoUrl} alt={agent.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>🤖</div>
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>ðŸ¤–</div>
               )}
               <button 
                 onClick={() => removeFromCompare(id)}
@@ -83,7 +83,7 @@ export function CompareBar() {
                   justifyContent: 'center', cursor: 'pointer', zIndex: 1
                 }}
               >
-                ✕
+                âœ•
               </button>
             </div>
           );

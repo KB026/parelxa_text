@@ -75,7 +75,7 @@ export function UniversalAISearch() {
           }}
           className="ai-search-input"
         />
-        <span style={{ position: 'absolute', left: '28px', top: '50%', transform: 'translateY(-50%)', fontSize: '28px', opacity: 0.5 }}>🪄</span>
+        <span style={{ position: 'absolute', left: '28px', top: '50%', transform: 'translateY(-50%)', fontSize: '28px', opacity: 0.5 }}>ðŸª„</span>
         <button 
           type="submit"
           disabled={isSearching}
@@ -101,14 +101,14 @@ export function UniversalAISearch() {
         }}>
           {isSearching ? (
             <div style={{ padding: '40px 0', textAlign: 'center' }}>
-              <div className="ai-loader" style={{ marginBottom: '16px' }}>✨</div>
+              <div className="ai-loader" style={{ marginBottom: '16px' }}>âœ¨</div>
               <p style={{ color: 'var(--text-dim)', fontSize: '15px' }}>Analyzing the best AI tools for your specific needs...</p>
             </div>
           ) : result && (
             <div>
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: result.isAIPowered ? 'var(--cyan)' : 'var(--text-dim)', fontSize: '13px', fontWeight: 700, textTransform: 'uppercase' }}>
-                  <span>{result.isAIPowered ? '✨' : '🔎'}</span> {result.isAIPowered ? 'Parlexa AI Insight' : 'Directory Search Results'}
+                  <span>{result.isAIPowered ? 'âœ¨' : 'ðŸ”Ž'}</span> {result.isAIPowered ? 'Parlexa AI Insight' : 'Directory Search Results'}
                 </div>
                 <p style={{ fontSize: '16px', lineHeight: 1.6, color: 'white', margin: 0 }}>{result.explanation}</p>
               </div>
@@ -127,12 +127,12 @@ export function UniversalAISearch() {
                       }}
                       className="ai-recommendation-item"
                     >
-                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🤖</div>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>ðŸ¤–</div>
                       <div style={{ flexGrow: 1 }}>
                         <div style={{ fontWeight: 700, fontSize: '16px', color: 'white' }}>{agent.name}</div>
                         <div style={{ fontSize: '13px', color: 'var(--text-dim)' }}>{agent.oneLiner || agent.category}</div>
                       </div>
-                      <div style={{ color: 'var(--cyan)', fontSize: '13px', fontWeight: 700 }}>Open Listing →</div>
+                      <div style={{ color: 'var(--cyan)', fontSize: '13px', fontWeight: 700 }}>Open Listing â†’</div>
                     </div>
                   ))}
                 </div>

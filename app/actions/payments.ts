@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { razorpay, validatePaymentVerification } from '@/lib/razorpay';
@@ -122,8 +123,9 @@ export async function verifyPromotionPayment(data: {
       p_amount: amounts[data.plan]
     });
       
-    if (rpcError || !rpcData?.success) {
-      throw new Error(rpcError?.message || rpcData?.error || 'Failed to activate promotion');
+    const promotionResult = rpcData as any;
+    if (rpcError || !promotionResult?.success) {
+      throw new Error(rpcError?.message || promotionResult?.error || 'Failed to activate promotion');
     }
     
     // 4. Send Confirmation Email

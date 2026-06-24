@@ -142,13 +142,13 @@ export default async function AdminVerifications() {
     <section>
       <div style={{ marginBottom: '32px' }}>
         <h1 className="page-title" style={{ fontSize: '28px', marginBottom: '8px' }}>Verification Requests</h1>
-        <p style={{ color: 'var(--text-muted)' }}>Review and approve verification applications to award the ✓ Verified badge.</p>
+        <p style={{ color: 'var(--text-muted)' }}>Review and approve verification applications to award the âœ“ Verified badge.</p>
       </div>
 
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px', padding: '24px' }}>
         {queue.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>✓</div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>âœ“</div>
             <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-white)', marginBottom: '8px' }}>No pending verifications</h3>
             <p style={{ color: 'var(--text-muted)' }}>All verification requests have been processed.</p>
           </div>
@@ -172,7 +172,7 @@ export default async function AdminVerifications() {
                       {req.agents?.name || `Agent #${req.agent_id}`}
                     </h3>
                     <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginTop: '4px' }}>
-                      {req.agents?.category} · Submitted {new Date(req.created_at).toLocaleDateString()}
+                      {req.agents?.category} Â· Submitted {new Date(req.created_at).toLocaleDateString()}
                     </div>
                   </div>
                   <span className="cat-pill" style={{ background: '#1e3a5f', color: '#60a5fa' }}>
@@ -200,7 +200,7 @@ export default async function AdminVerifications() {
                   </div>
                   <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '12px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '4px' }}>Product Demo</div>
-                    <a href={req.product_demo_url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', color: 'var(--cyan)' }}>View Demo →</a>
+                    <a href={req.product_demo_url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', color: 'var(--cyan)' }}>View Demo â†’</a>
                   </div>
                   {req.press_mentions && (
                     <div style={{ background: 'var(--bg-card)', borderRadius: '10px', padding: '12px' }}>
@@ -224,7 +224,7 @@ export default async function AdminVerifications() {
                         display: 'flex', alignItems: 'center', gap: '6px'
                       }}
                     >
-                      ✓ Approve & Award Badge
+                      âœ“ Approve & Award Badge
                     </button>
                   </form>
                   <form action={rejectVerification} style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flex: 1 }}>

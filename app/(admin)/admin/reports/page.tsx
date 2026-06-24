@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +32,8 @@ const agents = Array.isArray(agentsData)
   
   const categoryMap: Record<string, number> = {};
  agents.forEach((a) => {
-    categoryMap[a.category] = (categoryMap[a.category] || 0) + 1;
+    const cat = a.category || 'Uncategorized';
+    categoryMap[cat] = (categoryMap[cat] || 0) + 1;
   });
   
   const topCategories = Object.entries(categoryMap)
@@ -50,7 +52,7 @@ const agents = Array.isArray(agentsData)
 
     return await Promise.all(weeks.map(async ({ start, end }) => {
       const { count } = await supabase
-        .from(table)
+        .from(table as any)
         .select('*', { count: 'exact', head: true })
         .gte('created_at', start.toISOString())
         .lt('created_at', end.toISOString());

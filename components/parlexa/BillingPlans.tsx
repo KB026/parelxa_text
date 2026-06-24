@@ -18,7 +18,7 @@ export default function BillingPlans({ initialAgents }: BillingPlansProps) {
     { 
       id: 'free',
       name: 'Free Listing', 
-      price: '₹0', 
+      price: 'â‚¹0', 
       features: ['Basic community listing', 'Link to website', 'Standard support'],
       active: true 
     },
@@ -59,7 +59,7 @@ export default function BillingPlans({ initialAgents }: BillingPlansProps) {
       // 2. Mock or Real Razorpay flow
       const orderData = res as { isMock?: boolean; orderId: string; keyId?: string; amount?: number };
       if (orderData.isMock) {
-        console.log('💳 MOCK PAYMENT: Simulating success...');
+        console.log('ðŸ’³ MOCK PAYMENT: Simulating success...');
         setTimeout(async () => {
           const verifyRes = await verifyPromotionPayment({
             razorpay_order_id: res.orderId,
@@ -201,7 +201,7 @@ export default function BillingPlans({ initialAgents }: BillingPlansProps) {
             <ul style={{ padding: 0, margin: '0 0 32px 0', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {plan.features.map(f => (
                 <li key={f} style={{ fontSize: '14px', color: 'var(--text-muted)', display: 'flex', gap: '8px' }}>
-                  <span style={{ color: plan.id === 'free' ? 'var(--cyan)' : '#fb923c' }}>✓</span> {f}
+                  <span style={{ color: plan.id === 'free' ? 'var(--cyan)' : '#fb923c' }}>âœ“</span> {f}
                 </li>
               ))}
             </ul>

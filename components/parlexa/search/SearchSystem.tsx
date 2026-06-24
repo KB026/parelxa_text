@@ -85,7 +85,7 @@ export function SearchSystem({
 
           {loading ? (
             <div style={{ padding: '80px 0', textAlign: 'center', color: 'var(--text-dim)' }}>
-              <div className="spinner" style={{ marginBottom: '16px' }}>⌛</div>
+              <div className="spinner" style={{ marginBottom: '16px' }}>âŒ›</div>
               Updating results...
             </div>
           ) : agents.length > 0 ? (
@@ -99,7 +99,7 @@ export function SearchSystem({
               padding: '100px 40px', textAlign: 'center', background: 'var(--bg-card)', 
               borderRadius: '24px', border: '1px solid var(--border-subtle)' 
             }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>ðŸ”</div>
               <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>No agents found</h3>
               <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto' }}>
                 We couldn&apos;t find any tools matching your criteria. Try adjusting your filters or clearing your search.

@@ -55,7 +55,7 @@ export default function VerificationStatusPage() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800,
                 fontSize: '18px', flexShrink: 0
               }}>
-                {step.status === 'completed' ? '✓' : i + 1}
+                {step.status === 'completed' ? 'âœ“' : i + 1}
               </div>
               <div style={{ flex: 1 }}>
                 <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>{step.title}</h4>
@@ -88,7 +88,7 @@ export default function VerificationStatusPage() {
               'Access to Featured Tool bids'
             ].map(benefit => (
               <li key={benefit} style={{ display: 'flex', gap: '10px', fontSize: '14px', color: 'var(--text-white)' }}>
-                <span style={{ color: 'var(--cyan)' }}>✦</span> {benefit}
+                <span style={{ color: 'var(--cyan)' }}>âœ¦</span> {benefit}
               </li>
             ))}
           </ul>

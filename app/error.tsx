@@ -18,7 +18,7 @@ export default function Error({
   return (
     <div className="error-container">
       <div className="error-card">
-        <div className="error-icon">⚠️</div>
+        <div className="error-icon">âš ï¸</div>
         <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '16px', color: 'var(--text-white)' }}>
           Something went wrong
         </h1>

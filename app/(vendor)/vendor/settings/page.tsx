@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,7 +33,14 @@ export default function VendorSettingsPage() {
         .eq('id', user.id)
         .single();
 
-      if (data) setProfile(data as VendorProfile);
+      if (data) {
+        setProfile({
+          full_name: data.full_name || '',
+          email: data.email || '',
+          phone: (data as any).phone || '',
+          notification_prefs: (data as any).notification_prefs || { listings: true, reviews: true, security: true }
+        });
+      }
       else {
         setProfile({
           full_name: user.user_metadata?.full_name || '',

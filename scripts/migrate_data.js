@@ -23,8 +23,8 @@ content = content.replace(/Indian languages/g, "multiple languages");
 content = content.replace(/Indian/g, "global");
 
 // 4. Price conversion
-// We use a regex to find "₹" followed by a number (maybe with commas)
-const priceRegex = /₹([0-9,]+)/g;
+// We use a regex to find "â‚¹" followed by a number (maybe with commas)
+const priceRegex = /â‚¹([0-9,]+)/g;
 
 content = content.replace(priceRegex, (match, p1) => {
   // Removing commas
@@ -50,8 +50,8 @@ content = content.replace(priceRegex, (match, p1) => {
   return '$' + usdAmount.toLocaleString('en-US');
 });
 
-// Since the seed data arrays still have hardcoded strings like "₹2,999/month", they will be fixed naturally by the Regex.
-// Same for the "inr_price": "₹XX" lines which got renamed to "usd_price": "₹XX" then converted to "$XX".
+// Since the seed data arrays still have hardcoded strings like "â‚¹2,999/month", they will be fixed naturally by the Regex.
+// Same for the "inr_price": "â‚¹XX" lines which got renamed to "usd_price": "â‚¹XX" then converted to "$XX".
 
 fs.writeFileSync(dataTsPath, content);
 console.log('Successfully globalized lib/data.ts');

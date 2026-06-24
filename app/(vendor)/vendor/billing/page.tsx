@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 import BillingPlans from '@/components/parlexa/BillingPlans';
 import { Agent } from '@/lib/types';
@@ -10,7 +11,7 @@ export default async function VendorBillingPage() {
 
   let agents: Agent[] = [];
   let transactions: {
-    id: number;
+    id: number | string;
     created_at: string;
     amount: number;
     status: string;
@@ -38,7 +39,13 @@ export default async function VendorBillingPage() {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     
-    transactions = userTransactions || [];
+    transactions = (userTransactions || []).map((t: any) => ({
+      id: t.id,
+      created_at: t.created_at || '',
+      amount: t.amount,
+      status: t.status,
+      gateway_payment_id: t.gateway_payment_id || undefined
+    }));
   }
 
   return (
@@ -72,7 +79,7 @@ export default async function VendorBillingPage() {
                 {transactions.map(t => (
                   <tr key={t.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                     <td style={{ padding: '16px 12px' }}>{new Date(t.created_at).toLocaleDateString()}</td>
-                    <td style={{ padding: '16px 12px', fontWeight: 600 }}>₹{t.amount}</td>
+                    <td style={{ padding: '16px 12px', fontWeight: 600 }}>â‚¹{t.amount}</td>
                     <td style={{ padding: '16px 12px' }}>
                       <span style={{ 
                         padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,

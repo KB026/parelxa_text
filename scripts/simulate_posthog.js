@@ -51,7 +51,7 @@ async function runTrafficSpike() {
   }
   
   await Promise.all(promises);
-  console.log('✅ Traffic simulation complete! PostHog analytics should now be populated.');
+  console.log('âœ… Traffic simulation complete! PostHog analytics should now be populated.');
 }
 
 runTrafficSpike();
