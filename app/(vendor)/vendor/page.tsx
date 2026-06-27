@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { getVendorAnalytics } from '@/lib/api';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,13 @@ export default async function VendorOverview() {
 
   // Fetch performance data & active promotions
   let activePromotions: { agents: { name: string } | null; end_date: string }[] = [];
+  let views = 0;
+  let clicks = 0;
+  let saves = 0;
+  let avgRating = 0;
+  let totalReviews = 0;
+  const chartData: number[] = Array(30).fill(0);
+
   if (user) {
     const { data: promos } = await supabase
       .from('promotions')
@@ -16,21 +24,60 @@ export default async function VendorOverview() {
       .eq('status', 'active')
       .gte('end_date', new Date().toISOString());
     activePromotions = promos || [];
+
+    // 1. Fetch vendor traffic/saves analytics
+    const analytics = await getVendorAnalytics(user.id);
+    views = analytics.views || 0;
+    clicks = analytics.clicks || 0;
+    saves = analytics.saves || 0;
+
+    // 2. Fetch rating and review aggregate details
+    const { data: agents } = await supabase
+      .from('agents')
+      .select('id, rating, reviews_count')
+      .eq('user_id', user.id);
+
+    if (agents && agents.length > 0) {
+      totalReviews = agents.reduce((acc, a) => acc + (Number(a.reviews_count) || 0), 0);
+      const totalRating = agents.reduce((acc, a) => acc + (Number(a.rating) || 0), 0);
+      avgRating = Number((totalRating / agents.length).toFixed(1));
+
+      // 3. Map real interaction trend for the last 30 days
+      const agentIds = agents.map(a => a.id);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data: interactions } = await supabase
+        .from('agent_interactions')
+        .select('created_at')
+        .in('agent_id', agentIds)
+        .eq('action_type', 'view')
+        .gte('created_at', thirtyDaysAgo.toISOString());
+
+      if (interactions) {
+        interactions.forEach(item => {
+          if (!item.created_at) return;
+          const created = new Date(item.created_at);
+          const diffTime = Math.abs(new Date().getTime() - created.getTime());
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          const index = 29 - diffDays;
+          if (index >= 0 && index < 30) {
+            chartData[index]++;
+          }
+        });
+      }
+    }
   }
 
   const kpis = [
-    { label: 'Profile Views', value: '3,450', trend: '+12.5%', icon: 'ðŸ‘ï¸' },
-    { label: 'Website Clicks', value: '182', trend: '+5.2%', icon: 'ðŸ–±ï¸' },
-    { label: 'Avg Rating', value: '4.8', trend: '0.0%', icon: 'â­' },
-    { label: 'Total Reviews', value: '24', trend: '+2', icon: 'ðŸ“' },
-    { label: 'Saves', value: '142', trend: '+18', icon: 'ðŸ”–' },
+    { label: 'Profile Views', value: views.toLocaleString(), trend: '+0.0%', icon: '👁️' },
+    { label: 'Website Clicks', value: clicks.toLocaleString(), trend: '+0.0%', icon: '🖱️' },
+    { label: 'Avg Rating', value: avgRating.toString(), trend: '0.0%', icon: '⭐' },
+    { label: 'Total Reviews', value: totalReviews.toLocaleString(), trend: '+0.0%', icon: '📝' },
+    { label: 'Saves', value: saves.toLocaleString(), trend: '+0.0%', icon: '🎗️' },
   ];
 
-  // Simulated chart data (last 30 days)
-  const chartData = [
-    40, 45, 38, 52, 60, 55, 48, 65, 78, 82, 75, 90, 85, 98, 110, 105, 120, 115, 130, 145, 138, 150, 142, 160, 175, 168, 180, 195, 210, 205
-  ];
-  const maxVal = Math.max(...chartData);
+  const maxVal = Math.max(...chartData, 1);
   const chartWidth = 900;
   const chartHeight = 200;
   const points = chartData.map((val, i) => `${(i / (chartData.length - 1)) * chartWidth},${chartHeight - (val / maxVal) * chartHeight}`).join(' ');
@@ -55,7 +102,7 @@ export default async function VendorOverview() {
             <div>
               <div style={{ fontSize: '12px', fontWeight: 700, color: '#fb923c', textTransform: 'uppercase' }}>Active Boost</div>
               <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
-                {activePromotions[0].agents?.name} Â· Ends {new Date(activePromotions[0].end_date).toLocaleDateString()}
+                {activePromotions[0].agents?.name} · Ends {activePromotions[0].end_date ? new Date(activePromotions[0].end_date).toLocaleDateString() : 'N/A'}
               </div>
             </div>
           </div>
@@ -64,7 +111,7 @@ export default async function VendorOverview() {
             padding: '12px 20px', borderRadius: '12px', background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)',
             color: 'black', fontSize: '14px', fontWeight: 700, textDecoration: 'none', transition: 'transform 0.2s'
           }}>
-            ðŸš€ Boost Visibility
+            🚀 Boost Visibility
           </Link>
         )}
       </div>
@@ -80,8 +127,8 @@ export default async function VendorOverview() {
               <span style={{ fontSize: '20px' }}>{kpi.icon}</span>
               <span style={{ 
                 fontSize: '12px', fontWeight: 600, 
-                color: kpi.trend.startsWith('+') ? 'var(--cyan)' : 'var(--text-dim)',
-                background: kpi.trend.startsWith('+') ? 'rgba(6,182,212,0.1)' : 'transparent',
+                color: 'var(--text-dim)',
+                background: 'transparent',
                 padding: '2px 8px', borderRadius: '4px'
               }}>
                 {kpi.trend}
