@@ -1,3 +1,5 @@
+import { withSentryConfig } from "@sentry/nextjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -21,4 +23,17 @@ if (process.env.NODE_ENV === 'production' || process.env.CI) {
   }
 }
 
-export default nextConfig;
+export default withSentryConfig(
+  nextConfig,
+  {
+    silent: true,
+    org: "parlexa",
+    project: "parlexa",
+  },
+  {
+    widenClientBounds: true,
+    tunnelRoute: "/monitoring",
+    hideSourceMaps: true,
+    disableLogger: true,
+  }
+);
