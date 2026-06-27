@@ -578,7 +578,7 @@ input, textarea { font-family: inherit; }
   padding: 5px 12px; border-radius: 20px;
 }
 .meta-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
-.meta-item { }
+.meta-item { display: block; }
 .meta-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .meta-value { font-size: 14px; color: var(--text-white); font-weight: 500; }
 .meta-value a { color: var(--cyan); }
