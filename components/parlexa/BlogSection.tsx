@@ -9,7 +9,7 @@ export function BlogSection() {
       id: 1,
       title: "The Rise of AI Agents in Enterprise Ecosystems (2026)",
       excerpt: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\"",
-      content: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\" But misunderstanding how these agents deploy will severely handicap modern enterprise scalability. \n\nWe are shifting from generative AI that simply writes emails or drafts code, to Agentic AI that can take actions. Future ecosystems will consist of interconnected agents handling distinct vertical pipelinesâ€”from supply chain procurement to customer success routing.",
+      content: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\" But misunderstanding how these agents deploy will severely handicap modern enterprise scalability. \n\nWe are shifting from generative AI that simply writes emails or drafts code, to Agentic AI that can take actions. Future ecosystems will consist of interconnected agents handling distinct vertical pipelines—from supply chain procurement to customer success routing.",
       date: "20 APRIL 2026"
     },
     {
@@ -89,7 +89,7 @@ export function BlogSection() {
                   border: 'none', padding: 0, textAlign: 'left',
                   cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' 
               }}>
-                Read More <span>â†’</span>
+                Read More <span>→</span>
               </button>
             </div>
             

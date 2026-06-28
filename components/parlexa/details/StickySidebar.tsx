@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
+import { RequestDemoModal } from './RequestDemoModal';
 
 interface StickySidebarProps {
   agent: Agent;
@@ -11,6 +13,8 @@ interface StickySidebarProps {
 }
 
 export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySidebarProps) {
+  const [showDemoModal, setShowDemoModal] = useState(false);
+
   return (
     <div style={{ position: 'sticky', top: '100px', alignSelf: 'start' }}>
       <div style={{ 
@@ -34,16 +38,33 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySi
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+          <button 
+            onClick={() => setShowDemoModal(true)}
+            className="btn-get-started"
+            style={{ 
+              padding: '16px', fontSize: '16px', width: '100%', borderRadius: '12px',
+              border: 'none', cursor: 'pointer', fontWeight: 700,
+              display: 'flex', justifyContent: 'center', alignItems: 'center'
+            }}
+          >
+            Request Demo
+          </button>
+          
           <a 
             href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => onVisitWebsite?.()}
-            className="btn-get-started"
-            style={{ padding: '16px', fontSize: '16px', width: '100%', display: 'inline-flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none', boxSizing: 'border-box' }}
+            style={{ 
+              padding: '16px', fontSize: '16px', width: '100%', borderRadius: '12px',
+              background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)',
+              color: 'var(--text-white)', fontWeight: 600, cursor: 'pointer',
+              display: 'inline-flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none', boxSizing: 'border-box'
+            }}
           >
             Visit Website
           </a>
+          
           <button 
             onClick={() => onSave?.()}
             style={{ 
@@ -66,6 +87,13 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySi
           </div>
         </div>
       </div>
+
+      {showDemoModal && (
+        <RequestDemoModal 
+          agent={agent} 
+          onClose={() => setShowDemoModal(false)} 
+        />
+      )}
     </div>
   );
 }

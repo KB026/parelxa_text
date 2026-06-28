@@ -89,7 +89,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     const hasAdminAccess = actualRole === 'admin';
-
+    const hasVendorAccess = actualRole === 'vendor' || actualRole === 'admin';
 
     if (isAdminPath && !hasAdminAccess) {
       const url = request.nextUrl.clone();
@@ -100,7 +100,14 @@ export async function updateSession(request: NextRequest) {
       return response;
     }
 
-
+    if (isVendorPath && !hasVendorAccess) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/dashboard';
+      url.searchParams.set('auth_err', 'vendor_required');
+      const response = NextResponse.redirect(url);
+      supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
+      return response;
+    }
   }
 
   return supabaseResponse;

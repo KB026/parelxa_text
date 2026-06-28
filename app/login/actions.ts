@@ -7,22 +7,33 @@ import { headers } from 'next/headers';
 import { sendWelcomeEmail, sendPasswordResetEmail } from '@/lib/email/actions';
 
 export async function signInWithGoogle() {
-  const supabase = createClient();
-  const origin = headers().get('origin');
-  
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${origin}/auth/callback`,
-    },
-  });
+  try {
+    const supabase = createClient();
+    const origin = headers().get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const redirectUrl = process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL || `${origin}/auth/callback`;
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+      },
+    });
 
-  if (error) {
-    console.error('OAuth error:', error);
-    return redirect(`/login?message=Could not authenticate with Google: ${error.message}`);
+    if (error) {
+      console.error('OAuth error:', error);
+      return redirect(`/login?message=Could not authenticate with Google: ${error.message}`);
+    }
+
+    if (data.url) {
+      return redirect(data.url);
+    }
+    
+    return redirect(`/login?message=OAuth configuration error. Missing redirect URL.`);
+  } catch (err) {
+    console.error('Unexpected OAuth Error:', err);
+    const errMsg = err instanceof Error ? err.message : 'Unknown error';
+    return redirect(`/login?message=An unexpected error occurred during Google Sign In: ${errMsg}`);
   }
-
-  return redirect(data.url);
 }
 
 export async function login(formData: FormData) {

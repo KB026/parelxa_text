@@ -56,7 +56,7 @@ export default function ContactPage() {
         {status === 'success' ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <div style={{ width: '64px', height: '64px', background: 'rgba(52, 211, 153, 0.1)', color: '#34D399', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', margin: '0 auto 24px' }}>
-              âœ“
+              ✓
             </div>
             <h3 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-white)', marginBottom: '12px' }}>Message Received!</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>We&apos;ve successfully received your inquiry and our support team will get back to you within 24 hours.</p>

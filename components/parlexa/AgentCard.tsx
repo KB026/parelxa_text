@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { Agent } from '@/lib/types';
 import { trackClick } from '@/lib/api';
 import { useCompare } from '@/context/CompareContext';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Star, CheckCircle, Sparkles } from 'lucide-react';
 
 export function AgentCard({ agent }: { agent: Agent }) {
   const { selectedIds, toggleCompare } = useCompare();
@@ -19,7 +22,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
   const reviews = (agent?.reviews_count ?? agent?.reviews ?? 0).toLocaleString();
   const pricing = agent?.pricing || 'Contact for pricing';
   const isVerified = agent?.isVerified === true;
-  const hasIndiaPricing = agent?.pricing?.toLowerCase().includes('inr') || agent?.pricing?.toLowerCase().includes('â‚¹');
+  const hasIndiaPricing = agent?.pricing?.toLowerCase().includes('inr') || agent?.pricing?.toLowerCase().includes('₹');
   
   const isInCompare = selectedIds.includes(agent?.id);
 
@@ -37,43 +40,19 @@ export function AgentCard({ agent }: { agent: Agent }) {
   
   return (
     <div 
-      className={`agent-card ${isFeatured ? 'featured-card' : ''}`}
-      style={{
-        position: 'relative',
-        transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        transform: isFeatured ? 'scale(1.03)' : 'scale(1)',
-        zIndex: isFeatured ? 5 : 1
-      }}
+      className={`relative group ${isFeatured ? 'z-10 scale-[1.03] transition-transform duration-300' : 'z-0 transition-transform duration-300 hover:-translate-y-1'}`}
     >
       {isFeatured && (
-        <span style={{ 
-          position: 'absolute', top: '-12px', left: '20px', zIndex: 10,
-          background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)', 
-          color: 'white', fontSize: '10px', fontWeight: 900, padding: '5px 12px', borderRadius: '100px',
-          boxShadow: '0 4px 15px rgba(249, 115, 22, 0.4)', border: '1px solid rgba(255,255,255,0.3)',
-          letterSpacing: '0.05em'
-        }}>
-          âœ¨ FEATURED
+        <span className="absolute -top-3 left-5 z-10 bg-gradient-to-br from-orange-400 to-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-[0_4px_15px_rgba(249,115,22,0.4)] border border-white/30 tracking-wider flex items-center">
+          <Sparkles className="w-3 h-3 mr-1" /> FEATURED
         </span>
       )}
 
       {/* Compare Toggle Button */}
-      {/* ... (button logic remains same but I'll ensure it stays consistent) */}
       <button 
         onClick={handleCompareToggle}
         title={isInCompare ? "Remove from Compare" : "Add to Compare"}
-        style={{
-          position: 'absolute', top: '16px', right: '16px', zIndex: 10,
-          width: '32px', height: '32px', borderRadius: '8px',
-          background: isInCompare ? 'var(--cyan)' : 'rgba(255,255,255,0.05)',
-          border: isInCompare ? 'none' : '1px solid var(--border-subtle)',
-          color: isInCompare ? 'black' : 'var(--text-white)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          pointerEvents: 'auto'
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        className={`absolute top-4 right-4 z-10 w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 pointer-events-auto hover:scale-110 ${isInCompare ? 'bg-sky-400 text-black border-none' : 'bg-white/5 border border-white/5 text-white'}`}
       >
         {isInCompare ? (
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -89,63 +68,50 @@ export function AgentCard({ agent }: { agent: Agent }) {
       
       <Link 
         href={`/products/${agent?.slug || agent?.id}`} 
-        className="agent-card-inner"
-        style={{
-          display: 'flex', flexDirection: 'column', gap: '12px', height: '100%',
-          background: isFeatured ? 'rgba(25, 30, 45, 0.95)' : 'var(--bg-card)',
-          border: isFeatured ? '2px solid rgba(251, 146, 60, 0.5)' : '1px solid var(--border-subtle)',
-          borderRadius: '24px',
-          padding: '24px',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          textDecoration: 'none', color: 'inherit',
-          boxShadow: isFeatured ? '0 10px 40px rgba(251, 146, 60, 0.15)' : 'none'
-        }}
+        className="block h-full no-underline text-inherit focus:outline-none"
         onClick={handleVisitSite}
       >
-        <div className="card-top" style={{ paddingRight: '40px' }}>
-          <span className="cat-pill" style={{ background: isFeatured ? '#f97316' : '#1d4ed8' }}>{category}</span>
-          <div className="rating-badge">â˜… {rating}</div>
-        </div>
-        <div>
-          <div className="card-name" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {name}
-            {isVerified && (
-              <span className="badge-tooltip">
-                <span className="verified-badge" />
-                <span className="tooltip-text">Verified by the Parlexa team</span>
-              </span>
+        <Card className={`h-full flex flex-col transition-all duration-300 ${isFeatured ? 'bg-[#191e2d]/95 border-2 border-orange-400/50 shadow-[0_10px_40px_rgba(251,146,60,0.15)]' : 'bg-[#111c2e] border-white/5 group-hover:bg-[#162035] group-hover:border-sky-400/25 group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]'}`}>
+          <CardHeader className="pb-2 pr-12">
+            <div className="flex items-start justify-between">
+              <Badge variant="default" className={`${isFeatured ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-700 hover:bg-blue-800'} text-[11px] font-semibold px-2.5 py-0.5 rounded-full border-none`}>
+                {category}
+              </Badge>
+              <div className="flex items-center gap-1 bg-amber-900/50 text-amber-400 text-xs font-bold px-2 py-1 rounded-md">
+                <Star className="w-3 h-3 fill-current" /> {rating}
+              </div>
+            </div>
+            <div>
+              <CardTitle className="text-lg font-bold text-slate-100 flex items-center gap-1.5 mt-2">
+                {name}
+                {isVerified && (
+                  <span className="relative group/badge flex items-center">
+                    <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white text-[10px] font-bold shadow-[0_0_8px_rgba(59,130,246,0.4)]">
+                      <CheckCircle className="w-3 h-3" />
+                    </span>
+                  </span>
+                )}
+              </CardTitle>
+              <div className="text-xs font-medium text-sky-400 mt-0.5">{subCategory}</div>
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1 pb-4">
+            <p className="text-[13px] text-slate-400 leading-relaxed">
+              {summary}
+            </p>
+            {hasIndiaPricing && (
+              <div className="inline-flex items-center px-2 py-1 bg-orange-500/10 border border-orange-500/20 rounded-md text-[11px] font-semibold text-orange-400 mt-2">
+                ðŸ‡®ðŸ‡³ Special India Pricing Available
+              </div>
             )}
-          </div>
-          <div className="card-sub">{subCategory}</div>
-        </div>
-        <div className="card-desc" style={{ flex: 1 }}>{summary}</div>
-        
-        {hasIndiaPricing && (
-          <div style={{ 
-            display: 'inline-flex', padding: '4px 8px', background: 'rgba(251, 146, 60, 0.1)', 
-            border: '1px solid rgba(251, 146, 60, 0.2)', borderRadius: '6px', 
-            fontSize: '11px', fontWeight: 600, color: '#fb923c', marginBottom: '8px', width: 'fit-content'
-          }}>
-            ðŸ‡®ðŸ‡³ Special India Pricing Available
-          </div>
-        )}
-
-        <hr className="card-divider" />
-        <div className="card-footer">
-          <span className="card-reviews">{reviews} reviews</span>
-          <span className="card-price" style={{ 
-            color: isFeatured ? '#fb923c' : 'var(--cyan)',
-            fontWeight: 700,
-            fontSize: '13px',
-            textAlign: 'right',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: '180px'
-          }} title={pricing}>
-            {pricing.length > 30 ? pricing.substring(0, 30) + '...' : pricing}
-          </span>
-        </div>
+          </CardContent>
+          <CardFooter className="border-t border-white/5 pt-4 bg-transparent justify-between items-center px-4">
+            <span className="text-xs text-slate-500">{reviews} reviews</span>
+            <span className={`text-[13px] font-bold truncate max-w-[150px] ${isFeatured ? 'text-orange-400' : 'text-sky-400'}`} title={pricing}>
+              {pricing}
+            </span>
+          </CardFooter>
+        </Card>
       </Link>
     </div>
   );

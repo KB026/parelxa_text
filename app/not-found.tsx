@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { Compass } from 'lucide-react';
 
 export default function NotFound() {
   return (
     <div className="not-found-container">
       <div className="not-found-content">
         <div className="status-code">404</div>
-        <div className="ai-icon">ðŸ›¸</div>
+        <div className="flex justify-center mb-6">
+          <Compass className="w-16 h-16 text-sky-400" />
+        </div>
         <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '16px', color: 'var(--text-white)' }}>
           Lost in the latent space?
         </h1>

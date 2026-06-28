@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { getVendorAnalytics } from '@/lib/api';
 import Link from 'next/link';
+import { Eye, MousePointer, Star, MessageSquare, Bookmark, Rocket } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,11 +71,11 @@ export default async function VendorOverview() {
   }
 
   const kpis = [
-    { label: 'Profile Views', value: views.toLocaleString(), trend: '+0.0%', icon: '👁️' },
-    { label: 'Website Clicks', value: clicks.toLocaleString(), trend: '+0.0%', icon: '🖱️' },
-    { label: 'Avg Rating', value: avgRating.toString(), trend: '0.0%', icon: '⭐' },
-    { label: 'Total Reviews', value: totalReviews.toLocaleString(), trend: '+0.0%', icon: '📝' },
-    { label: 'Saves', value: saves.toLocaleString(), trend: '+0.0%', icon: '🎗️' },
+    { label: 'Profile Views', value: views.toLocaleString(), trend: '+0.0%', icon: Eye },
+    { label: 'Website Clicks', value: clicks.toLocaleString(), trend: '+0.0%', icon: MousePointer },
+    { label: 'Avg Rating', value: avgRating.toString(), trend: '0.0%', icon: Star },
+    { label: 'Total Reviews', value: totalReviews.toLocaleString(), trend: '+0.0%', icon: MessageSquare },
+    { label: 'Saves', value: saves.toLocaleString(), trend: '+0.0%', icon: Bookmark },
   ];
 
   const maxVal = Math.max(...chartData, 1);
@@ -109,9 +110,11 @@ export default async function VendorOverview() {
         ) : (
           <Link href="/vendor/billing" style={{ 
             padding: '12px 20px', borderRadius: '12px', background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)',
-            color: 'black', fontSize: '14px', fontWeight: 700, textDecoration: 'none', transition: 'transform 0.2s'
+            color: 'black', fontSize: '14px', fontWeight: 700, textDecoration: 'none', transition: 'transform 0.2s',
+            display: 'inline-flex', alignItems: 'center', gap: '6px'
           }}>
-            🚀 Boost Visibility
+            <Rocket className="w-4 h-4 text-black" />
+            <span>Boost Visibility</span>
           </Link>
         )}
       </div>
@@ -124,7 +127,9 @@ export default async function VendorOverview() {
             borderRadius: '20px', padding: '24px'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <span style={{ fontSize: '20px' }}>{kpi.icon}</span>
+              <div style={{ color: kpi.label === 'Avg Rating' ? 'var(--gold)' : 'var(--text-muted)' }}>
+                <kpi.icon className={`w-5 h-5 shrink-0 ${kpi.label === 'Avg Rating' ? 'fill-current' : ''}`} />
+              </div>
               <span style={{ 
                 fontSize: '12px', fontWeight: 600, 
                 color: 'var(--text-dim)',

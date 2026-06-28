@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 import { sendListingStatusUpdate, sendFeaturedAlert } from '@/lib/email/actions';
+import { Flame, Minus, Star } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -226,7 +227,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
                       background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px',
                       color: item.is_pinned_trending ? '#fb923c' : 'var(--text-dim)'
                     }}>
-                      {item.is_pinned_trending ? 'ðŸ”¥' : 'â»'}
+                      {item.is_pinned_trending ? <Flame className="w-4 h-4 text-orange-400" /> : <Minus className="w-4 h-4 text-muted-foreground" />}
                     </button>
                   </form>
                 </td>
@@ -238,7 +239,7 @@ const listings: Listing[] = (data ?? []) as Listing[];
                       background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px',
                       color: item.is_featured ? '#fb923c' : 'var(--text-dim)'
                     }}>
-                      {item.is_featured ? 'â˜…' : 'â˜†'}
+                      {item.is_featured ? <Star className="w-4 h-4 text-orange-400 fill-orange-400" /> : <Star className="w-4 h-4 text-muted-foreground" />}
                     </button>
                   </form>
                 </td>

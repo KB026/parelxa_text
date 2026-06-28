@@ -1,33 +1,51 @@
-import { getAgents, getCategories } from "@/lib/api";
-import { Agent, Category } from "@/lib/types";
-import { AIFinder } from "@/components/parlexa/search/AIFinder";
-import { Metadata } from "next";
+'use client';
+import { useState } from 'react';
 
-export const metadata: Metadata = {
-  title: "AI Tool Finder | Parlexa â€” The Global AI Agent Marketplace",
-  description: "Find the perfect AI solutions for your business using our intelligent matching engine.",
-};
+export default function AIFinderPage() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<{ id: string; name: string; summary: string }[]>([]);
+  const [loading, setLoading] = useState(false);
 
-export default async function AIFinderPage() {
-  // Fetch dynamic data
-  let agents: Agent[] = [];
-  let categories: Category[] = [];
-  
-  try {
-    const [a, c] = await Promise.all([
-      getAgents(),
-      getCategories()
-    ]);
-    agents = a;
-    categories = c;
-  } catch (err) {
-    console.error('Finder: DB fetch failed:', err);
-  }
+  const handleSearch = async () => {
+    setLoading(true);
+    const res = await fetch(`/api/ai-search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
+    const data = await res.json();
+    setResults(data.agents || []);
+    setLoading(false);
+  };
 
   return (
-    <div style={{ padding: '120px 20px 80px', minHeight: '80vh' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        <AIFinder agents={agents} categories={categories} />
+    <div className="min-h-screen bg-gray-900 p-8">
+      <h1 className="text-3xl font-bold mb-6">AI Finder</h1>
+      <div className="flex gap-2 mb-6">
+        <input
+          type="text"
+          placeholder="Describe what you need..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="flex-1 px-4 py-2 bg-gray-800 rounded border border-gray-700 text-white"
+        />
+        <button
+          onClick={handleSearch}
+          disabled={loading}
+          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded font-semibold text-white"
+        >
+          {loading ? 'Searching...' : 'Search'}
+        </button>
+      </div>
+      <div className="grid grid-cols-3 gap-4">
+        {results.map((agent) => (
+          <div key={agent.id} className="bg-gray-800 p-4 rounded border border-gray-700">
+            <h3 className="font-bold text-white">{agent.name}</h3>
+            <p className="text-sm text-gray-400">{agent.summary}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

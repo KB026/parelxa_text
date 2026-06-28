@@ -100,7 +100,7 @@ export default function VendorListings() {
       if (!res.ok) throw new Error(subData.error || 'Failed to initialize subscription');
 
       if (subData.is_mock) {
-        console.log('ðŸ’³ MOCK SUBSCRIPTION: Simulating success...');
+        console.log('💳 MOCK SUBSCRIPTION: Simulating success...');
         setTimeout(async () => {
           try {
             const verifyRes = await fetch('/api/verify-listing-subscription', {
@@ -128,7 +128,7 @@ export default function VendorListings() {
         key: subData.key_id,
         subscription_id: subData.subscription_id,
         name: 'Parlexa Marketplace',
-        description: 'Annual Listing Fee â‚¹1,999 + 18% GST â€” â‚¹2,359/year',
+        description: 'Annual Listing Fee ₹1,999 + 18% GST — ₹2,359/year',
         handler: async function (response: { razorpay_subscription_id: string; razorpay_payment_id: string; razorpay_signature: string; }) {
           try {
             const verifyRes = await fetch('/api/verify-listing-subscription', {
@@ -207,7 +207,7 @@ export default function VendorListings() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                   <div style={{ display: 'flex', gap: '20px', alignItems: 'center', minWidth: 0, flex: 1 }}>
                     <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--bg-secondary)', overflow: 'hidden', flexShrink: 0 }}>
-                      {listing.logo_url ? <img src={listing.logo_url} alt={`${listing.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>ðŸ¤–</div>}
+                      {listing.logo_url ? <img src={listing.logo_url} alt={`${listing.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🤖</div>}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, paddingRight: '20px' }}>
                       <h3 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{listing.name}</h3>
@@ -254,7 +254,7 @@ export default function VendorListings() {
                         disabled={payingId === listing.id}
                         style={{ padding: '10px 18px', borderRadius: '10px', background: 'var(--cyan)', color: 'var(--bg)', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: 'none', opacity: payingId === listing.id ? 0.7 : 1 }}
                       >
-                        {payingId === listing.id ? 'Processing...' : 'Pay â‚¹2,359 to Publish'}
+                        {payingId === listing.id ? 'Processing...' : 'Pay ₹2,359 to Publish'}
                       </button>
                     )}
                     {listing.subscription_id && listing.subscription_status !== 'cancelled' && (
@@ -320,7 +320,7 @@ export default function VendorListings() {
                       href={`/vendor/listings/${listing.id}/verify`}
                       style={{ color: 'var(--cyan)', fontSize: '13px', fontWeight: 700, textDecoration: 'none' }}
                     >
-                      Get Verified Badge â†’
+                      Get Verified Badge →
                     </Link>
                   )}
                   {listing.is_verified && (

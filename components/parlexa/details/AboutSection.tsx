@@ -1,4 +1,5 @@
 'use client';
+import { Check } from 'lucide-react';
 
 interface AboutSectionProps {
   description?: string;
@@ -37,7 +38,7 @@ export function AboutSection({ description, features = [], useCases }: AboutSect
                 display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '16px',
                 background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--border-subtle)'
               }}>
-                <span style={{ color: 'var(--cyan)', fontWeight: 700 }}>âœ“</span>
+                <Check className="w-5 h-5 text-cyan-400 shrink-0" />
                 <span style={{ color: 'var(--text-white)', fontSize: '15px' }}>{feature}</span>
               </li>
             ))}

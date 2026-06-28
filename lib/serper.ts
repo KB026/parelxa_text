@@ -57,7 +57,7 @@ export async function searchReviews(agentName: string): Promise<SerperResult[]> 
       const domainMatch = targetDomains.find(d => item.link.includes(d.host));
       if (domainMatch) {
         // Extract rating/count from snippet if not provided as structured data
-        // Google often provides: "Rating: 4.8 Â· â€Ž12 reviews" or "4.8/5 (120)"
+        // Google often provides: "Rating: 4.8 · 12 reviews" or "4.8/5 (120)"
         let rating = item.rating;
         let ratingCount = item.ratingCount || item.reviewCount;
 

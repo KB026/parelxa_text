@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface MediaSectionProps {
   screenshots?: string[];
@@ -43,10 +44,11 @@ export function MediaSection({ screenshots = [], videoUrl }: MediaSectionProps) 
             style={{ 
               aspectRatio: '16/10', borderRadius: '16px', overflow: 'hidden', 
               border: '1px solid var(--border-subtle)', cursor: 'zoom-in',
-              background: 'var(--bg-secondary)'
+              background: 'var(--bg-secondary)',
+              position: 'relative'
             }}
           >
-            <img src={src} alt={`Screenshot ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Image src={src} alt={`Screenshot ${idx + 1}`} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
           </div>
         ))}
       </div>
@@ -61,15 +63,17 @@ export function MediaSection({ screenshots = [], videoUrl }: MediaSectionProps) 
             alignItems: 'center', justifyContent: 'center', padding: '40px'
           }}
         >
-          <img 
+          <Image 
             src={activeImage} 
-            alt="Enlarged screenshot" 
-            style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '12px', boxShadow: '0 0 50px rgba(0,0,0,0.5)' }} 
+            alt="Enlarged screenshot"
+            width={1920}
+            height={1080}
+            style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: '12px', boxShadow: '0 0 50px rgba(0,0,0,0.5)' }} 
           />
           <button 
             style={{ position: 'absolute', top: '24px', right: '24px', background: 'white', color: 'black', border: 'none', borderRadius: '50%', width: '40px', height: '40px', fontWeight: 700, cursor: 'pointer' }}
           >
-            âœ•
+            ✕
           </button>
         </div>
       )}

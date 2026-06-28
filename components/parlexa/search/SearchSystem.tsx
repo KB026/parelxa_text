@@ -9,23 +9,22 @@ import { FilterPanel } from './FilterPanel';
 import { SortSelector } from './SortSelector';
 import { ActiveFilters } from './ActiveFilters';
 import { AgentCard } from '../AgentCard';
+import { Loader2, Search } from 'lucide-react';
 
 interface SearchSystemProps {
   initialAgents: Agent[];
-  initialCount: number;
   categories: Category[];
   allIndustries: string[];
 }
 
 export function SearchSystem({ 
   initialAgents, 
-  initialCount, 
   categories, 
   allIndustries 
 }: SearchSystemProps) {
   const searchParams = useSearchParams();
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
-  const [totalCount, setTotalCount] = useState<number>(initialCount);
+
   const [loading, setLoading] = useState(false);
   const isFirstRender = useRef(true);
 
@@ -56,7 +55,7 @@ export function SearchSystem({
       
       if (!ignore) {
         setAgents(result.agents);
-        setTotalCount(result.count);
+
         setLoading(false);
       }
     };
@@ -70,7 +69,7 @@ export function SearchSystem({
 
   return (
     <div className="search-system">
-      <SearchBar agents={agents} categories={categories} totalCount={totalCount} />
+      <SearchBar />
       
       <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
         <FilterPanel categories={categories} industries={allIndustries} />
@@ -85,7 +84,9 @@ export function SearchSystem({
 
           {loading ? (
             <div style={{ padding: '80px 0', textAlign: 'center', color: 'var(--text-dim)' }}>
-              <div className="spinner" style={{ marginBottom: '16px' }}>âŒ›</div>
+              <div className="spinner" style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+                <Loader2 className="w-8 h-8 text-sky-400 animate-spin" />
+              </div>
               Updating results...
             </div>
           ) : agents.length > 0 ? (
@@ -99,7 +100,7 @@ export function SearchSystem({
               padding: '100px 40px', textAlign: 'center', background: 'var(--bg-card)', 
               borderRadius: '24px', border: '1px solid var(--border-subtle)' 
             }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>ðŸ”</div>
+              <Search className="w-16 h-16 text-slate-500 mx-auto mb-5" />
               <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>No agents found</h3>
               <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto' }}>
                 We couldn&apos;t find any tools matching your criteria. Try adjusting your filters or clearing your search.

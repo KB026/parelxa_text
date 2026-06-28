@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCompare } from '@/context/CompareContext';
 import { getAgentsByIds } from '@/lib/api';
 import { Agent } from '@/lib/types';
+import { Bot, X as XIcon } from 'lucide-react';
 
 export function CompareBar() {
   const { selectedIds, removeFromCompare, clearCompare } = useCompare();
@@ -69,9 +71,9 @@ export function CompareBar() {
               border: '1px solid var(--border-subtle)', overflow: 'hidden'
             }}>
               {agent?.logoUrl ? (
-                <img src={agent.logoUrl} alt={agent.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <Image src={agent.logoUrl} alt={agent.name} fill sizes="48px" style={{ objectFit: 'cover' }} />
               ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>ðŸ¤–</div>
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Bot className="w-5 h-5 text-muted-foreground" /></div>
               )}
               <button 
                 onClick={() => removeFromCompare(id)}
@@ -83,7 +85,7 @@ export function CompareBar() {
                   justifyContent: 'center', cursor: 'pointer', zIndex: 1
                 }}
               >
-                âœ•
+                <XIcon className="w-2.5 h-2.5" />
               </button>
             </div>
           );

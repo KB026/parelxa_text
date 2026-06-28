@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { NavbarClient } from './NavbarClient';
 import { ListingLink } from './ListingLink';
 import { UserProfile } from '@/lib/types';
+import { CategoriesDropdown } from './CategoriesDropdown';
 
 export async function Navbar() {
   let userData: UserProfile | null = null;
@@ -26,38 +28,28 @@ export async function Navbar() {
   }
 
   return (
-    <nav className="navbar">
-      <Link href="/" className="nav-logo">
-        <img src="/logo.png" alt="Parlexa Logo" style={{ width: '220px', height: 'auto', objectFit: 'contain' }} />
+    <nav className="fixed top-0 left-0 right-0 z-[1000] bg-[#080d1a]/90 backdrop-blur-md border-b border-white/5 h-20 flex items-center px-5 md:px-10 gap-4 md:gap-8">
+      <Link href="/" className="flex items-center gap-2.5 cursor-pointer shrink-0">
+        <Image src="/logo.png" alt="Parlexa Logo" width={220} height={44} className="w-[220px] h-auto object-contain" />
       </Link>
       
-      <div className="nav-links">
-        <Link href="/products" className="nav-link">All Agents</Link>
+      <div className="hidden md:flex items-center gap-7 flex-1">
+        <Link href="/products" className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-1.5 relative">All Agents</Link>
         
-        <div className="nav-categories">
-          <button className="nav-link">Categories <span style={{fontSize:'8px'}}>â–¼</span></button>
-          <div className="categories-dropdown">
-            <Link href="/products?cats=AI+%26+LLMs" className="dropdown-item"><span>ðŸ¤–</span> AI &amp; LLMs</Link>
-            <Link href="/products?cats=Customer+Experience" className="dropdown-item"><span>ðŸ’¬</span> Customer Experience</Link>
-            <Link href="/products?cats=Marketing+%26+Sales" className="dropdown-item"><span>ðŸ“£</span> Marketing &amp; Sales</Link>
-            <Link href="/products?cats=Enterprise+%26+Automation" className="dropdown-item"><span>âš™ï¸</span> Enterprise &amp; Automation</Link>
-            <Link href="/products" className="dropdown-item" style={{justifyContent: 'center', color: 'var(--cyan)'}}>View All Categories â†’</Link>
-          </div>
-        </div>
+        <CategoriesDropdown />
 
-        <Link href="/ai-finder" className="nav-link">
-          AI Finder <span className="nav-badge">NEW</span>
+        <Link href="/ai-finder" className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-1.5 relative">
+          AI Finder <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-sky-400 text-black rounded-full uppercase tracking-wider">NEW</span>
         </Link>
         <ListingLink 
           user={userData} 
-          className="nav-link" 
-          style={{ color: 'var(--cyan)', fontWeight: 600 }}
+          className="text-sm font-semibold text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1.5 relative" 
         >
           List your tool
         </ListingLink>
       </div>
 
-      <div className="nav-right">
+      <div className="ml-auto flex items-center gap-3">
         <NavbarClient user={userData} />
       </div>
     </nav>

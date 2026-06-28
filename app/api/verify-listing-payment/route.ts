@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     if (insertError) {
       console.error('Listing insert after payment error:', insertError);
-      // Payment was verified but DB insert failed â€” log this critically
+      // Payment was verified but DB insert failed — log this critically
       return NextResponse.json(
         { error: 'Payment verified but listing creation failed. Contact support with payment ID: ' + razorpay_payment_id },
         { status: 500 }
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
       }
     } catch (e) {
       console.error('Email trigger failed:', e);
-      // Non-fatal â€” listing is already created
+      // Non-fatal — listing is already created
     }
 
     // 8. Revalidate paths

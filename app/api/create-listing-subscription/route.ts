@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { razorpay, isMockMode } from '@/lib/razorpay';
+import { razorpay } from '@/lib/razorpay';
 import { createClient } from '@/lib/supabase/server';
 
-// â‚¹1,999 base + 18% GST = â‚¹2,358.82 â†’ â‚¹2,359/year
+// ₹1,999 base + 18% GST = ₹2,358.82 → ₹2,359/year
 const LISTING_FEE_BASE = 1999;
 const GST_RATE = 0.18;
-const LISTING_FEE_TOTAL = Math.round(LISTING_FEE_BASE * (1 + GST_RATE)); // â‚¹2,359
+const LISTING_FEE_TOTAL = Math.round(LISTING_FEE_BASE * (1 + GST_RATE)); // ₹2,359
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,18 +19,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // 2. Mock mode for local dev without Razorpay keys
-    if (isMockMode || !razorpay) {
-      return NextResponse.json({
-        subscription_id: `mock_sub_listing_${Date.now()}`,
-        key_id: 'rzp_test_mock_key',
-        is_mock: true,
-        breakdown: {
-          base: LISTING_FEE_BASE,
-          gst: Math.round(LISTING_FEE_BASE * GST_RATE),
-          total: LISTING_FEE_TOTAL,
-        },
-      });
+    if (!razorpay) {
+      return NextResponse.json({ error: 'Razorpay is not configured' }, { status: 500 });
     }
 
     const planId = process.env.RAZORPAY_PLAN_ID;
@@ -41,7 +31,6 @@ export async function POST(req: NextRequest) {
           has_key_id: !!process.env.RAZORPAY_KEY_ID,
           has_key_secret: !!process.env.RAZORPAY_KEY_SECRET,
           has_plan_id: !!process.env.RAZORPAY_PLAN_ID,
-          is_mock: isMockMode,
         }
       }, { status: 500 });
     }

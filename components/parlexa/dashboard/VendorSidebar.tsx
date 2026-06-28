@@ -7,12 +7,12 @@ export function VendorSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'Overview', href: '/vendor', icon: 'ðŸ“ˆ' },
+    { label: 'Overview', href: '/vendor', icon: '📈' },
     { label: 'My Listing', href: '/vendor/listings', icon: 'ðŸ“' },
     { label: 'Customer Reviews', href: '/vendor/reviews', icon: 'â­' },
-    { label: 'Deep Analytics', href: '/vendor/analytics', icon: 'ðŸ“Š' },
+    { label: 'Deep Analytics', href: '/vendor/analytics', icon: '📊' },
     { label: 'Verification', href: '/vendor/verification', icon: 'ðŸ›¡ï¸' },
-    { label: 'Billing & Plan', href: '/vendor/billing', icon: 'ðŸ’³' },
+    { label: 'Billing & Plan', href: '/vendor/billing', icon: '💳' },
     { label: 'Settings', href: '/vendor/settings', icon: 'âš™ï¸' },
   ];
 
@@ -68,7 +68,7 @@ export function VendorSidebar() {
               color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
             }}
           >
-            <span>ðŸ“¦</span> Sales & Orders
+            <span>📦</span> Sales & Orders
           </Link>
         </div>
       </div>

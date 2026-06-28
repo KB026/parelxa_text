@@ -84,13 +84,13 @@ export function PricingSection({
 
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
               <li style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span>âœ¦</span> Multi-currency support
+                <span>✦</span> Multi-currency support
               </li>
               <li style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span>âœ¦</span> Global tax & compliance ready
+                <span>✦</span> Global tax & compliance ready
               </li>
               <li style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span>âœ¦</span> Multiple payment gateways
+                <span>✦</span> Multiple payment gateways
               </li>
             </ul>
           </div>

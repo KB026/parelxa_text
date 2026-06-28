@@ -36,7 +36,7 @@ export function ClaimModal({ agent, onClose, onSubmit }: ClaimModalProps) {
     return (
       <div className="modal-overlay">
         <div className="modal-content" style={{ maxWidth: '480px', textAlign: 'center', padding: '40px' }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>ðŸ“©</div>
+          <div style={{ fontSize: '48px', marginBottom: '20px' }}>📥</div>
           <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '12px' }}>Check your inbox!</h2>
           <p style={{ color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '32px' }}>
             We&apos;ve sent a verification email to <strong>{email}</strong>. Please click the link in the email to confirm your identity and proceed with the claim.

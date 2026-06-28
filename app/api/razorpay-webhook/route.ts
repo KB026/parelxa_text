@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const event = JSON.parse(body);
     const supabase = createClient();
 
-    // 2. Handle subscription.charged â†’ extend listing by 1 year
+    // 2. Handle subscription.charged → extend listing by 1 year
     if (event.event === 'subscription.charged') {
       const subscriptionId = event.payload?.subscription?.entity?.id as string;
 
@@ -55,11 +55,11 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 3. Handle subscription.cancelled â†’ leave listing until natural expiry
+    // 3. Handle subscription.cancelled → leave listing until natural expiry
     if (event.event === 'subscription.cancelled') {
       const subscriptionId = event.payload?.subscription?.entity?.id as string;
       console.log(`Subscription ${subscriptionId} cancelled. Listing will expire at its current date.`);
-      // No action needed â€” listing stays visible until listing_expires_at
+      // No action needed — listing stays visible until listing_expires_at
     }
 
     return NextResponse.json({ received: true });

@@ -7,7 +7,7 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'Overview', href: '/dashboard', icon: 'ðŸ“Š' },
+    { label: 'Overview', href: '/dashboard', icon: '📊' },
     { label: 'My Listings', href: '/vendor/listings', icon: 'ðŸš€' },
     { label: 'Saved Tools', href: '/dashboard/saved', icon: 'ðŸ”–' },
     { label: 'My Reviews', href: '/dashboard/reviews', icon: 'â­' },
@@ -68,7 +68,7 @@ export function DashboardSidebar() {
               color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
             }}
           >
-            <span>ðŸ“¦</span> My Orders
+            <span>📦</span> My Orders
           </Link>
         </div>
       </div>

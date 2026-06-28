@@ -12,6 +12,7 @@ import { StickySidebar } from '@/components/parlexa/details/StickySidebar';
 import { SimilarTools } from '@/components/parlexa/details/SimilarTools';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Star } from 'lucide-react';
 
 import { ViewTracker } from '@/components/parlexa/details/ViewTracker';
 import { getExternalReviews } from '@/lib/api/externalReviews';
@@ -189,7 +190,10 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
         display: 'none', zIndex: 100, gap: '12px'
       }}>
         <div style={{ flexGrow: 1 }}>
-          <div style={{ fontSize: '18px', fontWeight: 800 }}>★ {stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</div>
+          <div style={{ fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Star className="w-5 h-5 text-amber-500 fill-current" />
+            <span>{stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</span>
+          </div>
           <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{agent.pricing}</div>
         </div>
         <a href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'} target="_blank" rel="noopener noreferrer" className="btn-get-started" style={{ padding: '12px 24px', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Visit Website</a>

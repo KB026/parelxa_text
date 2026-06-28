@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { StarRating } from './ReviewStats';
 import { voteReview, reportReview, respondToReview } from '@/app/actions/reviews';
 import { Review } from '@/lib/types';
+import { ThumbsUp, ThumbsDown, Check, X } from 'lucide-react';
 
 interface ReviewCardProps {
   review: Review;
@@ -61,9 +62,14 @@ export function ReviewCard({ review, isVendor = false }: ReviewCardProps) {
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{dateStr}</div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', background: review.recommend ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding: '4px 10px', borderRadius: '12px' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', background: review.recommend ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding: '4px 10px', borderRadius: '12px' }}>
+          {review.recommend ? (
+            <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
+          ) : (
+            <X className="w-3.5 h-3.5 text-red-500 shrink-0" />
+          )}
           <span style={{ fontSize: '12px', color: review.recommend ? '#10b981' : '#ef4444', fontWeight: 600 }}>
-            {review.recommend ? 'âœ“ Recommended' : 'âœ• Not Recommended'}
+            {review.recommend ? 'Recommended' : 'Not Recommended'}
           </span>
         </div>
       </div>
@@ -90,14 +96,15 @@ export function ReviewCard({ review, isVendor = false }: ReviewCardProps) {
               disabled={hasVoted}
               style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'transparent', cursor: hasVoted ? 'default' : 'pointer', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              ðŸ‘ {votes > 0 && votes}
+              <ThumbsUp className="w-3.5 h-3.5" />
+              <span>{votes > 0 ? votes : 'Helpful'}</span>
             </button>
             <button 
               onClick={() => handleVote('unhelpful')}
               disabled={hasVoted}
-              style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'transparent', cursor: hasVoted ? 'default' : 'pointer', fontSize: '12px', color: 'var(--text-dim)' }}
+              style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'transparent', cursor: hasVoted ? 'default' : 'pointer', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              ðŸ‘Ž
+              <ThumbsDown className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

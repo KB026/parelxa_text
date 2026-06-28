@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Star } from 'lucide-react';
 
 interface StarRatingProps {
   rating: number;
@@ -53,7 +54,14 @@ export function StarRating({
                 userSelect: 'none'
               }}
             >
-              â˜…
+              <Star 
+                style={{ 
+                  width: getStarSize(), 
+                  height: getStarSize(), 
+                  fill: isFilled ? 'currentColor' : 'none',
+                  strokeWidth: isFilled ? 0 : 1.5
+                }} 
+              />
             </span>
           );
         })}

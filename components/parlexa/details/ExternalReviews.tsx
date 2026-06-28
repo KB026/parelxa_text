@@ -1,5 +1,5 @@
 import { ExternalReview } from '@/lib/api/externalReviews';
-
+import { Trophy, Cat, Star, Shield, TrendingUp, Laptop, Pizza, Globe, ArrowRight } from 'lucide-react';
 interface ExternalReviewsProps {
   reviews: ExternalReview[];
   agentName: string;
@@ -8,14 +8,14 @@ interface ExternalReviewsProps {
 export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
   if (!reviews || reviews.length === 0) return null;
 
-  const sourceIcons: Record<string, string> = {
-    'G2': 'ðŸ†',
-    'Product Hunt': 'ðŸ˜¸',
-    'Trustpilot': 'â­',
-    'Capterra': 'ðŸ›¡ï¸',
-    'Gartner': 'ðŸ“ˆ',
-    'SourceForge': 'ðŸ’»',
-    'AppSumo': 'ðŸŒ®',
+  const sourceIcons: Record<string, React.ReactNode> = {
+    'G2': <Trophy className="w-5 h-5" />,
+    'Product Hunt': <Cat className="w-5 h-5" />,
+    'Trustpilot': <Star className="w-5 h-5" />,
+    'Capterra': <Shield className="w-5 h-5" />,
+    'Gartner': <TrendingUp className="w-5 h-5" />,
+    'SourceForge': <Laptop className="w-5 h-5" />,
+    'AppSumo': <Pizza className="w-5 h-5" />,
   };
 
   const sourceColors: Record<string, string> = {
@@ -63,12 +63,12 @@ export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '20px' }}>{sourceIcons[review.source] || 'ðŸŒ'}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{sourceIcons[review.source] || <Globe className="w-5 h-5" />}</span>
                 <span style={{ fontWeight: 700, fontSize: '14px', color: 'white' }}>{review.source}</span>
               </div>
               {review.rating > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#fbbf24', fontSize: '14px', fontWeight: 700 }}>
-                  â˜… {review.rating ? review.rating.toFixed(1) : '0.0'}
+                  <Star className="w-3.5 h-3.5 fill-current" /> {review.rating ? review.rating.toFixed(1) : '0.0'}
                 </div>
               )}
             </div>
@@ -83,14 +83,14 @@ export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden'
             }}>
-              &quot;{review.snippet.replace(/Rating: [0-9.]+ Â· â€Ž[0-9,]+ reviews/i, '').trim()}&quot;
+              &quot;{review.snippet.replace(/Rating: [0-9.]+ · [0-9,]+ reviews/i, '').trim()}&quot;
             </p>
 
             <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase' }}>
                 {review.reviews_count > 0 ? `${review.reviews_count.toLocaleString()} Reviews` : 'Verified Source'}
               </span>
-              <span style={{ color: 'var(--cyan)', fontSize: '12px', fontWeight: 700 }}>Read More â†’</span>
+              <span style={{ color: 'var(--cyan)', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>Read More <ArrowRight className="w-3.5 h-3.5" /></span>
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `

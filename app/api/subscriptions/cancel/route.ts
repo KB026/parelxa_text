@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { razorpay, isMockMode } from '@/lib/razorpay';
+import { razorpay } from '@/lib/razorpay';
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Call Razorpay API to cancel at end of cycle
-    if (!isMockMode && razorpay) {
+    if (razorpay) {
       // The second parameter 'false' means cancel_at_cycle_end = true in standard razorpay-node
       // Specifically: cancel(subscriptionId, cancelAtCycleEnd) 
       // Actually, passing `true` or `1` means cancel_at_cycle_end = true depending on SDK version. Let's pass { cancel_at_cycle_end: 1 } if it takes an object, but razorpay-node takes (id, cancel_at_cycle_end: boolean) usually. 

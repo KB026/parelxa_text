@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { submitReview } from '@/app/actions/reviews';
 import { Review } from '@/lib/types';
 import { StarRating } from './ReviewStats';
+import { CheckCircle2 } from 'lucide-react';
 
 interface ReviewFormProps {
   agentId: number;
@@ -55,7 +56,7 @@ export function ReviewForm({ agentId, existingReview, onSuccess }: ReviewFormPro
   if (success) {
     return (
       <div style={{ padding: '40px', textAlign: 'center', background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>âœ…</div>
+        <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-5" />
         <h3 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-white)' }}>Review Submitted!</h3>
         <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Thank you for sharing your feedback with the Parlexa community.</p>
         <button 

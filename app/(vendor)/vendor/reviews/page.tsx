@@ -117,7 +117,7 @@ export default function VendorReviewsPage() {
                   <StarRating rating={review.ratingOverall} size="sm" />
                 </div>
                 <button style={{ color: '#ef4444', background: 'none', border: 'none', fontSize: '13px', cursor: 'pointer', fontWeight: 600 }}>
-                  ðŸš© Flag Review
+                  🚩 Flag Review
                 </button>
               </div>
 

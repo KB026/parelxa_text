@@ -51,6 +51,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // Auth code exchange error â€” redirect to homepage
+  // Auth code exchange error — redirect to homepage
   return NextResponse.redirect(`${origin}/?auth_error=true`);
 }

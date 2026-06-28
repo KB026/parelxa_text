@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { X } from 'lucide-react';
 
 export function ActiveFilters() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export function ActiveFilters() {
           className="filter-chip-active"
         >
           <span>{f.label}</span>
-          <span style={{ fontSize: '10px', opacity: 0.5 }}>âœ•</span>
+          <X className="w-3.5 h-3.5 text-slate-400 hover:text-white" />
         </div>
       ))}
       <button 

@@ -90,10 +90,10 @@ const reviews = Array.isArray(data) ? data : [];;
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ color: '#fbbf24' }}>â˜… {review.rating_overall}</span>
-                <span style={{ color: 'var(--text-dim)' }}>Â·</span>
+                <span style={{ color: '#fbbf24' }}>★ {review.rating_overall}</span>
+                <span style={{ color: 'var(--text-dim)' }}>·</span>
                 <span style={{ color: 'var(--text-white)', fontWeight: 600 }}>{(review.agents as unknown as { name: string })?.name}</span>
-                <span style={{ color: 'var(--text-dim)' }}>Â·</span>
+                <span style={{ color: 'var(--text-dim)' }}>·</span>
                 <span style={{ color: 'var(--text-dim)', fontSize: '13px' }}>by {(review.profiles as unknown as { full_name: string })?.full_name || 'Anonymous'}</span>
               </div>
               <p style={{ color: 'var(--text-white)', lineHeight: 1.6, marginBottom: '16px' }}>{review.content}</p>

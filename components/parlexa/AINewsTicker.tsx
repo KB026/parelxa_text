@@ -80,10 +80,10 @@ export async function AINewsTicker() {
                 gap: '12px'
               }}
             >
-              <span style={{ color: 'var(--cyan)', fontSize: '18px' }}>â€¢</span>
+              <span style={{ color: 'var(--cyan)', fontSize: '18px' }}>•</span>
               <span style={{ color: '#fff' }}>{item.title}</span>
               <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                â€” {item.source}
+                — {item.source}
               </span>
             </a>
           ))}

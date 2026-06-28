@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { aiSearchSchema, safeValidate } from '@/lib/validation';
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
-const requestBuckets = new Map<string, { count: number; resetAt: number }>();
 
 function getRequestKey(req: NextRequest) {
   return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -13,24 +13,39 @@ function getRequestKey(req: NextRequest) {
     'anonymous';
 }
 
-function isRateLimited(key: string) {
-  const now = Date.now();
-  const bucket = requestBuckets.get(key);
+async function isRateLimited(key: string, supabase: SupabaseClient) {
+  const now = new Date();
+  const resetAt = new Date(now.getTime() + RATE_LIMIT_WINDOW_MS);
 
-  if (!bucket || bucket.resetAt <= now) {
-    requestBuckets.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+  // Attempt to fetch existing record
+  const { data: existing } = await supabase
+    .from('rate_limits')
+    .select('count, reset_at')
+    .eq('key', key)
+    .single();
+
+  if (!existing || new Date(existing.reset_at) <= now) {
+    // Upsert new or reset bucket
+    await supabase.from('rate_limits').upsert({
+      key,
+      count: 1,
+      reset_at: resetAt.toISOString()
+    }, { onConflict: 'key' });
     return false;
   }
 
-  bucket.count += 1;
-  requestBuckets.set(key, bucket);
-  return bucket.count > RATE_LIMIT_MAX_REQUESTS;
+  const newCount = existing.count + 1;
+  await supabase.from('rate_limits').update({ count: newCount }).eq('key', key);
+
+  return newCount > RATE_LIMIT_MAX_REQUESTS;
 }
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = createClient();
     const requestKey = getRequestKey(req);
-    if (isRateLimited(requestKey)) {
+    
+    if (await isRateLimited(requestKey, supabase)) {
       return NextResponse.json(
         { error: 'Too many AI search requests. Please try again in a minute.' },
         { status: 429 }
@@ -38,7 +53,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const body = await req.json();
     const validation = safeValidate(aiSearchSchema, body);
@@ -47,8 +62,6 @@ export async function POST(req: NextRequest) {
     }
 
     const { query } = validation.data;
-
-    const supabase = createClient();
 
     // 1. Fetch ALL relevant tools to provide full context to the AI
     // Limit the context window to keep cost and latency under control.

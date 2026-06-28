@@ -140,7 +140,7 @@ export default function LoginPage({ searchParams }: { searchParams: { message?: 
                 name="password"
                 id="password"
                 required
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="••••••••"
                 style={{ width: '100%', padding: '14px 16px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-subtle)', borderRadius: '12px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
@@ -153,7 +153,7 @@ export default function LoginPage({ searchParams }: { searchParams: { message?: 
                   name="passwordConfirm"
                   id="passwordConfirm"
                   required
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  placeholder="••••••••"
                   style={{ width: '100%', padding: '14px 16px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-subtle)', borderRadius: '12px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>

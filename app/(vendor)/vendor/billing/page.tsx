@@ -79,7 +79,7 @@ export default async function VendorBillingPage() {
                 {transactions.map(t => (
                   <tr key={t.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                     <td style={{ padding: '16px 12px' }}>{new Date(t.created_at).toLocaleDateString()}</td>
-                    <td style={{ padding: '16px 12px', fontWeight: 600 }}>â‚¹{t.amount}</td>
+                    <td style={{ padding: '16px 12px', fontWeight: 600 }}>₹{t.amount}</td>
                     <td style={{ padding: '16px 12px' }}>
                       <span style={{ 
                         padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,

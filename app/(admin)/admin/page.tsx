@@ -98,7 +98,7 @@ const activities = [
               <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em', marginBottom: '12px' }}>{kpi.label}</div>
               <div style={{ fontSize: '32px', fontWeight: 800, color: kpi.color }}>{kpi.value}</div>
               {kpi.link && (
-                <Link href={kpi.link} style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>View â†’</Link>
+                <Link href={kpi.link} style={{ position: 'absolute', top: '16px', right: '16px', fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>View →</Link>
               )}
             </div>
           ))}
@@ -118,7 +118,7 @@ const activities = [
                     width: '36px', height: '36px', borderRadius: '10px', background: 'var(--bg-secondary)', 
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' 
                   }}>
-                    {activity.type === 'listing' ? 'ðŸ“¦' : activity.type === 'review' ? 'ðŸ’¬' : 'âœ“'}
+                    {activity.type === 'listing' ? '📦' : activity.type === 'review' ? 'ðŸ’¬' : '✓'}
                   </div>
                   <div>
                     <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-white)' }}>{activity.action}</p>

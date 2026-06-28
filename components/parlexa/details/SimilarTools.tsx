@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Agent } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
 
@@ -46,7 +47,7 @@ export function SimilarTools({ tools }: SimilarToolsProps) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
                 flexShrink: 0, overflow: 'hidden'
               }}>
-                {tool.logoUrl ? <img src={tool.logoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : tool.name[0]}
+                {tool.logoUrl ? <Image src={tool.logoUrl} alt="" width={56} height={56} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : tool.name[0]}
               </div>
               <div style={{ overflow: 'hidden' }}>
                 <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: 'var(--text-white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tool.name}</h4>

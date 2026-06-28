@@ -22,16 +22,16 @@ export default async function AdminLayout({
   }
 
   const navLinks = [
-    { href: '/admin', label: 'Platform Overview', icon: 'ðŸ“Š' },
+    { href: '/admin', label: 'Platform Overview', icon: '📊' },
     { href: '/admin/reviews', label: 'Review Queue', icon: 'â³', accent: '#fbbf24' },
-    { href: '/admin/listings', label: 'Manage Listings', icon: 'ðŸ“¦' },
-    { href: '/admin/transactions', label: 'Transactions', icon: 'ðŸ’³', accent: '#34d399' },
+    { href: '/admin/listings', label: 'Manage Listings', icon: '📦' },
+    { href: '/admin/transactions', label: 'Transactions', icon: '💳', accent: '#34d399' },
     { href: '/admin/claims', label: 'Listing Claims', icon: 'ðŸ”‘' },
     { href: '/admin/users', label: 'User Management', icon: 'ðŸ‘¥' },
     { href: '/admin/moderation/reviews', label: 'Review Moderation', icon: 'ðŸ›¡ï¸' },
-    { href: '/admin/verifications', label: 'Verification Queue', icon: 'âœ“', accent: '#60a5fa' },
+    { href: '/admin/verifications', label: 'Verification Queue', icon: '✓', accent: '#60a5fa' },
     { href: '/admin/promotions', label: 'Promotions & Revenue', icon: 'ðŸ’°', accent: '#fb923c' },
-    { href: '/admin/reports', label: 'Reports & Analytics', icon: 'ðŸ“ˆ' },
+    { href: '/admin/reports', label: 'Reports & Analytics', icon: '📈' },
     { href: '/admin/settings', label: 'Site Settings', icon: 'âš™ï¸' },
   ];
 

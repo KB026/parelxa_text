@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { createClient } from "@/lib/supabase/server";
 import { authorizeManualPromotion } from "@/app/actions/admin";
 import { revalidatePath } from "next/cache";
@@ -50,17 +51,17 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '48px' }}>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Total Platform Revenue</div>
-          <div style={{ fontSize: '36px', fontWeight: 800, color: '#fb923c' }}>â‚¹{totalRevenue.toLocaleString()}</div>
+          <div style={{ fontSize: '36px', fontWeight: 800, color: '#fb923c' }}>₹{totalRevenue.toLocaleString()}</div>
           <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--green)' }}>ðŸ’° All-time earnings from visibility boosts</div>
         </div>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Active Promotions</div>
           <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--text-white)' }}>{activeCount}</div>
-          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>ðŸ“ˆ Active visibility slots occupied</div>
+          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>📈 Active visibility slots occupied</div>
         </div>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Avg. Transaction</div>
-          <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--cyan)' }}>â‚¹{(totalRevenue / (transactions?.length || 1)).toFixed(0)}</div>
+          <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--cyan)' }}>₹{(totalRevenue / (transactions?.length || 1)).toFixed(0)}</div>
           <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>ðŸ¤ Value per boosted tool</div>
         </div>
       </div>

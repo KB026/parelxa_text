@@ -156,7 +156,7 @@ export default async function AdminUsers({
                         Verify
                       </button>
                     </form>
-                    <Link href={`/admin/users/${profile.id}`} style={{ fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>Detail â†’</Link>
+                    <Link href={`/admin/users/${profile.id}`} style={{ fontSize: '12px', color: 'var(--text-dim)', textDecoration: 'none' }}>Detail →</Link>
                   </div>
                 </td>
               </tr>

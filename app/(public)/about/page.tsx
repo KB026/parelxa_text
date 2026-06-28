@@ -31,8 +31,8 @@ export default function AboutPage() {
           </h2>
           <p style={{ fontSize: '16px', lineHeight: '1.8', color: 'var(--text-white)', marginBottom: '16px' }}>
             At Parlexa, we believe that the barrier to entry for robust, enterprise-grade AI should be eliminated. 
-            Our mission is to construct the ultimate directory of AI agentsâ€”ranging from customer support LLMs to 
-            complex vertical data analysis modelsâ€”and connect builders globally with the businesses that need them.
+            Our mission is to construct the ultimate directory of AI agents—ranging from customer support LLMs to 
+            complex vertical data analysis models—and connect builders globally with the businesses that need them.
           </p>
           <p style={{ fontSize: '16px', lineHeight: '1.8', color: 'var(--text-white)' }}>
             Whether you&apos;re a small startup trying to scale your operations autonomously or a Fortune 500 company 

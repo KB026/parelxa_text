@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase/client';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 
 
 type AuthView = 'signin' | 'register' | 'forgot';
@@ -201,36 +203,41 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
 
   // â”€â”€ Google SSO â”€â”€
   async function handleGoogleSignIn() {
+    setError('');
     try {
       const supabase = createClient();
+      const redirectUrl = process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL || `${window.location.origin}/auth/callback`;
+      
       const { error: oAuthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: redirectUrl,
         },
       });
 
       if (oAuthError) {
-        setError('Google sign-in failed. Please try again.');
+        console.error('Google OAuth Error:', oAuthError);
+        setError(`Google sign-in failed: ${oAuthError.message}`);
       }
-    } catch {
-      setError('An unexpected error occurred.');
+    } catch (err) {
+      console.error('Unexpected Google SSO error:', err);
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      setError(`An unexpected error occurred: ${errMsg}`);
     }
   }
 
   return createPortal(
-    <div className="auth-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="auth-modal">
-        <div className="auth-glow" />
-        <button className="auth-close-btn" onClick={onClose} aria-label="Close">Ã—</button>
+    <div className="fixed inset-0 z-[2000] bg-black/70 backdrop-blur-md flex items-center justify-center p-5" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="bg-[#0d1524] border border-white/10 rounded-2xl p-8 max-w-[480px] w-full max-h-[90vh] overflow-y-auto relative shadow-[0_16px_48px_rgba(0,0,0,0.5)]">
+        <button className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 border-none text-slate-400 text-xl cursor-pointer flex items-center justify-center transition-colors hover:bg-white/10 hover:text-white" onClick={onClose} aria-label="Close">Ã—</button>
 
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <img src="/icon.png" alt="Parlexa Icon" style={{ width: '60px', height: 'auto', objectFit: 'contain', margin: '0 auto 16px', display: 'block' }} />
-          <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>
+        <div className="text-center mb-6">
+          <Image src="/icon.png" alt="Parlexa Icon" width={60} height={60} className="w-[60px] h-auto object-contain mx-auto mb-4 block" />
+          <h2 className="text-xl font-bold m-0 text-slate-100">
             {view === 'forgot' ? 'Reset Password' : 'Welcome to Parlexa'}
           </h2>
-          <p style={{ color: 'var(--text-dim)', fontSize: '13px', marginTop: '4px' }}>
+          <p className="text-slate-500 text-sm mt-1">
             {view === 'signin' && "Sign in to access your dashboard"}
             {view === 'register' && "Create your account to get started"}
             {view === 'forgot' && "Enter your email to receive a reset link"}
@@ -238,30 +245,30 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         </div>
 
         {/* Error / Success */}
-        {error && <div className="auth-error">{error}</div>}
-        {success && <div className="auth-success">{success}</div>}
+        {error && <div className="bg-red-500/10 border border-red-500/30 text-red-500 p-3 rounded-lg text-sm mb-5 text-center">{error}</div>}
+        {success && <div className="bg-green-500/10 border border-green-500/30 text-green-500 p-3 rounded-lg text-sm mb-5 text-center">{success}</div>}
 
         {/* â”€â”€ FORGOT PASSWORD VIEW â”€â”€ */}
         {view === 'forgot' && !success && (
-          <form onSubmit={handleForgotPassword}>
-            <div className="auth-field">
-              <label className="auth-label">Email Address</label>
-              <input className="auth-input" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+          <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-semibold text-slate-300">Email Address</label>
+              <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
-            <button className="auth-submit-btn" type="submit" disabled={loading}>
-              {loading ? <span className="auth-spinner" /> : 'Send Reset Link'}
-            </button>
-            <div style={{ textAlign: 'center', marginTop: '16px' }}>
-              <button type="button" className="auth-footer-link" onClick={() => { setView('signin'); resetForm(); }}>
-                â† Back to Sign In
+            <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 text-sm font-semibold mt-2">
+              {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-transparent rounded-full animate-spin" /> : 'Send Reset Link'}
+            </Button>
+            <div className="text-center mt-4">
+              <button type="button" className="bg-transparent border-none text-slate-400 text-sm font-medium cursor-pointer hover:text-white transition-colors" onClick={() => { setView('signin'); resetForm(); }}>
+                â†  Back to Sign In
               </button>
             </div>
           </form>
         )}
         {view === 'forgot' && success && (
-          <div style={{ textAlign: 'center', marginTop: '8px' }}>
-            <button type="button" className="auth-footer-link" onClick={() => { setView('signin'); resetForm(); }}>
-              â† Back to Sign In
+          <div className="text-center mt-2">
+            <button type="button" className="bg-transparent border-none text-slate-400 text-sm font-medium cursor-pointer hover:text-white transition-colors" onClick={() => { setView('signin'); resetForm(); }}>
+              â†  Back to Sign In
             </button>
           </div>
         )}
@@ -270,46 +277,46 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         {view !== 'forgot' && (
           <>
             {/* Tab Switcher */}
-            <div className="auth-tabs">
-              <button className={`auth-tab ${view === 'signin' ? 'active' : ''}`} onClick={() => setView('signin')} type="button">Sign In</button>
-              <button className={`auth-tab ${view === 'register' ? 'active' : ''}`} onClick={() => setView('register')} type="button">Create Account</button>
+            <div className="flex bg-[#111c2e] p-1 rounded-xl mb-6">
+              <button className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all border-none cursor-pointer ${view === 'signin' ? 'bg-blue-600 text-white shadow-md' : 'bg-transparent text-slate-400 hover:text-white'}`} onClick={() => setView('signin')} type="button">Sign In</button>
+              <button className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all border-none cursor-pointer ${view === 'register' ? 'bg-blue-600 text-white shadow-md' : 'bg-transparent text-slate-400 hover:text-white'}`} onClick={() => setView('register')} type="button">Create Account</button>
             </div>
 
             {/* Google SSO */}
-            <button className="auth-google-btn" onClick={handleGoogleSignIn} type="button">
+            <Button variant="outline" className="w-full h-11 rounded-lg bg-white/5 border-white/10 hover:bg-white/10 text-white font-medium flex items-center justify-center gap-2 mb-5" onClick={handleGoogleSignIn} type="button">
               <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.24 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
               Continue with Google
-            </button>
+            </Button>
 
-            <div className="auth-divider">or</div>
+            <div className="flex items-center text-slate-500 text-xs font-semibold uppercase tracking-wider mb-5 before:content-[''] before:flex-1 before:h-px before:bg-white/10 before:mr-3 after:content-[''] after:flex-1 after:h-px after:bg-white/10 after:ml-3">or</div>
 
             {/* â”€â”€ SIGN IN FORM â”€â”€ */}
             {view === 'signin' && (
-              <form onSubmit={handleSignIn}>
-                <div className="auth-field">
-                  <label className="auth-label">Email</label>
-                  <input className="auth-input" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+              <form onSubmit={handleSignIn} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-slate-300">Email</label>
+                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
-                <div className="auth-field">
-                  <label className="auth-label">Password</label>
-                  <input className="auth-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={password} onChange={e => setPassword(e.target.value)} required />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-slate-300">Password</label>
+                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
                 </div>
-                <div className="auth-remember-row">
-                  <label>
-                    <input type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
+                <div className="flex justify-between items-center text-sm">
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                    <input type="checkbox" className="accent-blue-600 w-4 h-4" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
                     Remember me
                   </label>
-                  <button type="button" className="auth-footer-link" onClick={() => setView('forgot')}>
+                  <button type="button" className="bg-transparent border-none text-sky-400 text-sm font-medium cursor-pointer hover:text-sky-300 transition-colors" onClick={() => setView('forgot')}>
                     Forgot password?
                   </button>
                 </div>
-                <button className="auth-submit-btn" type="submit" disabled={loading}>
-                  {loading ? <span className="auth-spinner" /> : 'Sign In'}
-                </button>
-                <div style={{ textAlign: 'center', marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
-                  <p style={{ fontSize: '14px', color: 'var(--text-dim)' }}>
+                <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 text-sm font-semibold mt-2">
+                  {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-transparent rounded-full animate-spin" /> : 'Sign In'}
+                </Button>
+                <div className="text-center mt-5 pt-4 border-t border-white/5">
+                  <p className="text-sm text-slate-500 m-0">
                     Don&apos;t have an account?{' '}
-                    <button type="button" className="auth-footer-link" style={{ fontWeight: 600, color: 'var(--cyan)' }} onClick={() => setView('register')}>
+                    <button type="button" className="bg-transparent border-none font-semibold text-sky-400 cursor-pointer hover:text-sky-300 transition-colors" onClick={() => setView('register')}>
                       Create one for free
                     </button>
                   </p>
@@ -319,51 +326,51 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
 
             {/* â”€â”€ REGISTER FORM â”€â”€ */}
             {view === 'register' && !success && (
-              <form onSubmit={handleSignUp}>
+              <form onSubmit={handleSignUp} className="flex flex-col gap-4">
                 {/* User Type Selector */}
-                <div className="auth-type-selector">
-                  <div className={`auth-type-card ${role === 'user' ? 'selected' : ''}`} onClick={() => setRole('user')}>
-                    <span className="auth-type-icon">ðŸ”</span>
-                    <span className="auth-type-label">Find AI Tools</span>
-                    <span className="auth-type-desc">I&apos;m looking for AI solutions</span>
+                <div className="grid grid-cols-2 gap-3 mb-2">
+                  <div className={`p-3 rounded-xl border cursor-pointer transition-all ${role === 'user' ? 'border-sky-400 bg-sky-400/10' : 'border-white/10 bg-[#111c2e] hover:border-white/20 hover:bg-white/5'} flex flex-col items-start gap-1`} onClick={() => setRole('user')}>
+                    <span className="text-2xl mb-1">🔍</span>
+                    <span className="text-sm font-semibold text-slate-200">Find AI Tools</span>
+                    <span className="text-[11px] text-slate-500">I&apos;m looking for AI solutions</span>
                   </div>
-                  <div className={`auth-type-card ${role === 'vendor' ? 'selected' : ''}`} onClick={() => setRole('vendor')}>
-                    <span className="auth-type-icon">ðŸš€</span>
-                    <span className="auth-type-label">List My Tool</span>
-                    <span className="auth-type-desc">I want to sell on Parlexa</span>
-                  </div>
-                </div>
-
-                <div className="auth-name-grid">
-                  <div className="auth-field">
-                    <label className="auth-label">First Name</label>
-                    <input className="auth-input" type="text" placeholder="John" value={firstName} onChange={e => setFirstName(e.target.value)} required />
-                  </div>
-                  <div className="auth-field">
-                    <label className="auth-label">Last Name</label>
-                    <input className="auth-input" type="text" placeholder="Doe" value={lastName} onChange={e => setLastName(e.target.value)} required />
+                  <div className={`p-3 rounded-xl border cursor-pointer transition-all ${role === 'vendor' ? 'border-sky-400 bg-sky-400/10' : 'border-white/10 bg-[#111c2e] hover:border-white/20 hover:bg-white/5'} flex flex-col items-start gap-1`} onClick={() => setRole('vendor')}>
+                    <span className="text-2xl mb-1">ðŸš€</span>
+                    <span className="text-sm font-semibold text-slate-200">List My Tool</span>
+                    <span className="text-[11px] text-slate-500">I want to sell on Parlexa</span>
                   </div>
                 </div>
 
-                <div className="auth-field">
-                  <label className="auth-label">Email</label>
-                  <input className="auth-input" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-semibold text-slate-300">First Name</label>
+                    <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="text" placeholder="John" value={firstName} onChange={e => setFirstName(e.target.value)} required />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-semibold text-slate-300">Last Name</label>
+                    <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="text" placeholder="Doe" value={lastName} onChange={e => setLastName(e.target.value)} required />
+                  </div>
                 </div>
-                <div className="auth-field">
-                  <label className="auth-label">Password</label>
-                  <input className="auth-input" type="password" placeholder="Min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-slate-300">Email</label>
+                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
-                <div className="auth-field">
-                  <label className="auth-label">Confirm Password</label>
-                  <input className="auth-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-slate-300">Password</label>
+                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="password" placeholder="Min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
                 </div>
-                <button className="auth-submit-btn" type="submit" disabled={loading}>
-                  {loading ? <span className="auth-spinner" /> : 'Create Account'}
-                </button>
-                <div style={{ textAlign: 'center', marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
-                  <p style={{ fontSize: '14px', color: 'var(--text-dim)' }}>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-slate-300">Confirm Password</label>
+                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="password" placeholder="••••••••" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required />
+                </div>
+                <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 text-sm font-semibold mt-2">
+                  {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-transparent rounded-full animate-spin" /> : 'Create Account'}
+                </Button>
+                <div className="text-center mt-5 pt-4 border-t border-white/5">
+                  <p className="text-sm text-slate-500 m-0">
                     Already have an account?{' '}
-                    <button type="button" className="auth-footer-link" style={{ fontWeight: 600, color: 'var(--cyan)' }} onClick={() => setView('signin')}>
+                    <button type="button" className="bg-transparent border-none font-semibold text-sky-400 cursor-pointer hover:text-sky-300 transition-colors" onClick={() => setView('signin')}>
                       Sign In
                     </button>
                   </p>

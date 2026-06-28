@@ -6,6 +6,7 @@ import { useCompare } from '@/context/CompareContext';
 import { getAgentsByIds } from '@/lib/api';
 import { CompareSearch } from './CompareSearch';
 import { saveComparison } from '@/app/actions/compare';
+import Image from 'next/image';
 
 interface ComparePageClientProps {
   initialAgents: Agent[];
@@ -143,7 +144,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
             transition: 'all 0.3s'
           }}
         >
-          <span>{saveStatus === 'saving' ? '...' : saveStatus === 'success' ? 'âœ“' : 'ðŸ’¾'}</span> 
+          <span>{saveStatus === 'saving' ? '...' : saveStatus === 'success' ? '✓' : 'ðŸ’¾'}</span> 
           {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'success' ? 'Saved' : 'Save to Dashboard'}
         </button>
       </div>
@@ -169,7 +170,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
                           <div style={{ position: 'relative' }}>
                             <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'var(--bg-secondary)', overflow: 'hidden' }}>
-                              {agent.logoUrl ? <img src={agent.logoUrl} alt={`${agent.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontSize: '32px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>ðŸ¤–</div>}
+                              {agent.logoUrl ? <Image src={agent.logoUrl} alt={`${agent.name} logo`} fill sizes="80px" style={{ objectFit: 'cover' }} /> : <div style={{ fontSize: '32px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🤖</div>}
                             </div>
                             <button 
                               onClick={() => toggleCompare(agent.id)}
@@ -178,7 +179,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                                 width: '24px', height: '24px', borderRadius: '50%', background: '#ef4444', 
                                 color: 'white', border: 'none', cursor: 'pointer' 
                               }}
-                            >âœ•</button>
+                            >✕</button>
                           </div>
                           <div>
                             <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-white)', marginBottom: '4px' }}>{agent.name}</div>
@@ -234,7 +235,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                       return (
                         <td key={i} style={{ padding: '20px 24px', textAlign: 'center', color: 'var(--text-white)', fontSize: '14px' }}>
                           {row.type === 'boolean' ? (
-                            <span style={{ color: val ? '#10b981' : '#ef4444' }}>{val ? 'âœ“ Yes' : 'âœ• No'}</span>
+                            <span style={{ color: val ? '#10b981' : '#ef4444' }}>{val ? '✓ Yes' : '✕ No'}</span>
                           ) : row.type === 'rating' ? (
                             <div style={{ fontWeight: 700, color: '#f59e0b' }}>â­ {Number(val || 0).toFixed(1)}</div>
                           ) : row.type === 'list' ? (

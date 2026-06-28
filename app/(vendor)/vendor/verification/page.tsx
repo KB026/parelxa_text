@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { Check, Sparkles } from 'lucide-react';
 import { AgentDB } from '@/lib/types';
 
 export default function VerificationStatusPage() {
@@ -55,7 +56,7 @@ export default function VerificationStatusPage() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800,
                 fontSize: '18px', flexShrink: 0
               }}>
-                {step.status === 'completed' ? 'âœ“' : i + 1}
+                {step.status === 'completed' ? <Check className="w-5 h-5 text-black" /> : i + 1}
               </div>
               <div style={{ flex: 1 }}>
                 <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>{step.title}</h4>
@@ -87,8 +88,8 @@ export default function VerificationStatusPage() {
               'Priority in AI finder results',
               'Access to Featured Tool bids'
             ].map(benefit => (
-              <li key={benefit} style={{ display: 'flex', gap: '10px', fontSize: '14px', color: 'var(--text-white)' }}>
-                <span style={{ color: 'var(--cyan)' }}>âœ¦</span> {benefit}
+              <li key={benefit} style={{ display: 'flex', gap: '10px', fontSize: '14px', color: 'var(--text-white)', alignItems: 'center' }}>
+                <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" /> {benefit}
               </li>
             ))}
           </ul>

@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Category } from '@/lib/types';
 import { useState } from 'react';
+import { X } from 'lucide-react';
 
 interface FilterPanelProps {
   categories: Category[];
@@ -179,7 +180,7 @@ export function FilterPanel({ categories, industries }: FilterPanelProps) {
           display: 'none', cursor: 'pointer'
         }}
       >
-        Filters {searchParams.toString() && 'â€¢'}
+        Filters {searchParams.toString() && '•'}
       </div>
 
       {/* Mobile Bottom Sheet */}
@@ -193,7 +194,9 @@ export function FilterPanel({ categories, industries }: FilterPanelProps) {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}>
               <h3 style={{ fontSize: '24px', fontWeight: 800 }}>Filters</h3>
-              <button onClick={() => setIsMobileOpen(false)} style={{ fontSize: '24px', background: 'none', border: 'none', color: 'white' }}>âœ•</button>
+              <button onClick={() => setIsMobileOpen(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
+                <X className="w-6 h-6" />
+              </button>
             </div>
             {/* Same content as desktop sidebar but bigger for touch */}
             <div style={{ transform: 'scale(1.1)', transformOrigin: 'top left', paddingBottom: '40px' }}>

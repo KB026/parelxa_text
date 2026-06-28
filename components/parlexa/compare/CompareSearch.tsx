@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { searchAgents } from '@/lib/api';
+import Image from 'next/image';
 import { Agent } from '@/lib/types';
 import { useCompare } from '@/context/CompareContext';
 
@@ -97,7 +98,7 @@ export function CompareSearch() {
               onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
             >
               <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--bg-secondary)', overflow: 'hidden' }}>
-                {agent.logoUrl ? <img src={agent.logoUrl} alt={`${agent.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>ðŸ¤–</div>}
+                {agent.logoUrl ? <Image src={agent.logoUrl} alt={`${agent.name} logo`} fill sizes="32px" style={{ objectFit: 'cover' }} /> : <div style={{ fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>🤖</div>}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-white)' }}>{agent.name}</div>

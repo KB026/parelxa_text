@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { AlertTriangle } from 'lucide-react';
 
 export default function Error({
   error,
@@ -18,7 +19,9 @@ export default function Error({
   return (
     <div className="error-container">
       <div className="error-card">
-        <div className="error-icon">âš ï¸</div>
+        <div className="flex justify-center mb-6">
+          <AlertTriangle className="w-16 h-16 text-amber-500 animate-pulse" />
+        </div>
         <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '16px', color: 'var(--text-white)' }}>
           Something went wrong
         </h1>

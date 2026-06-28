@@ -3,6 +3,7 @@ import { getTrendingAgents, getNewArrivals, refreshTrendingScores } from "@/lib/
 import { Agent, Category } from "@/lib/types";
 import { Metadata } from "next";
 import Link from 'next/link';
+import { Flame, Sparkles, ArrowRight } from 'lucide-react';
 import { AgentCard } from "@/components/parlexa/AgentCard";
 import { AIFinderCTA } from "@/components/parlexa/AIFinderCTA";
 import { RealStories } from "@/components/parlexa/RealStories";
@@ -94,8 +95,8 @@ export default async function PublicHomePage() {
           
           <UniversalAISearch />
           
-          <div style={{ maxWidth: '600px', margin: '40px auto 0', display: 'flex', gap: '24px', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>
-             <span>ðŸ”¥ <strong>Trending:</strong> <Link href="/products?cats=AI+%26+LLMs" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>AI Agents</Link>, <Link href="/products?cats=Marketing+%26+Sales" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>Marketing Bots</Link></span>
+          <div style={{ maxWidth: '600px', margin: '40px auto 0', display: 'flex', gap: '24px', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '14px', alignItems: 'center' }}>
+             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><Flame className="w-4 h-4 text-orange-500 shrink-0" /> <strong>Trending:</strong> <Link href="/products?cats=AI+%26+LLMs" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>AI Agents</Link>, <Link href="/products?cats=Marketing+%26+Sales" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>Marketing Bots</Link></span>
           </div>
         </div>
       </section>
@@ -115,8 +116,9 @@ export default async function PublicHomePage() {
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px' }}>
               <div>
-                <h2 style={{ fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 800, marginBottom: '12px', letterSpacing: '-0.03em' }}>
-                  âœ¨ <span style={{ background: 'linear-gradient(135deg, #fff 0%, #fb923c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Featured on Parlexa</span>
+                <h2 style={{ fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 800, marginBottom: '12px', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Sparkles className="w-8 h-8 text-orange-400 shrink-0" />
+                  <span style={{ background: 'linear-gradient(135deg, #fff 0%, #fb923c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Featured on Parlexa</span>
                 </h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '18px', maxWidth: '600px' }}>
                   Premium AI solutions and enterprise-ready agents selected for world-class performance.
@@ -124,9 +126,11 @@ export default async function PublicHomePage() {
               </div>
               <Link href="/products" style={{ 
                 color: '#fb923c', fontWeight: 700, fontSize: '15px', textDecoration: 'none',
-                padding: '10px 20px', background: 'rgba(251, 146, 60, 0.1)', borderRadius: '12px', border: '1px solid rgba(251, 146, 60, 0.2)'
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                padding: '10px 20px', background: 'rgba(255, 145, 60, 0.1)', borderRadius: '12px', border: '1px solid rgba(255, 145, 60, 0.2)'
               }}>
-                View Marketplace â†’
+                <span>View Marketplace</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
@@ -161,7 +165,10 @@ export default async function PublicHomePage() {
       {trendingAgents.length > 0 && (
         <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '80px 20px' }}>
           <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: '#fb923c' }}>ðŸ”¥ Trending Now</h2>
+            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: '#fb923c', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Flame className="w-8 h-8 text-orange-500 shrink-0" />
+              <span>Trending Now</span>
+            </h2>
             <p style={{ color: 'var(--text-dim)' }}>Most visited and popular AI solutions this week</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
@@ -238,7 +245,10 @@ export default async function PublicHomePage() {
       {uniqueNewArrivals.length > 0 && (
         <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '80px 20px' }}>
           <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: 'var(--cyan)' }}>âœ¨ Just Added</h2>
+            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: 'var(--cyan)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Sparkles className="w-8 h-8 text-sky-400 shrink-0" />
+              <span>Just Added</span>
+            </h2>
             <p style={{ color: 'var(--text-dim)' }}>Fresh AI tools added to the marketplace in the last 48 hours</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>

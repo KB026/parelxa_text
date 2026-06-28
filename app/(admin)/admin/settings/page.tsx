@@ -68,14 +68,14 @@ export default async function AdminSettings() {
           <h1 className="page-title" style={{ fontSize: '28px', marginBottom: '8px' }}>Global Settings</h1>
           <p style={{ color: 'var(--text-muted)' }}>Configure site-wide parameters and operational configurations.</p>
         </div>
-        <Link href="/admin/settings/admins" className="btn-secondary" style={{ padding: '10px 20px', borderRadius: '10px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}> Manage Admins â†’ </Link>
+        <Link href="/admin/settings/admins" className="btn-secondary" style={{ padding: '10px 20px', borderRadius: '10px', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}> Manage Admins → </Link>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         {/* Announcement Banner */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-             <span>ðŸ“¢</span> Announcement Banner
+             <span>📢</span> Announcement Banner
           </h3>
           <form action={updateBanner}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

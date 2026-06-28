@@ -71,7 +71,7 @@ export async function triggerSavedToolVerificationAlert(agentId: string) {
     if (profile?.email && profile?.notification_prefs?.verified_alert !== false) {
       const unsubscribeLink = `https://parlexa.in/api/email/unsubscribe?userId=${save.user_id}&type=verified_alert`;
       const html = templates.savedToolVerified(agent.name || 'Unnamed Tool', agent.slug || '', unsubscribeLink);
-      await sendEmail({ to: profile.email, subject: `âœ“ Verification Alert: ${agent.name || 'Unnamed Tool'}`, html });
+      await sendEmail({ to: profile.email, subject: `✓ Verification Alert: ${agent.name || 'Unnamed Tool'}`, html });
     }
   }
 }
