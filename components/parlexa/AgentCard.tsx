@@ -6,7 +6,7 @@ import { trackClick } from '@/lib/api';
 import { useCompare } from '@/context/CompareContext';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, CheckCircle, Sparkles } from 'lucide-react';
+import { Star, CheckCircle, Sparkles, MapPin } from 'lucide-react';
 
 export function AgentCard({ agent }: { agent: Agent }) {
   const { selectedIds, toggleCompare } = useCompare();
@@ -72,12 +72,12 @@ export function AgentCard({ agent }: { agent: Agent }) {
         onClick={handleVisitSite}
       >
         <Card className={`h-full flex flex-col transition-all duration-300 ${isFeatured ? 'bg-[#191e2d]/95 border-2 border-orange-400/50 shadow-[0_10px_40px_rgba(251,146,60,0.15)]' : 'bg-[#111c2e] border-white/5 group-hover:bg-[#162035] group-hover:border-sky-400/25 group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]'}`}>
-          <CardHeader className="pb-2 pr-12">
+          <CardHeader className="pb-2 pr-16">
             <div className="flex items-start justify-between">
               <Badge variant="default" className={`${isFeatured ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-700 hover:bg-blue-800'} text-[11px] font-semibold px-2.5 py-0.5 rounded-full border-none`}>
                 {category}
               </Badge>
-              <div className="flex items-center gap-1 bg-amber-900/50 text-amber-400 text-xs font-bold px-2 py-1 rounded-md">
+              <div className="flex items-center gap-1 bg-amber-900/50 text-amber-400 text-xs font-bold px-2 py-1 rounded-md mr-1">
                 <Star className="w-3 h-3 fill-current" /> {rating}
               </div>
             </div>
@@ -101,7 +101,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
             </p>
             {hasIndiaPricing && (
               <div className="inline-flex items-center px-2 py-1 bg-orange-500/10 border border-orange-500/20 rounded-md text-[11px] font-semibold text-orange-400 mt-2">
-                ðŸ‡®ðŸ‡³ Special India Pricing Available
+                <MapPin className="w-3 h-3 mr-1.5" /> Special India Pricing Available
               </div>
             )}
           </CardContent>

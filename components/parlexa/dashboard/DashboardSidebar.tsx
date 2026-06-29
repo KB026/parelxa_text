@@ -3,17 +3,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { LayoutDashboard, ListPlus, Bookmark, Star, ArrowRightLeft, User, Brain, Package } from 'lucide-react';
+
 export function DashboardSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'Overview', href: '/dashboard', icon: '📊' },
-    { label: 'My Listings', href: '/vendor/listings', icon: 'ðŸš€' },
-    { label: 'Saved Tools', href: '/dashboard/saved', icon: 'ðŸ”–' },
-    { label: 'My Reviews', href: '/dashboard/reviews', icon: 'â­' },
-    { label: 'Compare History', href: '/dashboard/history', icon: 'âš–ï¸' },
-    { label: 'Profile Settings', href: '/dashboard/settings', icon: 'ðŸ‘¤' },
-    { label: 'AI Preferences', href: '/dashboard/preferences', icon: 'ðŸ§ ' },
+    { label: 'Overview', href: '/dashboard', icon: <LayoutDashboard size={18} /> },
+    { label: 'My Listings', href: '/vendor/listings', icon: <ListPlus size={18} /> },
+    { label: 'Saved Tools', href: '/dashboard/saved', icon: <Bookmark size={18} /> },
+    { label: 'My Reviews', href: '/dashboard/reviews', icon: <Star size={18} /> },
+    { label: 'Compare History', href: '/dashboard/history', icon: <ArrowRightLeft size={18} /> },
+    { label: 'Profile Settings', href: '/dashboard/settings', icon: <User size={18} /> },
+    { label: 'AI Preferences', href: '/dashboard/preferences', icon: <Brain size={18} /> },
   ];
 
   return (
@@ -68,7 +70,7 @@ export function DashboardSidebar() {
               color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
             }}
           >
-            <span>📦</span> My Orders
+            <Package size={18} /> My Orders
           </Link>
         </div>
       </div>

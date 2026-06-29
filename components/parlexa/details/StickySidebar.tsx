@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
 import { toggleWishlist } from '@/app/actions/wishlist';
+import { Bookmark } from 'lucide-react';
 
 interface StickySidebarProps {
   agent: Agent;
@@ -90,13 +91,16 @@ export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsi
             <button 
               onClick={handleSave}
               disabled={saving}
+              title="Save to Wishlist"
               style={{ 
                 flex: 1, padding: '12px', fontSize: '14px', borderRadius: '12px',
                 background: saved ? 'var(--cyan)' : 'transparent', border: '1px solid var(--border-subtle)',
                 color: saved ? 'black' : 'var(--text-white)', fontWeight: 600,
-                cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1
+                cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
               }}
             >
+              <Bookmark size={18} fill={saved ? 'currentColor' : 'none'} />
               {saving ? '...' : (saved ? 'Saved' : 'Wishlist')}
             </button>
             <button 

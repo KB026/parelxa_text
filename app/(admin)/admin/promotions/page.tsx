@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import { createClient } from "@/lib/supabase/server";
 import { authorizeManualPromotion } from "@/app/actions/admin";
 import { revalidatePath } from "next/cache";
+import { Rocket } from 'lucide-react';
 
 export default async function AdminPromotions() {
   const supabase = createClient();
@@ -70,7 +71,7 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
         {/* Active Promotions List */}
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-             ðŸš€ Active Promotions
+             <Rocket size={20} /> Active Promotions
           </h2>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '20px', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -161,8 +162,8 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
                 <textarea name="reason" rows={3} placeholder="e.g., Marketing partnership with founder..." style={{ width: '100%', padding: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: '#fff', fontSize: '14px', resize: 'none' }}></textarea>
               </div>
 
-              <button type="submit" style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--cyan)', color: 'black', fontWeight: 700, border: 'none', marginTop: '12px' }}>
-                ðŸš€ Authorize Visibility Boost
+              <button type="submit" style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--cyan)', color: 'black', fontWeight: 700, border: 'none', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <Rocket size={18} /> Authorize Visibility Boost
               </button>
             </form>
           </div>

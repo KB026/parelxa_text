@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Search, Briefcase } from 'lucide-react';
 
 
 type AuthView = 'signin' | 'register' | 'forgot';
@@ -330,12 +331,12 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
                 {/* User Type Selector */}
                 <div className="grid grid-cols-2 gap-3 mb-2">
                   <div className={`p-3 rounded-xl border cursor-pointer transition-all ${role === 'user' ? 'border-sky-400 bg-sky-400/10' : 'border-white/10 bg-[#111c2e] hover:border-white/20 hover:bg-white/5'} flex flex-col items-start gap-1`} onClick={() => setRole('user')}>
-                    <span className="text-2xl mb-1">🔍</span>
+                    <span className="mb-1 text-slate-300"><Search size={24} /></span>
                     <span className="text-sm font-semibold text-slate-200">Find AI Tools</span>
                     <span className="text-[11px] text-slate-500">I&apos;m looking for AI solutions</span>
                   </div>
                   <div className={`p-3 rounded-xl border cursor-pointer transition-all ${role === 'vendor' ? 'border-sky-400 bg-sky-400/10' : 'border-white/10 bg-[#111c2e] hover:border-white/20 hover:bg-white/5'} flex flex-col items-start gap-1`} onClick={() => setRole('vendor')}>
-                    <span className="text-2xl mb-1">ðŸš€</span>
+                    <span className="mb-1 text-slate-300"><Briefcase size={24} /></span>
                     <span className="text-sm font-semibold text-slate-200">List My Tool</span>
                     <span className="text-[11px] text-slate-500">I want to sell on Parlexa</span>
                   </div>

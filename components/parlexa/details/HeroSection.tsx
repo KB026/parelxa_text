@@ -5,7 +5,7 @@ import { StarRating } from '../reviews/ReviewStats';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Heart, ArrowRightLeft, Share2 } from 'lucide-react';
+import { CheckCircle, Bookmark, ArrowRightLeft, Share2 } from 'lucide-react';
 import { toggleWishlist } from '@/app/actions/wishlist';
 
 interface HeroSectionProps {
@@ -132,13 +132,13 @@ export function HeroSection({
                 onClick={handleSave}
                 title="Save to Wishlist"
               >
-                <Heart className={`w-5 h-5 ${saved ? 'fill-current' : ''}`} />
+                <Bookmark className={`w-5 h-5 ${saved ? 'fill-current' : ''}`} />
               </Button>
               <Button 
                 variant="outline"
                 size="icon"
                 className="w-12 h-12 rounded-xl bg-slate-900 border-white/10 text-white hover:bg-slate-800 hover:text-white"
-                onClick={() => onCompare?.()}
+                onClick={() => { console.log('Compare clicked'); onCompare?.(); }}
                 title="Add to Compare"
               >
                 <ArrowRightLeft className="w-5 h-5" />
