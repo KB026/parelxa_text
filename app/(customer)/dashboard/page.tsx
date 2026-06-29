@@ -5,7 +5,11 @@ import { Bookmark, Star, ArrowRightLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CustomerDashboard() {
+interface PageProps {
+  searchParams: { auth_err?: string };
+}
+
+export default async function CustomerDashboard({ searchParams }: PageProps) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -24,6 +28,25 @@ export default async function CustomerDashboard() {
 
   return (
     <section>
+      {searchParams.auth_err === 'vendor_required' && (
+         <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl p-5 mb-8 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+            <div>
+               <h4 className="text-sky-400 font-semibold m-0 flex items-center gap-2">
+                 <Star size={18} /> Vendor Access Required
+               </h4>
+               <p className="text-[15px] text-slate-300 m-0 mt-1.5">You need a Vendor account to list your AI tools. Upgrade your account for free to get started.</p>
+            </div>
+            <form action={async () => {
+              'use server';
+              const { upgradeToVendor } = await import('@/app/actions/vendor');
+              await upgradeToVendor();
+            }}>
+               <button type="submit" className="bg-sky-500 hover:bg-sky-400 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap shadow-lg shadow-sky-500/20 hover:-translate-y-0.5">
+                 Upgrade to Vendor
+               </button>
+            </form>
+         </div>
+      )}
       <div style={{ 
         background: 'linear-gradient(135deg, var(--bg-card) 0%, rgba(6,182,212,0.08) 100%)', 
         border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '40px', marginBottom: '48px',

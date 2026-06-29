@@ -12,9 +12,22 @@ interface ListingLinkProps {
 
 export function ListingLink({ user, children, className, style }: ListingLinkProps) {
   if (user) {
+    if (user.role === 'vendor' || user.role === 'admin') {
+      return (
+        <Link 
+          href="/vendor/listings/new?fresh=true" 
+          className={className} 
+          style={style}
+        >
+          {children}
+        </Link>
+      );
+    }
+    
+    // User is logged in but not a vendor. Send them to dashboard with the upgrade prompt
     return (
       <Link 
-        href="/vendor/listings/new?fresh=true" 
+        href="/dashboard?auth_err=vendor_required" 
         className={className} 
         style={style}
       >
