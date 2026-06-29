@@ -4,9 +4,16 @@ import { Step1Industry } from '@/components/parlexa/ai-finder/Step1Industry';
 import { Step2Problem } from '@/components/parlexa/ai-finder/Step2Problem';
 import { Step3Size } from '@/components/parlexa/ai-finder/Step3Size';
 import { AIFinderResults } from '@/components/parlexa/ai-finder/AIFinderResults';
+import { useEffect } from 'react';
 
 export default function AIFinderPage() {
   const { state, goBack, reset } = useAIFinderWizard();
+
+  useEffect(() => {
+    console.log('📍 AIFinderPage: Current step =', state.step);
+    console.log('📍 AIFinderPage: Current answers =', state.answers);
+    console.log('📍 AIFinderPage: Has results =', !!state.results);
+  }, [state.step, state.answers, state.results]);
 
   return (
     <div className="min-h-screen bg-gray-900 pt-28 pb-16">

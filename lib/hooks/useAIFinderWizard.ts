@@ -1,4 +1,5 @@
-import { useState } from 'react';
+'use client';
+import { useState, useCallback } from 'react';
 import { Agent } from '../types';
 
 export type Industry =
@@ -43,7 +44,7 @@ export interface WizardAnswers {
 export interface AIFinderState {
   step: 1 | 2 | 3;
   answers: WizardAnswers;
-  results: (Agent & { match_score?: number, match_reason?: string })[] | null;
+  results: any[] | null;
   loading: boolean;
   error: string | null;
 }
@@ -57,21 +58,30 @@ export function useAIFinderWizard() {
     error: null,
   });
 
-  const selectIndustry = (industry: Industry) =>
-    setState(prev => ({
-      ...prev,
-      step: 2,
-      answers: { ...prev.answers, industry },
-    }));
+  const selectIndustry = useCallback((industry: Industry) => {
+    console.log('🔧 selectIndustry called with:', industry);
+    setState(prev => {
+      const newState = {
+        ...prev,
+        step: 2 as const,
+        answers: { ...prev.answers, industry },
+      };
+      console.log('🔧 State updated to:', newState);
+      return newState;
+    });
+  }, []);
 
-  const selectProblem = (problem: BusinessProblem) =>
+  const selectProblem = useCallback((problem: BusinessProblem) => {
+    console.log('🔧 selectProblem called with:', problem);
     setState(prev => ({
       ...prev,
-      step: 3,
+      step: 3 as const,
       answers: { ...prev.answers, problem },
     }));
+  }, []);
 
-  const selectSize = async (size: CompanySize) => {
+  const selectSize = useCallback(async (size: CompanySize) => {
+    console.log('🔧 selectSize called with:', size);
     const answers = { ...state.answers, size };
     setState(prev => ({ ...prev, answers, loading: true, error: null }));
 
@@ -94,9 +104,10 @@ export function useAIFinderWizard() {
       }
       
       const { results } = await res.json();
+      console.log('✅ Results received:', results);
       setState(prev => ({ ...prev, results, loading: false }));
     } catch (err) {
-      console.error('Wizard match error:', err);
+      console.error('❌ Error:', err);
       setState(prev => ({
         ...prev,
         loading: false,
@@ -105,16 +116,17 @@ export function useAIFinderWizard() {
           : 'System temporarily unavailable. Please try again.',
       }));
     }
-  };
+  }, [state.answers]);
 
-  const goBack = () =>
+  const goBack = useCallback(() => {
     setState(prev => ({
       ...prev,
       step: prev.step > 1 ? ((prev.step - 1) as 1 | 2 | 3) : 1,
       error: null
     }));
+  }, []);
 
-  const reset = () =>
+  const reset = useCallback(() => {
     setState({
       step: 1,
       answers: { industry: null, problem: null, size: null },
@@ -122,6 +134,7 @@ export function useAIFinderWizard() {
       loading: false,
       error: null,
     });
+  }, []);
 
   return { state, selectIndustry, selectProblem, selectSize, goBack, reset };
 }

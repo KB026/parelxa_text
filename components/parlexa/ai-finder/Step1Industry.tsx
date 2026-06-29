@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { Industry, useAIFinderWizard } from '@/lib/hooks/useAIFinderWizard';
 
 const industries: { id: Industry; label: string; emoji: string; desc: string }[] = [
@@ -17,7 +18,22 @@ const industries: { id: Industry; label: string; emoji: string; desc: string }[]
 ];
 
 export function Step1Industry() {
-  const { selectIndustry } = useAIFinderWizard();
+  const [mounted, setMounted] = useState(false);
+  const { selectIndustry, state } = useAIFinderWizard();
+
+  useEffect(() => {
+    console.log('Step1Industry mounted. Hook state:', state);
+    setMounted(true);
+  }, [state]);
+
+  const handleClick = (id: Industry) => {
+    console.log('✅ Industry button clicked:', id);
+    console.log('✅ Current state before:', state);
+    selectIndustry(id);
+    console.log('✅ selectIndustry called');
+  };
+
+  if (!mounted) return <div>Loading...</div>;
 
   return (
     <div className="space-y-6">
@@ -30,8 +46,9 @@ export function Step1Industry() {
         {industries.map(ind => (
           <button
             key={ind.id}
-            onClick={() => selectIndustry(ind.id)}
-            className="p-4 rounded-xl border border-gray-700 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-left group"
+            type="button"
+            onClick={() => handleClick(ind.id)}
+            className="p-4 rounded-xl border border-gray-700 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-left group cursor-pointer"
           >
             <div className="text-2xl mb-2">{ind.emoji}</div>
             <div className="font-semibold text-sm text-white group-hover:text-blue-400">
