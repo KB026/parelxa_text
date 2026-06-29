@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Bookmark, ArrowRightLeft, Share2 } from 'lucide-react';
 import { toggleWishlist } from '@/app/actions/wishlist';
+import { useCompare } from '@/context/CompareContext';
 
 interface HeroSectionProps {
   agent: Agent;
@@ -29,6 +30,8 @@ export function HeroSection({
 }: HeroSectionProps) {
   const [saved, setSaved] = useState(initialSaved);
   const [saving, setSaving] = useState(false);
+  const { selectedIds, toggleCompare } = useCompare();
+  const isInCompare = selectedIds.includes(agent.id);
 
   const handleShare = async () => {
     if (onShare) return onShare();
@@ -137,9 +140,9 @@ export function HeroSection({
               <Button 
                 variant="outline"
                 size="icon"
-                className="w-12 h-12 rounded-xl bg-slate-900 border-white/10 text-white hover:bg-slate-800 hover:text-white"
-                onClick={() => { console.log('Compare clicked'); onCompare?.(); }}
-                title="Add to Compare"
+                className={`w-12 h-12 rounded-xl border-white/10 ${isInCompare ? 'bg-sky-400 text-black border-sky-400 hover:bg-sky-500' : 'bg-slate-900 text-white hover:bg-slate-800 hover:text-white'}`}
+                onClick={() => { toggleCompare(agent.id); onCompare?.(); }}
+                title={isInCompare ? "Remove from Compare" : "Add to Compare"}
               >
                 <ArrowRightLeft className="w-5 h-5" />
               </Button>
