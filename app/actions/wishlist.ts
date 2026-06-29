@@ -15,12 +15,12 @@ export async function toggleWishlist(agentId: number) {
   const userId = session.user.id;
 
   // Check if it exists
-  const { data: existing } = await (supabase
+  const { data: existing } = (await supabase
     .from('wishlists' as any)
     .select('id')
     .eq('user_id', userId)
     .eq('agent_id', agentId)
-    .single());
+    .single()) as any;
 
   if (existing) {
     // Remove
