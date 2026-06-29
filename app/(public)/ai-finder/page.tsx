@@ -128,7 +128,7 @@ export default function AIFinderPage() {
             <button onClick={() => setStep('industry')} className="text-blue-400 hover:text-blue-300 mb-4 text-sm">
               ← Back
             </button>
-            <h2 className="text-2xl font-bold text-white mb-6">What's your biggest challenge?</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">What&apos;s your biggest challenge?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {problems.map(prob => (
                 <button
