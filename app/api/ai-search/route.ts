@@ -116,10 +116,9 @@ export async function POST(req: NextRequest) {
       const data = JSON.parse(text);
       
       // Match by ID (handling string/number conversion) or by Name as a fallback
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const recommendedAgents = agents?.filter(a => 
-        data.recommended_ids?.some((id: any) => String(id) === String(a.id)) ||
-        data.recommended_ids?.some((id: any) => typeof id === 'string' && id.toLowerCase() === a.name.toLowerCase())
+        data.recommended_ids?.some((id: string | number) => String(id) === String(a.id)) ||
+        data.recommended_ids?.some((id: string | number) => typeof id === 'string' && id.toLowerCase() === a.name.toLowerCase())
       ) || [];
 
       // Log the successful AI search
