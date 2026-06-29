@@ -76,13 +76,23 @@ export function useAIFinderWizard() {
     setState(prev => ({ ...prev, answers, loading: true, error: null }));
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
       const res = await fetch('/api/ai-finder-match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(answers),
+        signal: controller.signal
       });
 
-      if (!res.ok) throw new Error('Matching failed');
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || 'System temporarily unavailable');
+      }
+      
       const { results } = await res.json();
       setState(prev => ({ ...prev, results, loading: false }));
     } catch (err) {
@@ -90,7 +100,9 @@ export function useAIFinderWizard() {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: 'Something went wrong. Please try again.',
+        error: err instanceof Error && err.name === 'AbortError' 
+          ? 'Request timed out. Please try again.' 
+          : 'System temporarily unavailable. Please try again.',
       }));
     }
   };
@@ -99,6 +111,7 @@ export function useAIFinderWizard() {
     setState(prev => ({
       ...prev,
       step: prev.step > 1 ? ((prev.step - 1) as 1 | 2 | 3) : 1,
+      error: null
     }));
 
   const reset = () =>

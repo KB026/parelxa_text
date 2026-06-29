@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 const industryToCategory: Record<string, string[]> = {
   'saas-tech': ['AI & LLMs', 'Developer Tools & Infra', 'Enterprise & Automation'],
   'marketing-sales': ['Marketing & Sales', 'Customer Experience'],
@@ -29,6 +27,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing answers' }, { status: 400 });
     }
 
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      console.error('CRITICAL: OPENAI_API_KEY is missing from environment variables');
+      return NextResponse.json({ error: 'System temporarily unavailable' }, { status: 503 });
+    }
+
+    const openai = new OpenAI({ apiKey });
     const supabase = createClient();
 
     // Get relevant agents from Supabase filtered by industry categories
@@ -46,7 +51,10 @@ export async function POST(request: NextRequest) {
     }
 
     const { data: agents, error } = await query;
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase DB Error:', error);
+      throw error;
+    }
 
     if (!agents || agents.length === 0) {
       return NextResponse.json({ results: [] });
@@ -83,16 +91,25 @@ Return ONLY a valid JSON array. No other text. Format:
 ]
 `;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-      max_tokens: 800,
-    });
+    let matches = [];
+    try {
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 800,
+      });
 
-    const responseText = completion.choices[0].message.content || '[]';
-    const cleanText = responseText.replace(/```json\n?/, '').replace(/\n?```/, '').trim();
-    const matches = JSON.parse(cleanText);
+      const responseText = completion.choices[0].message.content || '[]';
+      const cleanText = responseText.replace(/```json\n?/, '').replace(/\n?```/, '').trim();
+      matches = JSON.parse(cleanText);
+    } catch (aiErr) {
+      console.error('OpenAI API Error:', aiErr);
+      return NextResponse.json(
+        { error: 'System temporarily unavailable' },
+        { status: 503 }
+      );
+    }
 
     // Enrich with full agent data
     const enrichedResults = matches
@@ -112,7 +129,7 @@ Return ONLY a valid JSON array. No other text. Format:
   } catch (err) {
     console.error('AI Finder Match Error:', err);
     return NextResponse.json(
-      { error: 'Matching failed. Please try again.' },
+      { error: 'System temporarily unavailable' },
       { status: 500 }
     );
   }

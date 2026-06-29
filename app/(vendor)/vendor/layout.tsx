@@ -1,5 +1,7 @@
 import { Navbar } from "@/components/parlexa/Navbar";
 import { Footer } from "@/components/parlexa/Footer";
+
+export const dynamic = 'force-dynamic';
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { VendorSidebar } from "@/components/parlexa/dashboard/VendorSidebar";

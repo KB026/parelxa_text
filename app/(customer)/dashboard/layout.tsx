@@ -1,5 +1,7 @@
 import { Navbar } from "@/components/parlexa/Navbar";
 import { Footer } from "@/components/parlexa/Footer";
+
+export const dynamic = 'force-dynamic';
 import { DashboardSidebar } from "@/components/parlexa/dashboard/DashboardSidebar";
 
 export default function CustomerLayout({
