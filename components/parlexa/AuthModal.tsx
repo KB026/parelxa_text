@@ -207,12 +207,10 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     setError('');
     try {
       const supabase = createClient();
-      const redirectUrl = process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL || `${window.location.origin}/auth/callback`;
-      
       const { error: oAuthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectUrl,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
