@@ -1,35 +1,35 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Agent } from '@/lib/types';
-import { RequestDemoModal } from '@/components/parlexa/details/RequestDemoModal';
+import { useCompare } from '@/context/CompareContext';
+import { Button } from '@/components/ui/button';
 
 export default function ComparePage() {
-  const searchParams = useSearchParams();
-  const agentsStr = searchParams.get('agents');
+  const { selectedIds } = useCompare();
   const [data, setData] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [demoAgent, setDemoAgent] = useState<Agent | null>(null);
 
   useEffect(() => {
-    const agents = agentsStr ? agentsStr.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id)) : [];
-    
-    const fetch = async () => {
+    const fetchAgents = async () => {
+      if (selectedIds.length === 0) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
       const supabase = createClient();
       const { data } = await supabase
         .from('agents')
         .select('*')
-        .in('id', agents);
+        .in('id', selectedIds);
+      
       setData((data as unknown as Agent[]) || []);
       setLoading(false);
     };
-    if (agents.length > 0) {
-      fetch();
-    } else {
-      setLoading(false);
-    }
-  }, [agentsStr]);
+    
+    fetchAgents();
+  }, [selectedIds]);
 
   if (loading) return <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
 
@@ -56,22 +56,29 @@ export default function ComparePage() {
                   <td className="p-4">{agent.rating ? agent.rating.toFixed(1) : 'N/A'} ⭐</td>
                   <td className="p-4">{agent.pricing}</td>
                   <td className="p-4">
-                    <button 
-                      onClick={() => setDemoAgent(agent)}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white"
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      onClick={() => {
+                        const url = agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#';
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                      }}
                     >
-                      Request Demo
-                    </button>
+                      Visit Website
+                    </Button>
                   </td>
                 </tr>
               ))}
+              {data.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-slate-400">
+                    No tools selected for comparison. Add tools from the marketplace!
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
-      {demoAgent && (
-        <RequestDemoModal agent={demoAgent} onClose={() => setDemoAgent(null)} />
-      )}
     </div>
   );
 }
