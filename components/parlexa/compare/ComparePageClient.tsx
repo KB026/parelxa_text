@@ -162,57 +162,45 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                 <th style={{ width: '220px', padding: '32px 24px', textAlign: 'left', background: 'rgba(255,255,255,0.02)', position: 'sticky', left: 0, zIndex: 2 }}>
                   <div style={{ fontSize: '14px', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Attribute</div>
                 </th>
-                {[0, 1, 2].map(i => {
-                  const agent = agents[i];
-                  return (
-                    <th key={i} style={{ padding: '32px 24px', textAlign: 'center', width: '30%' }}>
-                      {agent ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                          <div style={{ position: 'relative' }}>
-                            <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'var(--bg-secondary)', overflow: 'hidden' }}>
-                              {agent.logoUrl ? <Image src={agent.logoUrl} alt={`${agent.name} logo`} fill sizes="80px" style={{ objectFit: 'cover' }} /> : <div style={{ fontSize: '32px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🤖</div>}
-                            </div>
-                            <button 
-                              onClick={() => toggleCompare(agent.id)}
-                              style={{ 
-                                position: 'absolute', top: '-8px', right: '-8px', 
-                                width: '24px', height: '24px', borderRadius: '50%', background: '#ef4444', 
-                                color: 'white', border: 'none', cursor: 'pointer' 
-                              }}
-                            >✕</button>
+                {agents.map((agent, i) => (
+                    <th key={i} style={{ padding: '32px 24px', textAlign: 'center', width: `${100 / agents.length}%` }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ position: 'relative' }}>
+                          <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'var(--bg-secondary)', overflow: 'hidden' }}>
+                            {agent.logoUrl ? <Image src={agent.logoUrl} alt={`${agent.name} logo`} fill sizes="80px" style={{ objectFit: 'cover' }} /> : <div style={{ fontSize: '32px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🤖</div>}
                           </div>
-                          <div>
-                            <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-white)', marginBottom: '4px' }}>{agent.name}</div>
-                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                              {getBadges(agent).map(b => (
-                                <span key={b.text} style={{ 
-                                  fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '20px', 
-                                  background: `${b.color}22`, color: b.color, border: `1px solid ${b.color}44` 
-                                }}>{b.text}</span>
-                              ))}
-                            </div>
+                          <button 
+                            onClick={() => toggleCompare(agent.id)}
+                            style={{ 
+                              position: 'absolute', top: '-8px', right: '-8px', 
+                              width: '24px', height: '24px', borderRadius: '50%', background: '#ef4444', 
+                              color: 'white', border: 'none', cursor: 'pointer' 
+                            }}
+                          >✕</button>
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-white)', marginBottom: '4px' }}>{agent.name}</div>
+                          <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            {getBadges(agent).map(b => (
+                              <span key={b.text} style={{ 
+                                fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '20px', 
+                                background: `${b.color}22`, color: b.color, border: `1px solid ${b.color}44` 
+                              }}>{b.text}</span>
+                            ))}
                           </div>
-                          <a 
-                            href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-get-started"
-                            style={{ padding: '8px 20px', fontSize: '13px', display: 'inline-block', textDecoration: 'none' }}
-                          >
-                            Visit Website
-                          </a>
                         </div>
-                      ) : (
-                        <div style={{ 
-                          height: '200px', border: '2px dashed var(--border-subtle)', borderRadius: '24px',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)'
-                        }}>
-                          Empty Slot
-                        </div>
-                      )}
+                        <a 
+                          href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-get-started"
+                          style={{ padding: '8px 20px', fontSize: '13px', display: 'inline-block', textDecoration: 'none' }}
+                        >
+                          Visit Website
+                        </a>
+                      </div>
                     </th>
-                  );
-                })}
+                  ))}
               </tr>
             </thead>
             <tbody>
@@ -227,17 +215,14 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
                       {row.label}
                       {diff && <span style={{ marginLeft: '8px', color: '#fb923c', fontSize: '10px' }}>â—</span>}
                     </td>
-                    {[0, 1, 2].map(i => {
-                      const agent = agents[i];
-                      if (!agent) return <td key={i} style={{ padding: '20px 24px' }} />;
-                      
+                    {agents.map((agent, i) => {
                       const val = (agent as unknown as Record<string, unknown>)[row.key];
                       return (
                         <td key={i} style={{ padding: '20px 24px', textAlign: 'center', color: 'var(--text-white)', fontSize: '14px' }}>
                           {row.type === 'boolean' ? (
                             <span style={{ color: val ? '#10b981' : '#ef4444' }}>{val ? '✓ Yes' : '✕ No'}</span>
                           ) : row.type === 'rating' ? (
-                            <div style={{ fontWeight: 700, color: '#f59e0b' }}>â­ {Number(val || 0).toFixed(1)}</div>
+                            <div style={{ fontWeight: 700, color: '#f59e0b' }}>â­  {Number(val || 0).toFixed(1)}</div>
                           ) : row.type === 'list' ? (
                             <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', justifyContent: 'center' }}>
                               {((val as string[]) || []).slice(0, 4).map((f: string) => (
