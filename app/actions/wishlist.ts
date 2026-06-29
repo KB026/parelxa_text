@@ -14,6 +14,7 @@ export async function toggleWishlist(agentId: number) {
   const userId = session.user.id;
 
   // Check if it exists
+  // @ts-expect-error - Table not yet in generated types
   const { data: existing } = await supabase
     .from('wishlists')
     .select('id')
@@ -23,6 +24,7 @@ export async function toggleWishlist(agentId: number) {
 
   if (existing) {
     // Remove
+    // @ts-expect-error - Table not yet in generated types
     const { error } = await supabase
       .from('wishlists')
       .delete()
@@ -35,6 +37,7 @@ export async function toggleWishlist(agentId: number) {
     return { isSaved: false };
   } else {
     // Add
+    // @ts-expect-error - Table not yet in generated types
     const { error } = await supabase
       .from('wishlists')
       .insert({ user_id: userId, agent_id: agentId });
@@ -53,6 +56,7 @@ export async function checkWishlistStatus(agentId: number): Promise<boolean> {
 
   if (!session?.user) return false;
 
+  // @ts-expect-error - Table not yet in generated types
   const { data } = await supabase
     .from('wishlists')
     .select('id')
