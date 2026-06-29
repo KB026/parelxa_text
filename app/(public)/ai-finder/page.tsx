@@ -47,14 +47,14 @@ export default function AIFinderPage() {
         )}
 
         {/* Wizard steps */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
+        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8" key={state.step}>
           {state.results ? (
             <AIFinderResults results={state.results} onReset={reset} />
           ) : (
             <>
-              {state.step === 1 && <Step1Industry />}
-              {state.step === 2 && <Step2Problem onBack={goBack} />}
-              {state.step === 3 && <Step3Size onBack={goBack} />}
+              {state.step === 1 && <Step1Industry key="step1" />}
+              {state.step === 2 && <Step2Problem key="step2" onBack={goBack} />}
+              {state.step === 3 && <Step3Size key="step3" onBack={goBack} />}
             </>
           )}
         </div>
