@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -14,19 +15,17 @@ export async function toggleWishlist(agentId: number) {
   const userId = session.user.id;
 
   // Check if it exists
-  // @ts-expect-error - Table not yet in generated types
-  const { data: existing } = await supabase
-    .from('wishlists')
+  const { data: existing } = await (supabase
+    .from('wishlists' as any)
     .select('id')
     .eq('user_id', userId)
     .eq('agent_id', agentId)
-    .single();
+    .single());
 
   if (existing) {
     // Remove
-    // @ts-expect-error - Table not yet in generated types
     const { error } = await supabase
-      .from('wishlists')
+      .from('wishlists' as any)
       .delete()
       .eq('id', existing.id);
 
@@ -37,9 +36,8 @@ export async function toggleWishlist(agentId: number) {
     return { isSaved: false };
   } else {
     // Add
-    // @ts-expect-error - Table not yet in generated types
     const { error } = await supabase
-      .from('wishlists')
+      .from('wishlists' as any)
       .insert({ user_id: userId, agent_id: agentId });
 
     if (error) return { error: 'Failed to add to wishlist' };
@@ -56,9 +54,8 @@ export async function checkWishlistStatus(agentId: number): Promise<boolean> {
 
   if (!session?.user) return false;
 
-  // @ts-expect-error - Table not yet in generated types
   const { data } = await supabase
-    .from('wishlists')
+    .from('wishlists' as any)
     .select('id')
     .eq('user_id', session.user.id)
     .eq('agent_id', agentId)
