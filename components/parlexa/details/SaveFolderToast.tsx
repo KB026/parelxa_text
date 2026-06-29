@@ -31,9 +31,13 @@ export function SaveFolderToast({ agentId, isOpen, onClose }: SaveFolderToastPro
     if (isOpen) {
       getFolders().then(f => setFolders(f));
       setShowOptions(false);
-      
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && !showOptions) {
       const timer = setTimeout(() => {
-        if (!showOptions) onClose();
+        onClose();
       }, 6000);
       return () => clearTimeout(timer);
     }

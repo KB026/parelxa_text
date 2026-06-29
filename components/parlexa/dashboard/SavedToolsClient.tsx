@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AgentCard } from '@/components/parlexa/AgentCard';
 import { Trash2, FolderPlus, Folder, Check } from 'lucide-react';
 import { Agent } from '@/lib/types';
@@ -21,6 +21,14 @@ export function SavedToolsClient({ initialTools, initialFolders }: SavedToolsCli
   const [tools, setTools] = useState<Agent[]>(initialTools);
   const [folders, setFolders] = useState<FolderDB[]>(initialFolders);
   const [activeFolder, setActiveFolder] = useState<string | null>('all');
+
+  useEffect(() => {
+    setTools(initialTools);
+  }, [initialTools]);
+
+  useEffect(() => {
+    setFolders(initialFolders);
+  }, [initialFolders]);
   
   // Folder Creation State
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
