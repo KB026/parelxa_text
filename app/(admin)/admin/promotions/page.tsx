@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { createClient } from "@/lib/supabase/server";
+import { Handshake } from 'lucide-react';
 import { authorizeManualPromotion } from "@/app/actions/admin";
 import { revalidatePath } from "next/cache";
 import { Rocket } from 'lucide-react';
@@ -53,7 +54,7 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Total Platform Revenue</div>
           <div style={{ fontSize: '36px', fontWeight: 800, color: '#fb923c' }}>₹{totalRevenue.toLocaleString()}</div>
-          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--green)' }}>ðŸ’° All-time earnings from visibility boosts</div>
+          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--green)' }}>All-time earnings from visibility boosts</div>
         </div>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Active Promotions</div>
@@ -63,7 +64,7 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>Avg. Transaction</div>
           <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--cyan)' }}>₹{(totalRevenue / (transactions?.length || 1)).toFixed(0)}</div>
-          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)' }}>ðŸ¤ Value per boosted tool</div>
+          <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}><Handshake size={14} /> Value per boosted tool</div>
         </div>
       </div>
 
@@ -124,7 +125,7 @@ const allAgents = Array.isArray(allAgentsData) ? allAgentsData : [];
 
         {/* Manual Override Form */}
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>âœ¨ Manual Visibility Boost</h2>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>Manual Visibility Boost</h2>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
             <p style={{ fontSize: '14px', color: 'var(--text-dim)', marginBottom: '24px' }}>Manual overrides are used for partner launches, marketing collaborations, or conflict resolution.</p>
             <form action={async (formData) => {

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LayoutDashboard, Clock, ListOrdered, DollarSign, Key, Users, Shield, CheckCircle, FileText, Settings } from 'lucide-react';
 import { Navbar } from "@/components/parlexa/Navbar";
 import { Footer } from "@/components/parlexa/Footer";
 import { createClient } from "@/lib/supabase/server";
@@ -22,17 +23,17 @@ export default async function AdminLayout({
   }
 
   const navLinks = [
-    { href: '/admin', label: 'Platform Overview', icon: '📊' },
-    { href: '/admin/reviews', label: 'Review Queue', icon: 'â³', accent: '#fbbf24' },
-    { href: '/admin/listings', label: 'Manage Listings', icon: '📦' },
-    { href: '/admin/transactions', label: 'Transactions', icon: '💳', accent: '#34d399' },
-    { href: '/admin/claims', label: 'Listing Claims', icon: 'ðŸ”‘' },
-    { href: '/admin/users', label: 'User Management', icon: 'ðŸ‘¥' },
-    { href: '/admin/moderation/reviews', label: 'Review Moderation', icon: 'ðŸ›¡ï¸' },
-    { href: '/admin/verifications', label: 'Verification Queue', icon: '✓', accent: '#60a5fa' },
-    { href: '/admin/promotions', label: 'Promotions & Revenue', icon: 'ðŸ’°', accent: '#fb923c' },
-    { href: '/admin/reports', label: 'Reports & Analytics', icon: '📈' },
-    { href: '/admin/settings', label: 'Site Settings', icon: 'âš™ï¸' },
+    { href: '/admin', label: 'Platform Overview', icon: <LayoutDashboard size={18} /> },
+    { href: '/admin/reviews', label: 'Review Queue', icon: <Clock size={18} />, accent: '#fbbf24' },
+    { href: '/admin/listings', label: 'Manage Listings', icon: <ListOrdered size={18} /> },
+    { href: '/admin/transactions', label: 'Transactions', icon: <DollarSign size={18} />, accent: '#34d399' },
+    { href: '/admin/claims', label: 'Listing Claims', icon: <Key size={18} /> },
+    { href: '/admin/users', label: 'User Management', icon: <Users size={18} /> },
+    { href: '/admin/moderation/reviews', label: 'Review Moderation', icon: <Shield size={18} /> },
+    { href: '/admin/verifications', label: 'Verification Queue', icon: <CheckCircle size={18} />, accent: '#60a5fa' },
+    { href: '/admin/promotions', label: 'Promotions & Revenue', icon: <DollarSign size={18} />, accent: '#fb923c' },
+    { href: '/admin/reports', label: 'Reports & Analytics', icon: <FileText size={18} /> },
+    { href: '/admin/settings', label: 'Site Settings', icon: <Settings size={18} /> },
   ];
 
   return (

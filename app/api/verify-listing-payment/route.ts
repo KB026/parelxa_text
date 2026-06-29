@@ -112,14 +112,14 @@ export async function POST(req: NextRequest) {
     }
 
     // 6. Record transaction with correct status
-    // âœ… FIX: Use 'completed' instead of 'paid' for consistent revenue reporting
+    // ✅ FIX: Use 'completed' instead of 'paid' for consistent revenue reporting
     try {
       await supabase.from('transactions').insert([{
         user_id: user.id,
         agent_id: listing_data.agent_id || null,
         amount: listing_data.amount || 0,
         currency: listing_data.currency || 'INR',
-        status: 'completed', // âœ… FIXED: was potentially 'paid', now 'completed'
+        status: 'completed', // ✅ FIXED: was potentially 'paid', now 'completed'
         gateway: 'razorpay',
         gateway_payment_id: razorpay_payment_id,
         gateway_order_id: razorpay_order_id,

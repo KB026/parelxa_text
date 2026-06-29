@@ -1,4 +1,5 @@
 'use client';
+import { Globe } from 'lucide-react';
 
 interface PricingSectionProps {
   pricing: string;
@@ -71,8 +72,8 @@ export function PricingSection({
             </div>
             
             <div>
-              <div style={{ color: 'var(--cyan)', fontSize: '14px', fontWeight: 700, marginBottom: '8px' }}>
-                ðŸŒ International Pricing
+              <div style={{ color: 'var(--cyan)', fontSize: '14px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Globe className="w-5 h-5 text-orange-400" /> International Pricing
               </div>
               <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--text-white)' }}>
                 {usdPrice || '$ Custom Plans'}

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Review, Agent } from '@/lib/types';
 import { StarRating } from '@/components/parlexa/reviews/ReviewStats';
+import { Trophy, ThumbsUp } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MyReviewsPage() {
@@ -74,7 +75,7 @@ export default function MyReviewsPage() {
               borderRadius: '20px', marginBottom: '16px' 
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '24px' }}>ðŸ†</span>
+                <span style={{ fontSize: '24px' }}><Trophy size={24} className="text-orange-400" /></span>
                 <span style={{ fontWeight: 700, color: 'var(--cyan)' }}>Most Helpful Review</span>
               </div>
               <p style={{ margin: 0, fontSize: '15px' }}>
@@ -113,7 +114,7 @@ export default function MyReviewsPage() {
                   Submitted on {new Date(review.createdAt || '').toLocaleDateString()}
                 </div>
                 <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--cyan)' }}>
-                  ðŸ‘ {review.helpfulVotes} helpful votes
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ThumbsUp size={14} /> {review.helpfulVotes} helpful votes</div>
                 </div>
               </div>
             </div>

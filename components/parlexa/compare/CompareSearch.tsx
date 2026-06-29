@@ -5,6 +5,7 @@ import { searchAgents } from '@/lib/api';
 import Image from 'next/image';
 import { Agent } from '@/lib/types';
 import { useCompare } from '@/context/CompareContext';
+import { Search } from 'lucide-react';
 
 export function CompareSearch() {
   const { selectedIds, toggleCompare } = useCompare();
@@ -72,7 +73,9 @@ export function CompareSearch() {
           }}
           onFocus={() => query.length >=2 && setIsOpen(true)}
         />
-        <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>ðŸ”</span>
+        <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }}>
+          <Search size={18} />
+        </div>
         {loading && <span style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: 'var(--cyan)' }}>...</span>}
       </div>
 

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { DollarSign } from 'lucide-react';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 
@@ -93,7 +94,7 @@ export default async function AdminSettings() {
                 <input 
                   name="text" 
                   defaultValue={banner.text}
-                  placeholder="e.g. âš¡ Special Launch Offer: Get 50% off featured listings!"
+                  placeholder="e.g. Special Launch Offer: Get 50% off featured listings!"
                   style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'white' }}
                 />
               </div>
@@ -119,7 +120,7 @@ export default async function AdminSettings() {
         {/* Featured Listing Pricing */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-             <span>ðŸ’°</span> Promotion Pricing (USD)
+             <span><DollarSign size={14} /></span> Promotion Pricing (USD)
           </h3>
           <form action={updatePricing}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>

@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { User } from 'lucide-react';
 
 interface Profile {
   full_name: string;
@@ -96,7 +97,7 @@ export default function ProfileSettingsPage() {
             }}>
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt={profile.full_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : 'ðŸ‘¤'}
+              ) : <User size={48} className="text-slate-400" />}
             </div>
             <button type="button" className="btn-secondary" style={{ padding: '10px 16px', borderRadius: '8px' }}>Change Photo</button>
           </div>

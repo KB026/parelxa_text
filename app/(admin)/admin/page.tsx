@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import { Zap, AlertTriangle } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,7 +108,7 @@ const activities = [
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
             <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span>âš¡</span> Recent Activity
+              <span><Zap size={14} /></span> Recent Activity
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {activities.length === 0 ? (
@@ -118,7 +119,7 @@ const activities = [
                     width: '36px', height: '36px', borderRadius: '10px', background: 'var(--bg-secondary)', 
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' 
                   }}>
-                    {activity.type === 'listing' ? '📦' : activity.type === 'review' ? 'ðŸ’¬' : '✓'}
+                    {activity.type === 'listing' ? '' : activity.type === 'review' ? '' : '✓'}
                   </div>
                   <div>
                     <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-white)' }}>{activity.action}</p>
@@ -153,7 +154,7 @@ const activities = [
         background: 'var(--bg-card)', border: '1px solid #f87171', borderRadius: '24px', padding: '60px', 
         textAlign: 'center', marginTop: '40px' 
       }}>
-        <div style={{ fontSize: '64px', marginBottom: '24px' }}>âš ï¸</div>
+        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}><AlertTriangle size={64} className="text-yellow-400" /></div>
         <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', marginBottom: '16px' }}>Platform Connectivity Issue</h2>
         <p style={{ color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto 32px' }}>
           {error.message === 'CONFIG_MISSING' 

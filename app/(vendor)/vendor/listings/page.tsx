@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Script from 'next/script';
 import { redirect } from 'next/navigation';
+import { Calendar, Star } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 
 interface Listing {
@@ -230,7 +231,7 @@ export default function VendorListings() {
                           <>
                             <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--text-dim)' }} />
                             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, color: listing.subscription_status === 'cancelled' ? '#f59e0b' : '#10b981' }}>
-                              ðŸ—“ï¸ Valid Until: {listing.listing_expires_at ? new Date(listing.listing_expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Processing...'}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> Valid Until: {listing.listing_expires_at ? new Date(listing.listing_expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Processing...'}</div>
                               {listing.subscription_status === 'cancelled' && <span style={{ marginLeft: '4px', color: '#ef4444' }}>(Auto-renew Off)</span>}
                             </div>
                           </>
@@ -311,7 +312,7 @@ export default function VendorListings() {
                     </div>
                     <div>
                       <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '4px' }}>Rating</div>
-                      <div style={{ fontWeight: 600 }}>â­ {listing.rating || 'N/A'}</div>
+                      <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Star size={14} /> {listing.rating || 'N/A'}</div>
                     </div>
                   </div>
                   

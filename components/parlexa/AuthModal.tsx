@@ -80,7 +80,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
 
   if (!mounted || !isOpen) return null;
 
-  // â”€â”€ Sign In â”€â”€
+  // ── Sign In ──
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -122,7 +122,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     }
   }
 
-  // â”€â”€ Sign Up â”€â”€
+  // ── Sign Up ──
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -170,7 +170,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     }
   }
 
-  // â”€â”€ Forgot Password â”€â”€
+  // ── Forgot Password ──
   async function handleForgotPassword(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -202,7 +202,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     }
   }
 
-  // â”€â”€ Google SSO â”€â”€
+  // ── Google SSO ──
   async function handleGoogleSignIn() {
     setError('');
     try {
@@ -249,7 +249,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         {error && <div className="bg-red-500/10 border border-red-500/30 text-red-500 p-3 rounded-lg text-sm mb-5 text-center">{error}</div>}
         {success && <div className="bg-green-500/10 border border-green-500/30 text-green-500 p-3 rounded-lg text-sm mb-5 text-center">{success}</div>}
 
-        {/* â”€â”€ FORGOT PASSWORD VIEW â”€â”€ */}
+        {/* ── FORGOT PASSWORD VIEW ── */}
         {view === 'forgot' && !success && (
           <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
@@ -261,7 +261,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
             </Button>
             <div className="text-center mt-4">
               <button type="button" className="bg-transparent border-none text-slate-400 text-sm font-medium cursor-pointer hover:text-white transition-colors" onClick={() => { setView('signin'); resetForm(); }}>
-                â†  Back to Sign In
+                ← Back to Sign In
               </button>
             </div>
           </form>
@@ -269,12 +269,12 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         {view === 'forgot' && success && (
           <div className="text-center mt-2">
             <button type="button" className="bg-transparent border-none text-slate-400 text-sm font-medium cursor-pointer hover:text-white transition-colors" onClick={() => { setView('signin'); resetForm(); }}>
-              â†  Back to Sign In
+              ← Back to Sign In
             </button>
           </div>
         )}
 
-        {/* â”€â”€ SIGN IN / REGISTER VIEWS â”€â”€ */}
+        {/* ── SIGN IN / REGISTER VIEWS ── */}
         {view !== 'forgot' && (
           <>
             {/* Tab Switcher */}
@@ -291,7 +291,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
 
             <div className="flex items-center text-slate-500 text-xs font-semibold uppercase tracking-wider mb-5 before:content-[''] before:flex-1 before:h-px before:bg-white/10 before:mr-3 after:content-[''] after:flex-1 after:h-px after:bg-white/10 after:ml-3">or</div>
 
-            {/* â”€â”€ SIGN IN FORM â”€â”€ */}
+            {/* ── SIGN IN FORM ── */}
             {view === 'signin' && (
               <form onSubmit={handleSignIn} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
@@ -325,7 +325,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
               </form>
             )}
 
-            {/* â”€â”€ REGISTER FORM â”€â”€ */}
+            {/* ── REGISTER FORM ── */}
             {view === 'register' && !success && (
               <form onSubmit={handleSignUp} className="flex flex-col gap-4">
                 {/* User Type Selector */}

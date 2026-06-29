@@ -2,18 +2,19 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FileText, Shield, Star, Settings, LayoutDashboard, CreditCard } from 'lucide-react';
 
 export function VendorSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'Overview', href: '/vendor', icon: '📈' },
-    { label: 'My Listing', href: '/vendor/listings', icon: 'ðŸ“' },
-    { label: 'Customer Reviews', href: '/vendor/reviews', icon: 'â­' },
-    { label: 'Deep Analytics', href: '/vendor/analytics', icon: '📊' },
-    { label: 'Verification', href: '/vendor/verification', icon: 'ðŸ›¡ï¸' },
-    { label: 'Billing & Plan', href: '/vendor/billing', icon: '💳' },
-    { label: 'Settings', href: '/vendor/settings', icon: 'âš™ï¸' },
+    { label: 'Overview', href: '/vendor', icon: <LayoutDashboard size={18} /> },
+    { label: 'My Listing', href: '/vendor/listings', icon: <FileText size={18} /> },
+    { label: 'Customer Reviews', href: '/vendor/reviews', icon: <Star size={18} /> },
+    { label: 'Deep Analytics', href: '/vendor/analytics', icon: <FileText size={18} /> },
+    { label: 'Verification', href: '/vendor/verification', icon: <Shield size={18} /> },
+    { label: 'Billing & Plan', href: '/vendor/billing', icon: <CreditCard size={18} /> },
+    { label: 'Settings', href: '/vendor/settings', icon: <Settings size={18} /> },
   ];
 
   return (

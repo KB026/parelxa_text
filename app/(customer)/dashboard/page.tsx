@@ -1,6 +1,7 @@
 import { getUserStats, getRecentlyViewed } from '@/lib/api';
 import { AgentCard } from '@/components/parlexa/AgentCard';
 import { createClient } from '@/lib/supabase/server';
+import { Bookmark, Star, ArrowRightLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,9 +17,9 @@ export default async function CustomerDashboard() {
   const recentAgents = await getRecentlyViewed(user.id);
   
   const stats = [
-    { label: 'Tools Saved', value: userStats.saved.toString(), icon: 'ðŸ”–' },
-    { label: 'Reviews Written', value: userStats.reviews.toString(), icon: 'â­' },
-    { label: 'Comparisons Done', value: userStats.compares.toString(), icon: 'âš–ï¸' },
+    { label: 'Tools Saved', value: userStats.saved.toString(), icon: <Bookmark size={24} className="text-cyan-400" /> },
+    { label: 'Reviews Written', value: userStats.reviews.toString(), icon: <Star size={24} className="text-orange-400" /> },
+    { label: 'Comparisons Done', value: userStats.compares.toString(), icon: <ArrowRightLeft size={24} className="text-emerald-400" /> },
   ];
 
   return (
@@ -30,7 +31,7 @@ export default async function CustomerDashboard() {
       }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
-            Welcome back, {user?.user_metadata?.full_name?.split(' ')[0] || 'Explorer'}! ðŸ‘‹
+            Welcome back, {user?.user_metadata?.full_name?.split(' ')[0] || 'Explorer'}!
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '16px', margin: 0 }}>
             Track your AI evaluations and manage your shortlisted tools in one place.
@@ -44,7 +45,7 @@ export default async function CustomerDashboard() {
             background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', 
             borderRadius: '20px', padding: '24px', display: 'flex', alignItems: 'center', gap: '20px'
           }}>
-            <div style={{ fontSize: '32px', background: 'rgba(255,255,255,0.03)', width: '56px', height: '56px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', width: '56px', height: '56px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {stat.icon}
             </div>
             <div>

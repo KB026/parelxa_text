@@ -90,7 +90,7 @@ export default async function ListingReviews() {
       >
         {pendingQueue.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>ðŸŽ‰</div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}></div>
             <h3
               style={{
                 fontSize: '18px',

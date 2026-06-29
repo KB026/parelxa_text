@@ -118,7 +118,7 @@ export default function PreferencesPage() {
                   }}
                 >
                   <span style={{ fontSize: '20px' }}>
-                    {b === 'Any' ? '📊' : b === 'Free' ? 'ðŸŽ' : b === 'Under ₹5k' ? 'ðŸ’°' : 'ðŸ¢'}
+                    {b === 'Any' ? 'Any' : b === 'Free' ? 'Free' : b === 'Under ₹5k' ? '< ₹5k' : '> ₹5k'}
                   </span>
                   {b}
                 </button>

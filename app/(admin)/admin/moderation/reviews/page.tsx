@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { Shield } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -79,7 +80,7 @@ const reviews = Array.isArray(data) ? data : [];;
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {(reviews || []).length === 0 ? (
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '60px', textAlign: 'center' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>ðŸ›¡ï¸</div>
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}><Shield size={48} className="text-blue-400" /></div>
             <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'white' }}>Moderation queue empty</h3>
             <p style={{ color: 'var(--text-muted)' }}>Great job! There are no flagged reviews that require attention.</p>
           </div>

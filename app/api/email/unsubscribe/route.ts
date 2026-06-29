@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const token = searchParams.get('token');
 
-  // âœ… SECURITY FIX: Require valid signed token instead of allowing any userId
+  // ✅ SECURITY FIX: Require valid signed token instead of allowing any userId
   if (!token) {
     return new NextResponse(`
       <html>

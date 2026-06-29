@@ -112,7 +112,7 @@ export default async function AdminUsers({
                       display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
                       overflow: 'hidden'
                     }}>
-                      {profile.avatar_url ? <img src={profile.avatar_url} alt={`${profile.full_name || 'User'}'s avatar`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : 'ðŸ‘¤'}
+                      {profile.avatar_url ? <img src={profile.avatar_url} alt={`${profile.full_name || 'User'}'s avatar`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : ''}
                     </div>
                     <div>
                       <div style={{ fontWeight: 700, color: 'white' }}>{profile.full_name || 'Anonymous User'}</div>

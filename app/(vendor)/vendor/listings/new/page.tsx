@@ -151,7 +151,7 @@ export default function NewListingPage() {
     }
   }
 
-  // â”€â”€ CONFIRMATION SCREEN â”€â”€
+  // ── CONFIRMATION SCREEN ──
   if (submitted) {
     return (
       <div className="listing-wizard">

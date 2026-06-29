@@ -1,6 +1,7 @@
 import { getSavedToolsList } from '@/lib/api';
 import { AgentCard } from '@/components/parlexa/AgentCard';
 import { createClient } from '@/lib/supabase/server';
+import { Trash2 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,7 +60,7 @@ export default async function SavedToolsPage() {
               position: 'absolute', top: '12px', right: '12px', background: 'rgba(0,0,0,0.5)', 
               backdropFilter: 'blur(8px)', borderRadius: '8px', padding: '6px', cursor: 'pointer' 
             }} title="Remove from wishlist">
-              ðŸ—‘ï¸
+              <Trash2 size={24} className="text-red-400" />
             </div>
             <button style={{ 
               width: '100%', marginTop: '12px', padding: '10px', borderRadius: '8px',

@@ -64,7 +64,7 @@ const others = (otherProfiles ?? []) as OtherProfile[];
     <section>
       <div style={{ marginBottom: '32px' }}>
         <Link href="/admin/settings" style={{ color: 'var(--text-dim)', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px' }}>
-          â† Back to Settings
+          ← Back to Settings
         </Link>
         <h1 className="page-title" style={{ fontSize: '28px', marginBottom: '8px' }}>Admin Management</h1>
         <p style={{ color: 'var(--text-muted)' }}>Revoke or grant platform-wide administrative privileges.</p>
