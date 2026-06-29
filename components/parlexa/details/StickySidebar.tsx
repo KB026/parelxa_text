@@ -1,19 +1,51 @@
 'use client';
-
 import { useState } from 'react';
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
-import { RequestDemoModal } from './RequestDemoModal';
+import { toggleWishlist } from '@/app/actions/wishlist';
 
 interface StickySidebarProps {
   agent: Agent;
   stats: ReviewStats | null;
+  initialSaved?: boolean;
   onVisitWebsite?: () => void;
   onSave?: () => void;
+  onShare?: () => void;
 }
 
-export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySidebarProps) {
-  const [showDemoModal, setShowDemoModal] = useState(false);
+export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsite, onSave, onShare }: StickySidebarProps) {
+  const [saved, setSaved] = useState(initialSaved);
+  const [saving, setSaving] = useState(false);
+
+  const handleShare = async () => {
+    if (onShare) return onShare();
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: agent.name,
+          text: `Check out ${agent.name} on Parlexa!`,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.log('Error sharing:', err);
+    }
+  };
+
+  const handleSave = async () => {
+    if (onSave) return onSave();
+    setSaving(true);
+    const result = await toggleWishlist(Number(agent.id));
+    if (result.error) {
+      alert(result.error);
+    } else {
+      setSaved(result.isSaved || false);
+    }
+    setSaving(false);
+  };
 
   return (
     <div style={{ position: 'sticky', top: '100px', alignSelf: 'start' }}>
@@ -38,17 +70,6 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySi
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-          <button 
-            onClick={() => setShowDemoModal(true)}
-            className="btn-get-started"
-            style={{ 
-              padding: '16px', fontSize: '16px', width: '100%', borderRadius: '12px',
-              border: 'none', cursor: 'pointer', fontWeight: 700,
-              display: 'flex', justifyContent: 'center', alignItems: 'center'
-            }}
-          >
-            Request Demo
-          </button>
           
           <a 
             href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
@@ -57,24 +78,36 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySi
             onClick={() => onVisitWebsite?.()}
             style={{ 
               padding: '16px', fontSize: '16px', width: '100%', borderRadius: '12px',
-              background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)',
-              color: 'var(--text-white)', fontWeight: 600, cursor: 'pointer',
+              background: 'var(--cyan)', border: 'none',
+              color: 'black', fontWeight: 700, cursor: 'pointer',
               display: 'inline-flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none', boxSizing: 'border-box'
             }}
           >
             Visit Website
           </a>
           
-          <button 
-            onClick={() => onSave?.()}
-            style={{ 
-              padding: '16px', fontSize: '16px', width: '100%', borderRadius: '12px',
-              background: 'transparent', border: '1px solid var(--border-subtle)',
-              color: 'var(--text-white)', fontWeight: 600, cursor: 'pointer'
-            }}
-          >
-            Save to Wishlist
-          </button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button 
+              onClick={handleSave}
+              style={{ 
+                flex: 1, padding: '12px', fontSize: '14px', borderRadius: '12px',
+                background: saved ? 'var(--cyan)' : 'transparent', border: '1px solid var(--border-subtle)',
+                color: saved ? 'black' : 'var(--text-white)', fontWeight: 600, cursor: 'pointer'
+              }}
+            >
+              {saved ? 'Saved' : 'Wishlist'}
+            </button>
+            <button 
+              onClick={handleShare}
+              style={{ 
+                flex: 1, padding: '12px', fontSize: '14px', borderRadius: '12px',
+                background: 'transparent', border: '1px solid var(--border-subtle)',
+                color: 'var(--text-white)', fontWeight: 600, cursor: 'pointer'
+              }}
+            >
+              Share
+            </button>
+          </div>
         </div>
 
         <div style={{ paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
@@ -87,13 +120,6 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onSave }: StickySi
           </div>
         </div>
       </div>
-
-      {showDemoModal && (
-        <RequestDemoModal 
-          agent={agent} 
-          onClose={() => setShowDemoModal(false)} 
-        />
-      )}
     </div>
   );
 }

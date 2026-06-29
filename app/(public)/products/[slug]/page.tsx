@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getAgentBySlug, getReviewStats, getReviews, getUserReview, getSimilarAgents } from '@/lib/api';
+import { checkWishlistStatus } from '@/app/actions/wishlist';
 import { trackInteraction } from '@/lib/analytics';
 import { ReviewSystem } from '@/components/parlexa/reviews/ReviewSystem';
 import { createClient } from '@/lib/supabase/server';
@@ -49,12 +50,13 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
   const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
   
-  const [stats, initialReviews, userReview, similarTools, externalReviews] = await Promise.all([
+  const [stats, initialReviews, userReview, similarTools, externalReviews, initialSaved] = await Promise.all([
     getReviewStats(Number(agent.id)),
     getReviews(Number(agent.id), 'helpful', 1, 5),
     session ? getUserReview(Number(agent.id), session.user.id) : null,
-    getSimilarAgents(agent.category, Number(agent.id), 6),
-    getExternalReviews(Number(agent.id), agent.name)
+    getSimilarAgents(agent.category, Number(agent.id), 4),
+    getExternalReviews(Number(agent.id), agent.name),
+    checkWishlistStatus(Number(agent.id))
   ]);
 
   const jsonLd = {
@@ -116,6 +118,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
           <HeroSection 
             agent={agent} 
             stats={stats} 
+            initialSaved={initialSaved}
             onVisitWebsite={async () => {
               'use server';
               await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);
@@ -132,6 +135,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
               description={agent.description || agent.summary} 
               features={agent.features} 
               useCases={agent.useCases} 
+              integrations={agent.integrationType}
             />
 
             <PricingSection 
@@ -173,6 +177,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
           <StickySidebar 
             agent={agent} 
             stats={stats} 
+            initialSaved={initialSaved}
             onVisitWebsite={async () => {
               'use server';
               await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);

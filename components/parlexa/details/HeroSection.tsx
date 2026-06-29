@@ -1,15 +1,17 @@
 'use client';
-
+import { useState } from 'react';
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Heart, ArrowRightLeft, Share2 } from 'lucide-react';
+import { toggleWishlist } from '@/app/actions/wishlist';
 
 interface HeroSectionProps {
   agent: Agent;
   stats: ReviewStats | null;
+  initialSaved?: boolean;
   onVisitWebsite?: () => void;
   onSave?: () => void;
   onCompare?: () => void;
@@ -19,11 +21,45 @@ interface HeroSectionProps {
 export function HeroSection({ 
   agent, 
   stats, 
+  initialSaved = false,
   onVisitWebsite, 
   onSave, 
   onCompare, 
   onShare 
 }: HeroSectionProps) {
+  const [saved, setSaved] = useState(initialSaved);
+  const [saving, setSaving] = useState(false);
+
+  const handleShare = async () => {
+    if (onShare) return onShare();
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: agent.name,
+          text: `Check out ${agent.name} on Parlexa!`,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.log('Error sharing:', err);
+    }
+  };
+
+  const handleSave = async () => {
+    if (onSave) return onSave();
+    setSaving(true);
+    const result = await toggleWishlist(Number(agent.id));
+    if (result.error) {
+      alert(result.error);
+    } else {
+      setSaved(result.isSaved || false);
+    }
+    setSaving(false);
+  };
+
   return (
     <section className="mb-12">
       <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -91,11 +127,11 @@ export function HeroSection({
               <Button 
                 variant="outline"
                 size="icon"
-                className="w-12 h-12 rounded-xl bg-slate-900 border-white/10 text-white hover:bg-slate-800 hover:text-white"
-                onClick={() => onSave?.()}
+                className={`w-12 h-12 rounded-xl ${saved ? 'bg-cyan-500 text-black border-cyan-500 hover:bg-cyan-600 hover:text-black' : 'bg-slate-900 border-white/10 text-white hover:bg-slate-800'}`}
+                onClick={handleSave}
                 title="Save to Wishlist"
               >
-                <Heart className="w-5 h-5" />
+                <Heart className={`w-5 h-5 ${saved ? 'fill-current' : ''}`} />
               </Button>
               <Button 
                 variant="outline"
@@ -110,7 +146,7 @@ export function HeroSection({
                 variant="outline"
                 size="icon"
                 className="w-12 h-12 rounded-xl bg-slate-900 border-white/10 text-white hover:bg-slate-800 hover:text-white"
-                onClick={() => onShare?.()}
+                onClick={handleShare}
                 title="Share"
               >
                 <Share2 className="w-5 h-5" />

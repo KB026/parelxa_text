@@ -1,13 +1,14 @@
 'use client';
-import { Check } from 'lucide-react';
+import { Check, Plug } from 'lucide-react';
 
 interface AboutSectionProps {
   description?: string;
   features?: string[];
   useCases?: string;
+  integrations?: string[];
 }
 
-export function AboutSection({ description, features = [], useCases }: AboutSectionProps) {
+export function AboutSection({ description, features = [], useCases, integrations = [] }: AboutSectionProps) {
   // Simple "markdown" to HTML helper
   const formatText = (text: string) => {
     if (!text) return '';
@@ -16,6 +17,8 @@ export function AboutSection({ description, features = [], useCases }: AboutSect
       .map((para, i) => `<p key="${i}" style="margin-bottom: 20px; line-height: 1.8; color: var(--text-muted);">${para.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`)
       .join('');
   };
+
+  const filteredIntegrations = integrations.filter(i => i.toLowerCase() !== 'web');
 
   return (
     <section style={{ marginBottom: '64px' }}>
@@ -43,6 +46,24 @@ export function AboutSection({ description, features = [], useCases }: AboutSect
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {filteredIntegrations.length > 0 && (
+        <div style={{ marginBottom: '48px' }}>
+          <h4 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '20px' }}>Integrations</h4>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+            {filteredIntegrations.map((integration, idx) => (
+              <div key={idx} style={{
+                display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
+                background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid var(--border-subtle)',
+                color: 'var(--text-white)', fontSize: '14px', fontWeight: 600
+              }}>
+                <Plug className="w-4 h-4 text-cyan-400" />
+                {integration}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
