@@ -7,9 +7,9 @@ export async function updateSession(request: NextRequest) {
   });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!supabaseUrl || !supabaseKey) {
     const protectedRoutes = ['/admin', '/vendor', '/dashboard'];
     const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route));
     
@@ -23,7 +23,7 @@ export async function updateSession(request: NextRequest) {
 
   const supabase = createServerClient(
     supabaseUrl,
-    supabaseAnonKey,
+    supabaseKey,
     {
       cookies: {
         getAll() {
