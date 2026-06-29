@@ -1,6 +1,5 @@
 'use client';
 import { useState, useCallback } from 'react';
-import { Agent } from '../types';
 
 export type Industry =
   | 'saas-tech'
@@ -41,6 +40,7 @@ export interface WizardAnswers {
   size: CompanySize | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface AIFinderState {
   step: 1 | 2 | 3;
   answers: WizardAnswers;
