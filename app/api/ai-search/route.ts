@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { aiSearchSchema, safeValidate } from '@/lib/validation';
@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Initialize OpenAI dynamically
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const body = await req.json();
     const validation = safeValidate(aiSearchSchema, body);
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       oneLiner: a.one_liner
     }));
 
-    // 2. Try to use Gemini for intelligent reasoning
+    // 2. Try to use OpenAI for intelligent reasoning
     try {
       const context = agents?.map(a => `- ${a.name} (${a.category}): ${a.summary || a.one_liner}`).join('\n');
 
@@ -96,23 +96,30 @@ export async function POST(req: NextRequest) {
         4. NO CATEGORIES: Do not suggest categories or industries. Focus only on the tools.
         5. CONCISENESS: Keep the entire response under 60 words.
         
-        Format your response ONLY as a valid JSON object:
+        Format your response ONLY as a valid JSON object with no markdown formatting around it:
         {
           "ai_explanation": "...",
           "recommended_ids": [id1, id2]
         }
       `;
 
-      const result = await model.generateContent(prompt);
-      let text = result.response.text();
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 250,
+      });
+
+      let text = completion.choices[0].message.content || '{}';
       text = text.replace(/```json\n?/, '').replace(/\n?```/, '').trim();
       
       const data = JSON.parse(text);
       
       // Match by ID (handling string/number conversion) or by Name as a fallback
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const recommendedAgents = agents?.filter(a => 
-        data.recommended_ids?.some((id: string | number) => String(id) === String(a.id)) ||
-        data.recommended_ids?.some((id: string | number) => typeof id === 'string' && id.toLowerCase() === a.name.toLowerCase())
+        data.recommended_ids?.some((id: any) => String(id) === String(a.id)) ||
+        data.recommended_ids?.some((id: any) => typeof id === 'string' && id.toLowerCase() === a.name.toLowerCase())
       ) || [];
 
       // Log the successful AI search
