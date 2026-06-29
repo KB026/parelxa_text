@@ -38,8 +38,8 @@ export async function Navbar() {
         
         <CategoriesDropdown />
 
-        <Link href="/ai-finder" className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-1.5 relative">
-          AI Finder <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-sky-400 text-black rounded-full uppercase tracking-wider">NEW</span>
+        <Link href="/ai-finder" className="text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white px-3 py-1.5 rounded-md transition-all shadow-lg shadow-sky-500/20 flex items-center gap-1.5">
+          ✨ AI Finder
         </Link>
         <ListingLink 
           user={userData} 

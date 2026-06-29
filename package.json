@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.21.0",
     "next": "14.2.35",
+    "openai": "^6.45.0",
     "posthog-js": "^1.395.0",
     "razorpay": "^2.9.6",
     "react": "^18",

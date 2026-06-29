@@ -1,51 +1,57 @@
 'use client';
-import { useState } from 'react';
+import { useAIFinderWizard } from '@/lib/hooks/useAIFinderWizard';
+import { Step1Industry } from '@/components/parlexa/ai-finder/Step1Industry';
+import { Step2Problem } from '@/components/parlexa/ai-finder/Step2Problem';
+import { Step3Size } from '@/components/parlexa/ai-finder/Step3Size';
+import { AIFinderResults } from '@/components/parlexa/ai-finder/AIFinderResults';
 
 export default function AIFinderPage() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<{ id: string; name: string; summary: string }[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const handleSearch = async () => {
-    setLoading(true);
-    const res = await fetch(`/api/ai-search`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query }),
-    });
-    const data = await res.json();
-    setResults(data.agents || []);
-    setLoading(false);
-  };
+  const { state, goBack, reset } = useAIFinderWizard();
 
   return (
-    <div className="min-h-screen bg-gray-900 p-8">
-      <h1 className="text-3xl font-bold mb-6">AI Finder</h1>
-      <div className="flex gap-2 mb-6">
-        <input
-          type="text"
-          placeholder="Describe what you need..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 px-4 py-2 bg-gray-800 rounded border border-gray-700 text-white"
-        />
-        <button
-          onClick={handleSearch}
-          disabled={loading}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded font-semibold text-white"
-        >
-          {loading ? 'Searching...' : 'Search'}
-        </button>
-      </div>
-      <div className="grid grid-cols-3 gap-4">
-        {results.map((agent) => (
-          <div key={agent.id} className="bg-gray-800 p-4 rounded border border-gray-700">
-            <h3 className="font-bold text-white">{agent.name}</h3>
-            <p className="text-sm text-gray-400">{agent.summary}</p>
+    <div className="min-h-screen bg-gray-900">
+      <div className="max-w-4xl mx-auto px-4 py-16">
+
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-block bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-1 text-blue-400 text-sm font-medium mb-4">
+            AI-Powered Discovery
           </div>
-        ))}
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Find Your Perfect AI Tool
+          </h1>
+          <p className="text-gray-400 text-lg max-w-xl mx-auto">
+            Answer 3 quick questions and our AI will match you with the best tools from Parlexa for your exact business needs.
+          </p>
+        </div>
+
+        {/* Progress bar */}
+        {!state.results && (
+          <div className="flex gap-2 mb-10 max-w-xs mx-auto">
+            {[1, 2, 3].map(s => (
+              <div
+                key={s}
+                className={`h-1.5 flex-1 rounded-full transition-all ${
+                  s <= state.step ? 'bg-blue-500' : 'bg-gray-700'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Wizard steps */}
+        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
+          {state.results ? (
+            <AIFinderResults results={state.results} onReset={reset} />
+          ) : (
+            <>
+              {state.step === 1 && <Step1Industry />}
+              {state.step === 2 && <Step2Problem onBack={goBack} />}
+              {state.step === 3 && <Step3Size onBack={goBack} />}
+            </>
+          )}
+        </div>
+
       </div>
     </div>
   );
