@@ -127,7 +127,8 @@ export function HeroSection({
               <Button 
                 variant="outline"
                 size="icon"
-                className={`w-12 h-12 rounded-xl ${saved ? 'bg-cyan-500 text-black border-cyan-500 hover:bg-cyan-600 hover:text-black' : 'bg-slate-900 border-white/10 text-white hover:bg-slate-800'}`}
+                disabled={saving}
+                className={`w-12 h-12 rounded-xl ${saved ? 'bg-cyan-500 text-black border-cyan-500 hover:bg-cyan-600 hover:text-black' : 'bg-slate-900 border-white/10 text-white hover:bg-slate-800'} ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={handleSave}
                 title="Save to Wishlist"
               >

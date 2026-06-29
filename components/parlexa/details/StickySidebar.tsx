@@ -89,13 +89,15 @@ export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsi
           <div style={{ display: 'flex', gap: '12px' }}>
             <button 
               onClick={handleSave}
+              disabled={saving}
               style={{ 
                 flex: 1, padding: '12px', fontSize: '14px', borderRadius: '12px',
                 background: saved ? 'var(--cyan)' : 'transparent', border: '1px solid var(--border-subtle)',
-                color: saved ? 'black' : 'var(--text-white)', fontWeight: 600, cursor: 'pointer'
+                color: saved ? 'black' : 'var(--text-white)', fontWeight: 600,
+                cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1
               }}
             >
-              {saved ? 'Saved' : 'Wishlist'}
+              {saving ? '...' : (saved ? 'Saved' : 'Wishlist')}
             </button>
             <button 
               onClick={handleShare}
