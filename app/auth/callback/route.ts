@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const type = searchParams.get('type');
   const next = searchParams.get('next') ?? '/dashboard';
+  const roleParam = searchParams.get('role'); // Captured from AuthModal state
 
   if (code) {
     const supabase = createClient();
@@ -18,27 +19,45 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}/reset-password`);
       }
       
-      const role = data.user.user_metadata?.role;
+      let role = data.user.user_metadata?.role;
       const email = data.user.email;
       const fullName = data.user.user_metadata?.full_name || data.user.user_metadata?.name || 'User';
 
-      // Welcome Email trigger for NEW users
+      // Welcome Email trigger & Role override for NEW users
       try {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('created_at')
+          .select('created_at, role')
           .eq('id', data.user.id)
           .single();
 
-        if (profile && email) {
+        if (profile) {
           const createdAt = new Date(profile.created_at || '').getTime();
           const now = new Date().getTime();
-          if (now - createdAt < 10000) { // 10 seconds threshold
-            await sendWelcomeEmail(email, fullName, (role as 'user' | 'vendor') || 'user');
+          
+          // If created in the last 15 seconds, it's a brand new Google SSO signup
+          if (now - createdAt < 15000) { 
+            
+            // Override the default trigger role if they selected a specific role during signup
+            if (roleParam && roleParam !== profile.role && (roleParam === 'user' || roleParam === 'vendor')) {
+              await supabase
+                .from('profiles')
+                .update({ role: roleParam })
+                .eq('id', data.user.id);
+              
+              role = roleParam;
+            }
+
+            if (email) {
+              await sendWelcomeEmail(email, fullName, (role as 'user' | 'vendor') || 'user');
+            }
+          } else {
+             // For existing users, use their established DB role rather than metadata
+             role = profile.role || role;
           }
         }
       } catch (e) {
-        console.error('Welcome email failed:', e);
+        console.error('Welcome email or role update failed:', e);
       }
 
       // Determine redirect path

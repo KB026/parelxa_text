@@ -210,7 +210,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
       const { error: oAuthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?role=${role}`,
         },
       });
 
