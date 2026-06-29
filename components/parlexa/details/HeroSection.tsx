@@ -5,9 +5,10 @@ import { StarRating } from '../reviews/ReviewStats';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Bookmark, ArrowRightLeft, Share2 } from 'lucide-react';
+import { CheckCircle, Bookmark, ArrowRightLeft, Share2, Star } from 'lucide-react';
 import { toggleWishlist } from '@/app/actions/wishlist';
 import { useCompare } from '@/context/CompareContext';
+import { SaveFolderToast } from './SaveFolderToast';
 
 interface HeroSectionProps {
   agent: Agent;
@@ -30,6 +31,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   const [saved, setSaved] = useState(initialSaved);
   const [saving, setSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const { selectedIds, toggleCompare } = useCompare();
   const isInCompare = selectedIds.includes(agent.id);
 
@@ -59,6 +61,7 @@ export function HeroSection({
       alert(result.error);
     } else {
       setSaved(result.isSaved || false);
+      if (result.isSaved) setShowToast(true);
     }
     setSaving(false);
   };
@@ -159,6 +162,24 @@ export function HeroSection({
           </div>
         </div>
       </div>
+
+      <div className="md:hidden mt-8">
+        <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><Star className="w-5 h-5 text-orange-400" /> Key Features</h3>
+        <ul className="grid grid-cols-1 gap-3">
+          {agent.features?.map((feature, idx) => (
+            <li key={idx} className="flex items-start gap-3 text-slate-300">
+              <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <span className="leading-relaxed">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <SaveFolderToast 
+        agentId={Number(agent.id)} 
+        isOpen={showToast} 
+        onClose={() => setShowToast(false)} 
+      />
     </section>
   );
 }

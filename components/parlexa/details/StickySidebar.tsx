@@ -14,9 +14,12 @@ interface StickySidebarProps {
   onShare?: () => void;
 }
 
+import { SaveFolderToast } from './SaveFolderToast';
+
 export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsite, onSave, onShare }: StickySidebarProps) {
   const [saved, setSaved] = useState(initialSaved);
   const [saving, setSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const handleShare = async () => {
     if (onShare) return onShare();
@@ -44,6 +47,7 @@ export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsi
       alert(result.error);
     } else {
       setSaved(result.isSaved || false);
+      if (result.isSaved) setShowToast(true);
     }
     setSaving(false);
   };
@@ -126,6 +130,12 @@ export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsi
           </div>
         </div>
       </div>
+      
+      <SaveFolderToast 
+        agentId={Number(agent.id)} 
+        isOpen={showToast} 
+        onClose={() => setShowToast(false)} 
+      />
     </div>
   );
 }

@@ -590,18 +590,38 @@ export async function getRecentlyViewed(userId: string): Promise<Agent[]> {
   })) as unknown as Agent[];
 }
 
-export async function getSavedToolsList(userId: string): Promise<Agent[]> {
+export async function getSavedToolsList(userId: string, folderId?: string | null): Promise<Agent[]> {
   const supabase = createClient() as any;
-  const { data } = await supabase
+  let query = supabase
     .from('saved_tools')
-    .select('agent_id, agents(*)')
+    .select('agent_id, folder_id, agents(*)')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
     
+  if (folderId !== undefined) {
+    if (folderId === null) {
+      query = query.is('folder_id', null);
+    } else {
+      query = query.eq('folder_id', folderId);
+    }
+  }
+
+  const { data } = await query;
+    
   if (!data) return [];
-  return data.map((row: Record<string, unknown>) => row.agents as AgentDB).filter(Boolean).map((a: AgentDB) => ({
-    ...a, logoUrl: a.logo_url, oneLiner: a.one_liner, reviews_count: a.reviews_count, isVerified: a.is_verified, slug: a.slug
-  })) as unknown as Agent[];
+  return data.map((row: Record<string, unknown>) => {
+    const a = row.agents as AgentDB;
+    if (!a) return null;
+    return {
+      ...a, 
+      logoUrl: a.logo_url, 
+      oneLiner: a.one_liner, 
+      reviews_count: a.reviews_count, 
+      isVerified: a.is_verified, 
+      slug: a.slug,
+      folder_id: row.folder_id // Pass the folder_id for UI state
+    };
+  }).filter(Boolean) as unknown as Agent[];
 }
 
 export async function getVendorAnalytics(userId: string) {
