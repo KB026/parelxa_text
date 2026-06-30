@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { LayoutDashboard, ListPlus, Bookmark, Star, ArrowRightLeft, User, Brain, Package } from 'lucide-react';
+import { LayoutDashboard, Bookmark, Star, ArrowRightLeft, User, Brain, Package } from 'lucide-react';
 
 export function DashboardSidebar() {
   const pathname = usePathname();
