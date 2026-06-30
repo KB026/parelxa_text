@@ -2,7 +2,7 @@
 
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bookmark, Share2, GitCompare } from 'lucide-react';
 
 interface HeroSectionProps {
@@ -12,6 +12,7 @@ interface HeroSectionProps {
   onSave?: (agentId: string | number) => Promise<boolean>;
   onCompare?: () => void;
   onShare?: () => void;
+  initialSaved?: boolean;
 }
 
 export function HeroSection({ 
@@ -20,17 +21,22 @@ export function HeroSection({
   onVisitWebsite, 
   onSave, 
   onCompare, 
-  onShare 
+  onShare,
+  initialSaved = false
 }: HeroSectionProps) {
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(initialSaved);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setIsSaved(initialSaved);
+  }, [initialSaved]);
 
   const handleSave = async () => {
     if (!onSave) return;
     setIsSaving(true);
     const success = await onSave(agent.id);
     if (success) {
-      setIsSaved(true);
+      setIsSaved(!isSaved);
     }
     setIsSaving(false);
   };
@@ -129,7 +135,7 @@ export function HeroSection({
                   opacity: isSaving ? 0.5 : 1,
                   transition: 'all 0.3s ease'
                 }}
-                title="Save to Wishlist"
+                title={isSaved ? "Saved to Wishlist" : "Save to Wishlist"}
               >
                 <Bookmark 
                   size={20} 

@@ -227,7 +227,10 @@ export function SavedToolsClient({ initialTools, initialFolders }: SavedToolsCli
           }}>
             <h2 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 16px' }}>Create New Folder</h2>
             <form onSubmit={handleCreateFolder}>
+              <label htmlFor="new-folder-name" style={{ display: 'block', fontSize: '13px', color: 'var(--text-dim)', marginBottom: '8px' }}>Folder Name</label>
               <input 
+                id="new-folder-name"
+                name="newFolderName"
                 type="text" 
                 autoFocus
                 value={newFolderName}

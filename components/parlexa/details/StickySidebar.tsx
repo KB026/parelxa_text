@@ -2,7 +2,7 @@
 
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bookmark, Share2 } from 'lucide-react';
 
 interface StickySidebarProps {
@@ -11,18 +11,23 @@ interface StickySidebarProps {
   onVisitWebsite?: () => void;
   onSave?: (agentId: string | number) => Promise<boolean>;
   onShare?: () => void;
+  initialSaved?: boolean;
 }
 
-export function StickySidebar({ agent, stats, onVisitWebsite, onSave, onShare }: StickySidebarProps) {
-  const [isSaved, setIsSaved] = useState(false);
+export function StickySidebar({ agent, stats, onVisitWebsite, onSave, onShare, initialSaved = false }: StickySidebarProps) {
+  const [isSaved, setIsSaved] = useState(initialSaved);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setIsSaved(initialSaved);
+  }, [initialSaved]);
 
   const handleSave = async () => {
     if (!onSave) return;
     setIsSaving(true);
     const success = await onSave(agent.id);
     if (success) {
-      setIsSaved(true);
+      setIsSaved(!isSaved);
     }
     setIsSaving(false);
   };

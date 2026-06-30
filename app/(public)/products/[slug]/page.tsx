@@ -19,6 +19,7 @@ import { Star } from 'lucide-react';
 import { ViewTracker } from '@/components/parlexa/details/ViewTracker';
 import { getExternalReviews } from '@/lib/api/externalReviews';
 import { ExternalReviews } from '@/components/parlexa/details/ExternalReviews';
+import { checkWishlistStatus } from '@/app/actions/wishlist';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const agent = await getAgentBySlug(params.slug);
@@ -89,6 +90,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
   };
 
   const isVendor = session?.user.id === agent.userId;
+  const isSaved = session ? await checkWishlistStatus(Number(agent.id)) : false;
 
   return (
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '100px 40px 80px' }}>
@@ -118,6 +120,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
           <HeroSection 
             agent={agent} 
             stats={stats} 
+            initialSaved={isSaved}
             onVisitWebsite={async () => {
               'use server';
               await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);
@@ -149,7 +152,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .insert({
                   user_id: user.id,
                   agent_id: agentId,
-                  folder_name: 'All Tools'
+                  folder_id: null
                 });
 
               return !error;
@@ -208,6 +211,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
           <StickySidebar 
             agent={agent} 
             stats={stats} 
+            initialSaved={isSaved}
             onVisitWebsite={async () => {
               'use server';
               await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);
@@ -239,7 +243,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .insert({
                   user_id: user.id,
                   agent_id: agentId,
-                  folder_name: 'All Tools'
+                  folder_id: null
                 });
 
               return !error;
