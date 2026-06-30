@@ -15,32 +15,37 @@ export async function POST(request: NextRequest) {
     const user = session.user;
     const body = await request.json();
     const agentId = body.agentId || body.agent_id;
+    const toolId = body.toolId || body.tool_id;
     const folderId = body.folderId || body.folder_id || null;
 
-    if (!agentId) {
-      return NextResponse.json({ error: 'Missing agentId' }, { status: 400 });
+    if (!agentId && !toolId) {
+      return NextResponse.json({ error: 'Missing agentId or toolId' }, { status: 400 });
     }
 
     // Check if already saved
-    const { data: existing } = await supabase
-      .from('saved_tools' as any)
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('agent_id', agentId)
-      .maybeSingle();
+    let query = supabase.from('saved_tools' as any).select('id').eq('user_id', user.id);
+    if (agentId) {
+      query = query.eq('agent_id', agentId);
+    } else {
+      query = query.eq('tool_id', toolId);
+    }
+    const { data: existing } = await query.maybeSingle();
 
     if (existing) {
       return NextResponse.json({ message: 'Already saved', saved: true }, { status: 200 });
     }
 
-    // Insert new saved tool
+    // Insert new saved tool supporting both agent_id and tool_id columns
+    const insertPayload: any = {
+      user_id: user.id,
+      folder_id: folderId,
+    };
+    if (agentId) insertPayload.agent_id = agentId;
+    if (toolId) insertPayload.tool_id = toolId;
+
     const { data, error } = await supabase
       .from('saved_tools' as any)
-      .insert({
-        user_id: user.id,
-        agent_id: agentId,
-        folder_id: folderId,
-      })
+      .insert(insertPayload)
       .select();
 
     if (error) {
@@ -48,7 +53,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    console.log('✅ Tool saved:', agentId);
+    console.log('✅ Tool saved:', agentId || toolId);
     return NextResponse.json({ saved: true, data }, { status: 200 });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : 'Failed to save tool';
@@ -74,6 +79,7 @@ export async function GET() {
       .select(`
         id,
         agent_id,
+        tool_id,
         folder_id,
         created_at,
         agents (
@@ -84,6 +90,15 @@ export async function GET() {
           summary,
           rating,
           category
+        ),
+        tools (
+          id,
+          name,
+          tagline,
+          description,
+          category,
+          logo_url,
+          website_url
         ),
         saved_tools_folders (
           id,
@@ -125,23 +140,27 @@ export async function DELETE(request: NextRequest) {
     const user = session.user;
     const body = await request.json();
     const agentId = body.agentId || body.agent_id;
+    const toolId = body.toolId || body.tool_id;
 
-    if (!agentId) {
-      return NextResponse.json({ error: 'Missing agentId' }, { status: 400 });
+    if (!agentId && !toolId) {
+      return NextResponse.json({ error: 'Missing agentId or toolId' }, { status: 400 });
     }
 
-    const { error } = await supabase
-      .from('saved_tools' as any)
-      .delete()
-      .eq('user_id', user.id)
-      .eq('agent_id', agentId);
+    let query = supabase.from('saved_tools' as any).delete().eq('user_id', user.id);
+    if (agentId) {
+      query = query.eq('agent_id', agentId);
+    } else {
+      query = query.eq('tool_id', toolId);
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error('Supabase delete error:', error.message);
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    console.log('✅ Tool removed:', agentId);
+    console.log('✅ Tool removed:', agentId || toolId);
     return NextResponse.json({ deleted: true }, { status: 200 });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : 'Failed to remove tool';
@@ -163,17 +182,21 @@ export async function PATCH(request: NextRequest) {
     const user = session.user;
     const body = await request.json();
     const agentId = body.agentId || body.agent_id;
+    const toolId = body.toolId || body.tool_id;
     const folderId = body.folderId || body.folder_id || null;
 
-    if (!agentId) {
-      return NextResponse.json({ error: 'Missing agentId' }, { status: 400 });
+    if (!agentId && !toolId) {
+      return NextResponse.json({ error: 'Missing agentId or toolId' }, { status: 400 });
     }
 
-    const { error } = await supabase
-      .from('saved_tools' as any)
-      .update({ folder_id: folderId })
-      .eq('user_id', user.id)
-      .eq('agent_id', agentId);
+    let query = supabase.from('saved_tools' as any).update({ folder_id: folderId }).eq('user_id', user.id);
+    if (agentId) {
+      query = query.eq('agent_id', agentId);
+    } else {
+      query = query.eq('tool_id', toolId);
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error('Supabase update error:', error.message);

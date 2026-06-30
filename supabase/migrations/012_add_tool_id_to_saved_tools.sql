@@ -1,0 +1,1 @@
+ALTER TABLE public.saved_tools ADD COLUMN IF NOT EXISTS tool_id TEXT REFERENCES public.tools(id) ON DELETE CASCADE;
