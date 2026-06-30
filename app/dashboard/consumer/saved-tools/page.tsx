@@ -30,14 +30,14 @@ export default function SavedToolsPage() {
         
         // Map from saved_tools API response format to Agent cards
         const mappedTools = (data.savedTools || []).map((t: any) => {
-          const raw = t.agents || t.tools;
+          const raw = t.agents;
           if (!raw) return null;
           return {
             id: raw.id,
             name: raw.name,
             slug: raw.slug || raw.id,
-            logoUrl: raw.logo_url || raw.logoUrl,
-            summary: raw.summary || raw.tagline || raw.description,
+            logoUrl: raw.logo_url,
+            summary: raw.summary,
             rating: raw.rating || 0,
             category: raw.category,
             folder_id: t.folder_id,

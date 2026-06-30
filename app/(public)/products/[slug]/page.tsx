@@ -142,7 +142,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .from('saved_tools' as any)
                 .select('id')
                 .eq('user_id', user.id)
-                .eq('agent_id', agentId)
+                .eq('tool_id', Number(agentId))
                 .maybeSingle();
 
               if (existing) return true;
@@ -151,7 +151,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .from('saved_tools' as any)
                 .insert({
                   user_id: user.id,
-                  agent_id: agentId,
+                  tool_id: Number(agentId),
                   folder_id: null
                 });
 
@@ -233,7 +233,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .from('saved_tools' as any)
                 .select('id')
                 .eq('user_id', user.id)
-                .eq('agent_id', agentId)
+                .eq('tool_id', Number(agentId))
                 .maybeSingle();
 
               if (existing) return true;
@@ -242,7 +242,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .from('saved_tools' as any)
                 .insert({
                   user_id: user.id,
-                  agent_id: agentId,
+                  tool_id: Number(agentId),
                   folder_id: null
                 });
 
