@@ -8,13 +8,13 @@ export function VendorSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'Overview', href: '/vendor', icon: <LayoutDashboard size={18} /> },
-    { label: 'My Listing', href: '/vendor/listings', icon: <FileText size={18} /> },
-    { label: 'Customer Reviews', href: '/vendor/reviews', icon: <Star size={18} /> },
-    { label: 'Deep Analytics', href: '/vendor/analytics', icon: <FileText size={18} /> },
-    { label: 'Verification', href: '/vendor/verification', icon: <Shield size={18} /> },
-    { label: 'Billing & Plan', href: '/vendor/billing', icon: <CreditCard size={18} /> },
-    { label: 'Settings', href: '/vendor/settings', icon: <Settings size={18} /> },
+    { label: 'Overview', href: '/dashboard/vendor', icon: <LayoutDashboard size={18} /> },
+    { label: 'My Listing', href: '/dashboard/vendor/listings', icon: <FileText size={18} /> },
+    { label: 'Customer Reviews', href: '/dashboard/vendor/reviews', icon: <Star size={18} /> },
+    { label: 'Deep Analytics', href: '/dashboard/vendor/analytics', icon: <FileText size={18} /> },
+    { label: 'Verification', href: '/dashboard/vendor/verification', icon: <Shield size={18} /> },
+    { label: 'Billing & Plan', href: '/dashboard/vendor/billing', icon: <CreditCard size={18} /> },
+    { label: 'Settings', href: '/dashboard/vendor/settings', icon: <Settings size={18} /> },
   ];
 
   return (

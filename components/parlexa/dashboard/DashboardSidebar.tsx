@@ -9,13 +9,12 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'Overview', href: '/dashboard', icon: <LayoutDashboard size={18} /> },
-    { label: 'My Listings', href: '/vendor/listings', icon: <ListPlus size={18} /> },
-    { label: 'Saved Tools', href: '/dashboard/saved', icon: <Bookmark size={18} /> },
-    { label: 'My Reviews', href: '/dashboard/reviews', icon: <Star size={18} /> },
-    { label: 'Compare History', href: '/dashboard/history', icon: <ArrowRightLeft size={18} /> },
-    { label: 'Profile Settings', href: '/dashboard/settings', icon: <User size={18} /> },
-    { label: 'AI Preferences', href: '/dashboard/preferences', icon: <Brain size={18} /> },
+    { label: 'Overview', href: '/dashboard/consumer', icon: <LayoutDashboard size={18} /> },
+    { label: 'Saved Tools', href: '/dashboard/consumer/saved', icon: <Bookmark size={18} /> },
+    { label: 'My Reviews', href: '/dashboard/consumer/reviews', icon: <Star size={18} /> },
+    { label: 'Compare History', href: '/dashboard/consumer/history', icon: <ArrowRightLeft size={18} /> },
+    { label: 'Profile Settings', href: '/dashboard/consumer/settings', icon: <User size={18} /> },
+    { label: 'AI Preferences', href: '/dashboard/consumer/preferences', icon: <Brain size={18} /> },
   ];
 
   return (

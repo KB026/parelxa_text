@@ -10,15 +10,17 @@ export default function DashboardRouter() {
   useEffect(() => {
     if (loading) return;
 
+    const currentQueryString = window.location.search;
+
     if (!role) {
-      router.push('/');
+      router.push('/' + currentQueryString);
       return;
     }
 
     if (role === 'vendor') {
-      router.push('/dashboard/vendor');
+      router.push('/dashboard/vendor' + currentQueryString);
     } else if (role === 'consumer' || role === 'admin') {
-      router.push('/dashboard/consumer');
+      router.push('/dashboard/consumer' + currentQueryString);
     }
   }, [role, loading, router]);
 
