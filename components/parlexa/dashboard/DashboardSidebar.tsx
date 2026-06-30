@@ -10,7 +10,7 @@ export function DashboardSidebar() {
 
   const navItems = [
     { label: 'Overview', href: '/dashboard/consumer', icon: <LayoutDashboard size={18} /> },
-    { label: 'Saved Tools', href: '/dashboard/consumer/saved', icon: <Bookmark size={18} /> },
+    { label: 'Saved Tools', href: '/dashboard/consumer/saved-tools', icon: <Bookmark size={18} /> },
     { label: 'My Reviews', href: '/dashboard/consumer/reviews', icon: <Star size={18} /> },
     { label: 'Compare History', href: '/dashboard/consumer/history', icon: <ArrowRightLeft size={18} /> },
     { label: 'Profile Settings', href: '/dashboard/consumer/settings', icon: <User size={18} /> },
