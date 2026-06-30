@@ -1,21 +1,18 @@
 'use client';
-import { useState } from 'react';
+
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Bookmark, ArrowRightLeft, Share2, Star } from 'lucide-react';
-import { toggleWishlist } from '@/app/actions/wishlist';
+import { Star, Share2, ArrowRightLeft, CheckCircle } from 'lucide-react';
+import { SaveToWishlistButton } from './SaveToWishlistButton';
 import { useCompare } from '@/context/CompareContext';
-import { SaveFolderToast } from './SaveFolderToast';
 
 interface HeroSectionProps {
   agent: Agent;
   stats: ReviewStats | null;
-  initialSaved?: boolean;
   onVisitWebsite?: () => void;
-  onSave?: () => void;
   onCompare?: () => void;
   onShare?: () => void;
 }
@@ -23,15 +20,10 @@ interface HeroSectionProps {
 export function HeroSection({ 
   agent, 
   stats, 
-  initialSaved = false,
   onVisitWebsite, 
-  onSave, 
   onCompare, 
   onShare 
 }: HeroSectionProps) {
-  const [saved, setSaved] = useState(initialSaved);
-  const [saving, setSaving] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const { selectedIds, toggleCompare } = useCompare();
   const isInCompare = selectedIds.includes(agent.id);
 
@@ -53,18 +45,6 @@ export function HeroSection({
     }
   };
 
-  const handleSave = async () => {
-    if (onSave) return onSave();
-    setSaving(true);
-    const result = await toggleWishlist(Number(agent.id));
-    if (result.error) {
-      alert(result.error);
-    } else {
-      setSaved(result.isSaved || false);
-      if (result.isSaved) setShowToast(true);
-    }
-    setSaving(false);
-  };
 
   return (
     <section className="mb-12">
@@ -130,16 +110,7 @@ export function HeroSection({
               Visit Website
             </Button>
             <div className="flex gap-3">
-              <Button 
-                variant="outline"
-                size="icon"
-                disabled={saving}
-                className={`w-12 h-12 rounded-xl ${saved ? 'bg-cyan-500 text-black border-cyan-500 hover:bg-cyan-600 hover:text-black' : 'bg-slate-900 border-white/10 text-white hover:bg-slate-800'} ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={handleSave}
-                title="Save to Wishlist"
-              >
-                <Bookmark className={`w-5 h-5 ${saved ? 'fill-current' : ''}`} />
-              </Button>
+              <SaveToWishlistButton agentId={agent.id.toString()} />
               <Button 
                 variant="outline"
                 size="icon"
@@ -174,12 +145,6 @@ export function HeroSection({
           ))}
         </ul>
       </div>
-
-      <SaveFolderToast 
-        agentId={Number(agent.id)} 
-        isOpen={showToast} 
-        onClose={() => setShowToast(false)} 
-      />
     </section>
   );
 }

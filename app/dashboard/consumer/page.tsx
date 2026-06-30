@@ -1,95 +1,165 @@
-import { getUserStats, getRecentlyViewed } from '@/lib/api';
-import { AgentCard } from '@/components/parlexa/AgentCard';
-import { createClient } from '@/lib/supabase/server';
-import { Bookmark, Star, ArrowRightLeft } from 'lucide-react';
+'use client';
+import { useEffect, useState } from 'react';
+import { useUserRole } from '@/lib/auth/useUserRole';
+import { Heart, BarChart3, MessageSquare, GitCompare } from 'lucide-react';
+import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-
-interface PageProps {
-  searchParams: { auth_err?: string };
+interface SavedTool {
+  id: string;
+  agent_id: string;
+  folder_name: string;
+  agents: {
+    id: string;
+    name: string;
+    summary: string;
+    rating: number;
+    slug: string;
+    logo_url: string;
+  };
 }
 
-export default async function CustomerDashboard({ searchParams }: PageProps) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return <div>Please log in to view your dashboard.</div>;
-  }
+export default function ConsumerDashboard() {
+  const { role, loading } = useUserRole();
+  const [savedTools, setSavedTools] = useState<SavedTool[]>([]);
+  const [folders, setFolders] = useState<string[]>(['All Tools']);
+  const [selectedFolder, setSelectedFolder] = useState('All Tools');
 
-  const userStats = await getUserStats(user.id);
-  const recentAgents = await getRecentlyViewed(user.id);
-  
-  const stats = [
-    { label: 'Tools Saved', value: userStats.saved.toString(), icon: <Bookmark size={24} className="text-cyan-400" /> },
-    { label: 'Reviews Written', value: userStats.reviews.toString(), icon: <Star size={24} className="text-orange-400" /> },
-    { label: 'Comparisons Done', value: userStats.compares.toString(), icon: <ArrowRightLeft size={24} className="text-emerald-400" /> },
-  ];
+  useEffect(() => {
+    if (role === 'consumer' || role === 'admin') {
+      fetchSavedTools();
+    }
+  }, [role]);
+
+  const fetchSavedTools = async () => {
+    try {
+      const res = await fetch('/api/saved-tools');
+      if (res.ok) {
+        const { savedTools } = await res.json();
+        setSavedTools(savedTools || []);
+        
+        // Extract unique folders
+        const uniqueFolders = ['All Tools', ...Array.from(new Set((savedTools || []).map((t: SavedTool) => t.folder_name)))];
+        setFolders(uniqueFolders as string[]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch saved tools:', err);
+    }
+  };
+
+  const filteredTools = selectedFolder === 'All Tools' 
+    ? savedTools 
+    : savedTools.filter(t => t.folder_name === selectedFolder);
+
+  if (loading) return <div className="p-8">Loading...</div>;
+  if (role !== 'consumer' && role !== 'admin') return <div className="p-8">Access denied</div>;
 
   return (
-    <section>
-      {searchParams.auth_err === 'vendor_required' && (
-         <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl p-5 mb-8 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-            <div>
-               <h4 className="text-sky-400 font-semibold m-0 flex items-center gap-2">
-                 <Star size={18} /> Vendor Access Required
-               </h4>
-               <p className="text-[15px] text-slate-300 m-0 mt-1.5">You need a Vendor account to list your AI tools. Upgrade your account for free to get started.</p>
-            </div>
-            <form action={async () => {
-              'use server';
-              const { upgradeToVendor } = await import('@/app/actions/vendor');
-              await upgradeToVendor();
-            }}>
-               <button type="submit" className="bg-sky-500 hover:bg-sky-400 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap shadow-lg shadow-sky-500/20 hover:-translate-y-0.5">
-                 Upgrade to Vendor
-               </button>
-            </form>
-         </div>
-      )}
-      <div style={{ 
-        background: 'linear-gradient(135deg, var(--bg-card) 0%, rgba(6,182,212,0.08) 100%)', 
-        border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '40px', marginBottom: '48px',
-        position: 'relative', overflow: 'hidden'
-      }}>
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
-            Welcome back, {user?.user_metadata?.full_name?.split(' ')[0] || 'Explorer'}!
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '16px', margin: 0 }}>
-            Track your AI evaluations and manage your shortlisted tools in one place.
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-900 pt-28 pb-16">
+      <div className="max-w-6xl mx-auto px-4">
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '56px' }}>
-        {stats.map(stat => (
-          <div key={stat.label} style={{ 
-            background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', 
-            borderRadius: '20px', padding: '24px', display: 'flex', alignItems: 'center', gap: '20px'
-          }}>
-            <div style={{ background: 'rgba(255,255,255,0.03)', width: '56px', height: '56px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {stat.icon}
-            </div>
-            <div>
-              <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{stat.label}</div>
-              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-white)' }}>{stat.value}</div>
-            </div>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-white mb-2">Your Dashboard</h1>
+          <p className="text-gray-400">Manage your saved tools and discover new solutions</p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
+            <Heart className="w-6 h-6 text-red-400 mb-2" />
+            <div className="text-2xl font-bold text-white">{savedTools.length}</div>
+            <div className="text-sm text-gray-400">Saved Tools</div>
           </div>
-        ))}
-      </div>
+          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
+            <BarChart3 className="w-6 h-6 text-blue-400 mb-2" />
+            <div className="text-2xl font-bold text-white">{folders.length}</div>
+            <div className="text-sm text-gray-400">Folders</div>
+          </div>
+          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
+            <MessageSquare className="w-6 h-6 text-purple-400 mb-2" />
+            <div className="text-2xl font-bold text-white">0</div>
+            <div className="text-sm text-gray-400">My Reviews</div>
+          </div>
+          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
+            <GitCompare className="w-6 h-6 text-green-400 mb-2" />
+            <div className="text-2xl font-bold text-white">0</div>
+            <div className="text-sm text-gray-400">Comparisons</div>
+          </div>
+        </div>
 
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '22px', fontWeight: 700, margin: 0 }}>Recently Viewed Tools</h3>
-          <button style={{ background: 'none', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>Clear History</button>
+        {/* Folders + Saved Tools */}
+        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Saved Tools</h2>
+
+          {/* Folder tabs */}
+          <div className="flex gap-2 mb-6 border-b border-gray-700 pb-4">
+            {folders.map(folder => (
+              <button
+                key={folder}
+                onClick={() => setSelectedFolder(folder)}
+                className={`px-4 py-2 rounded-lg transition ${
+                  selectedFolder === folder
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                }`}
+              >
+                {folder} ({folder === 'All Tools' ? savedTools.length : savedTools.filter(t => t.folder_name === folder).length})
+              </button>
+            ))}
+          </div>
+
+          {/* Tools grid */}
+          {filteredTools.length === 0 ? (
+            <div className="text-center py-12">
+              <Heart className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400">No tools saved yet</p>
+              <Link href="/products">
+                <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">
+                  Explore Tools
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredTools.map(saved => (
+                <div
+                  key={saved.id}
+                  className="bg-gray-700/50 border border-gray-600 rounded-lg p-4 hover:border-blue-500 transition"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-bold text-white">{saved.agents?.name}</h3>
+                      <p className="text-xs text-gray-400">{saved.folder_name}</p>
+                    </div>
+                    <div className="text-yellow-400 font-bold">{saved.agents?.rating?.toFixed(1) || '0.0'}</div>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">{saved.agents?.summary}</p>
+                  <div className="flex gap-2">
+                    <Link href={`/products/${saved.agents?.slug}`}>
+                      <button className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm font-semibold">
+                        View
+                      </button>
+                    </Link>
+                    <button 
+                      onClick={async () => {
+                        await fetch('/api/saved-tools', {
+                          method: 'DELETE',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ agent_id: saved.agent_id })
+                        });
+                        fetchSavedTools();
+                      }}
+                      className="px-3 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 rounded text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="agents-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
-          {recentAgents.map(agent => (
-            <AgentCard key={agent.id} agent={agent} />
-          ))}
-        </div>
+
       </div>
-    </section>
+    </div>
   );
 }

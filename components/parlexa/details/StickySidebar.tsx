@@ -1,26 +1,19 @@
 'use client';
-import { useState } from 'react';
+
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
-import { toggleWishlist } from '@/app/actions/wishlist';
-import { Bookmark } from 'lucide-react';
 
 interface StickySidebarProps {
   agent: Agent;
   stats: ReviewStats | null;
-  initialSaved?: boolean;
   onVisitWebsite?: () => void;
-  onSave?: () => void;
   onShare?: () => void;
 }
 
-import { SaveFolderToast } from './SaveFolderToast';
 
-export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsite, onSave, onShare }: StickySidebarProps) {
-  const [saved, setSaved] = useState(initialSaved);
-  const [saving, setSaving] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+import { SaveToWishlistButton } from './SaveToWishlistButton';
 
+export function StickySidebar({ agent, stats, onVisitWebsite, onShare }: StickySidebarProps) {
   const handleShare = async () => {
     if (onShare) return onShare();
     try {
@@ -39,18 +32,6 @@ export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsi
     }
   };
 
-  const handleSave = async () => {
-    if (onSave) return onSave();
-    setSaving(true);
-    const result = await toggleWishlist(Number(agent.id));
-    if (result.error) {
-      alert(result.error);
-    } else {
-      setSaved(result.isSaved || false);
-      if (result.isSaved) setShowToast(true);
-    }
-    setSaving(false);
-  };
 
   return (
     <div style={{ position: 'sticky', top: '100px', alignSelf: 'start' }}>
@@ -92,21 +73,7 @@ export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsi
           </a>
           
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button 
-              onClick={handleSave}
-              disabled={saving}
-              title="Save to Wishlist"
-              style={{ 
-                flex: 1, padding: '12px', fontSize: '14px', borderRadius: '12px',
-                background: saved ? 'var(--cyan)' : 'transparent', border: '1px solid var(--border-subtle)',
-                color: saved ? 'black' : 'var(--text-white)', fontWeight: 600,
-                cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-              }}
-            >
-              <Bookmark size={18} fill={saved ? 'currentColor' : 'none'} />
-              {saving ? '...' : (saved ? 'Saved' : 'Wishlist')}
-            </button>
+            <SaveToWishlistButton agentId={agent.id.toString()} />
             <button 
               onClick={handleShare}
               style={{ 
@@ -130,12 +97,6 @@ export function StickySidebar({ agent, stats, initialSaved = false, onVisitWebsi
           </div>
         </div>
       </div>
-      
-      <SaveFolderToast 
-        agentId={Number(agent.id)} 
-        isOpen={showToast} 
-        onClose={() => setShowToast(false)} 
-      />
     </div>
   );
 }
