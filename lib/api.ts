@@ -594,7 +594,7 @@ export async function getSavedToolsList(userId: string, folderId?: string | null
   const supabase = createClient() as any;
   let query = supabase
     .from('saved_tools')
-    .select('agent_id, folder_id, agents(*)')
+    .select('tool_id, folder_id, agents!fk_saved_tools_agent_id(*)')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
     
@@ -631,11 +631,11 @@ export async function getVendorAnalytics(userId: string) {
   
   const agentIds = agents.map((a: any) => a.id);
   
-  // âœ… FIXED: Query for both 'click' and 'cta_click' for backward compatibility during migration
+  // ✅ FIXED: Query for both 'click' and 'cta_click' for backward compatibility during migration
   const [{ count: viewsCount }, clicksData, { count: savesCount }] = await Promise.all([
     supabase.from('agent_interactions').select('*', { count: 'exact', head: true }).in('agent_id', agentIds).eq('action_type', 'view'),
     supabase.from('agent_interactions').select('*', { count: 'exact', head: true }).in('agent_id', agentIds).or('action_type.eq.click,action_type.eq.cta_click'),
-    supabase.from('saved_tools').select('*', { count: 'exact', head: true }).in('agent_id', agentIds)
+    supabase.from('saved_tools').select('*', { count: 'exact', head: true }).in('tool_id', agentIds)
   ]);
   
   return {

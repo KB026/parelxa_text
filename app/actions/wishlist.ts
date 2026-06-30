@@ -19,7 +19,7 @@ export async function toggleWishlist(agentId: number, folderId?: string | null) 
     .from('saved_tools' as any)
     .select('id')
     .eq('user_id', userId)
-    .eq('agent_id', agentId)
+    .eq('tool_id', agentId)
     .single()) as any;
 
   if (existing) {
@@ -38,7 +38,7 @@ export async function toggleWishlist(agentId: number, folderId?: string | null) 
     // Add
     const { error } = await supabase
       .from('saved_tools' as any)
-      .insert({ user_id: userId, agent_id: agentId, folder_id: folderId || null });
+      .insert({ user_id: userId, tool_id: agentId, folder_id: folderId || null });
 
     if (error) return { error: 'Failed to save tool' };
     
@@ -58,7 +58,7 @@ export async function checkWishlistStatus(agentId: number): Promise<boolean> {
     .from('saved_tools' as any)
     .select('id')
     .eq('user_id', session.user.id)
-    .eq('agent_id', agentId)
+    .eq('tool_id', agentId)
     .maybeSingle();
 
   return !!data;
@@ -107,7 +107,7 @@ export async function moveToolToFolder(agentId: number, folderId: string | null)
     .from('saved_tools' as any)
     .update({ folder_id: folderId })
     .eq('user_id', session.user.id)
-    .eq('agent_id', agentId);
+    .eq('tool_id', agentId);
 
   if (error) return { error: error.message };
   

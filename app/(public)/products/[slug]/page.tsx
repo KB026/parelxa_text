@@ -145,7 +145,13 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .eq('tool_id', Number(agentId))
                 .maybeSingle();
 
-              if (existing) return true;
+              if (existing) {
+                const { error } = await supabase
+                  .from('saved_tools' as any)
+                  .delete()
+                  .eq('id', (existing as any).id);
+                return !error;
+              }
 
               const { error } = await supabase
                 .from('saved_tools' as any)
@@ -236,7 +242,13 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                 .eq('tool_id', Number(agentId))
                 .maybeSingle();
 
-              if (existing) return true;
+              if (existing) {
+                const { error } = await supabase
+                  .from('saved_tools' as any)
+                  .delete()
+                  .eq('id', (existing as any).id);
+                return !error;
+              }
 
               const { error } = await supabase
                 .from('saved_tools' as any)

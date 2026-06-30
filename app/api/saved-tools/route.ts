@@ -68,7 +68,7 @@ export async function GET() {
         tool_id,
         folder_id,
         created_at,
-        agents (
+        agents!fk_saved_tools_agent_id (
           id,
           name,
           slug,

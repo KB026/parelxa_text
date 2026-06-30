@@ -59,12 +59,14 @@ export async function triggerSavedToolVerificationAlert(agentId: string) {
   // 2. Find users who have this tool in their 'ai_finder_results' or some saved list
   // Note: For this MVP, we'll look at the user preferences or a 'saved_tools' table if it exists.
   // Assuming a table 'saved_tools' (Common in marketplaces)
-  const { data: saves } = await supabase
-    .from('saved_tools')
+  const { data: savesRaw } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .from('saved_tools' as any)
     .select('user_id, profiles(email, notification_prefs)')
-    .eq('agent_id', Number(agentId));
+    .eq('tool_id', Number(agentId));
 
-  if (!saves) return;
+  if (!savesRaw) return;
+  const saves = savesRaw as unknown as { user_id: string; profiles: unknown }[];
 
   for (const save of saves) {
     const profile = save.profiles as unknown as { email: string; notification_prefs?: Record<string, boolean | undefined> } | null;
