@@ -6,13 +6,13 @@ import { revalidatePath } from 'next/cache';
 
 export async function toggleWishlist(agentId: number, folderId?: string | null) {
   const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (!user) {
     return { error: 'You must be logged in to save tools.' };
   }
 
-  const userId = session.user.id;
+  const userId = user.id;
 
   // Check if it exists in saved_tools
   const { data: existing } = (await supabase
@@ -50,14 +50,14 @@ export async function toggleWishlist(agentId: number, folderId?: string | null) 
 
 export async function checkWishlistStatus(agentId: number): Promise<boolean> {
   const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user) return false;
+  if (!user) return false;
 
   const { data } = await supabase
     .from('saved_tools' as any)
     .select('id')
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .eq('tool_id', agentId)
     .maybeSingle();
 
@@ -66,13 +66,13 @@ export async function checkWishlistStatus(agentId: number): Promise<boolean> {
 
 export async function createFolder(name: string): Promise<{ error?: string; folder?: { id: string; name: string } }> {
   const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user) return { error: 'Unauthorized' };
+  if (!user) return { error: 'Unauthorized' };
 
   const { data, error } = await supabase
     .from('saved_tools_folders' as any)
-    .insert({ user_id: session.user.id, name })
+    .insert({ user_id: user.id, name })
     .select()
     .single();
 
@@ -84,14 +84,14 @@ export async function createFolder(name: string): Promise<{ error?: string; fold
 
 export async function getFolders(): Promise<{ id: string; name: string }[]> {
   const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user) return [];
+  if (!user) return [];
 
   const { data } = await supabase
     .from('saved_tools_folders' as any)
     .select('*')
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: true });
 
   return (data as unknown as { id: string; name: string }[]) || [];
@@ -99,14 +99,14 @@ export async function getFolders(): Promise<{ id: string; name: string }[]> {
 
 export async function moveToolToFolder(agentId: number, folderId: string | null) {
   const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user) return { error: 'Unauthorized' };
+  if (!user) return { error: 'Unauthorized' };
 
   const { error } = await supabase
     .from('saved_tools' as any)
     .update({ folder_id: folderId })
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .eq('tool_id', agentId);
 
   if (error) return { error: error.message };

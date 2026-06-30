@@ -6,13 +6,11 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const user = session.user;
     const body = await request.json();
     const toolId = Number(body.agentId || body.agent_id || body.toolId || body.tool_id);
     const folderId = body.folderId || body.folder_id || null;
@@ -53,13 +51,11 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const user = session.user;
 
     const { data: savedTools, error } = await supabase
       .from('saved_tools' as any)
@@ -101,13 +97,11 @@ export async function GET() {
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const user = session.user;
     const body = await request.json();
     const toolId = Number(body.agentId || body.agent_id || body.toolId || body.tool_id);
 
@@ -136,13 +130,11 @@ export async function DELETE(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const user = session.user;
     const body = await request.json();
     const toolId = Number(body.agentId || body.agent_id || body.toolId || body.tool_id);
     const folderId = body.folderId || body.folder_id || null;

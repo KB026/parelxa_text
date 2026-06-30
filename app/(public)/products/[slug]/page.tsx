@@ -50,12 +50,12 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
   }
 
   const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
   
   const [stats, initialReviews, userReview, similarTools, externalReviews] = await Promise.all([
     getReviewStats(Number(agent.id)),
     getReviews(Number(agent.id), 'helpful', 1, 5),
-    session ? getUserReview(Number(agent.id), session.user.id) : null,
+    user ? getUserReview(Number(agent.id), user.id) : null,
     getSimilarAgents(agent.category, Number(agent.id), 4),
     getExternalReviews(Number(agent.id), agent.name)
   ]);
@@ -89,8 +89,8 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
     ]
   };
 
-  const isVendor = session?.user.id === agent.userId;
-  const isSaved = session ? await checkWishlistStatus(Number(agent.id)) : false;
+  const isVendor = user?.id === agent.userId;
+  const isSaved = user ? await checkWishlistStatus(Number(agent.id)) : false;
 
   return (
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '100px 40px 80px' }}>
@@ -102,7 +102,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      <ViewTracker agentId={Number(agent.id)} userId={session?.user?.id} />
+      <ViewTracker agentId={Number(agent.id)} userId={user?.id} />
 
       {/* Back Link */}
       <Link href="/products" style={{ 
@@ -123,13 +123,14 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
             initialSaved={isSaved}
             onVisitWebsite={async () => {
               'use server';
-              await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);
               const supabase = createClient();
+              const { data: { user: currentUser } } = await supabase.auth.getUser();
+              await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
               await supabase
                 .from('lead_clicks' as any)
                 .insert({
                   agent_id: Number(agent.id),
-                  user_id: session?.user?.id || null,
+                  user_id: currentUser?.id || null,
                 });
             }} 
           />
@@ -170,7 +171,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
               stats={stats}
               userReview={userReview}
               initialReviews={initialReviews}
-              isLoggedIn={!!session}
+              isLoggedIn={!!user}
               isVendor={isVendor}
             />
 
@@ -189,13 +190,14 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
             initialSaved={isSaved}
             onVisitWebsite={async () => {
               'use server';
-              await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);
               const supabase = createClient();
+              const { data: { user: currentUser } } = await supabase.auth.getUser();
+              await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
               await supabase
                 .from('lead_clicks' as any)
                 .insert({
                   agent_id: Number(agent.id),
-                  user_id: session?.user?.id || null,
+                  user_id: currentUser?.id || null,
                 });
             }} 
           />
