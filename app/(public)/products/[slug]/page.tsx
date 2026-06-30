@@ -132,37 +132,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                   user_id: session?.user?.id || null,
                 });
             }} 
-            onSave={async (agentId) => {
-              'use server';
-              const supabase = createClient();
-              const { data: { user } } = await supabase.auth.getUser();
-              if (!user) return false;
-
-              const { data: existing } = await supabase
-                .from('saved_tools' as any)
-                .select('id')
-                .eq('user_id', user.id)
-                .eq('tool_id', Number(agentId))
-                .maybeSingle();
-
-              if (existing) {
-                const { error } = await supabase
-                  .from('saved_tools' as any)
-                  .delete()
-                  .eq('id', (existing as any).id);
-                return !error;
-              }
-
-              const { error } = await supabase
-                .from('saved_tools' as any)
-                .insert({
-                  user_id: user.id,
-                  tool_id: Number(agentId),
-                  folder_id: null
-                });
-
-              return !error;
-            }}
           />
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '80px' }}>
@@ -229,37 +198,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
                   user_id: session?.user?.id || null,
                 });
             }} 
-            onSave={async (agentId) => {
-              'use server';
-              const supabase = createClient();
-              const { data: { user } } = await supabase.auth.getUser();
-              if (!user) return false;
-
-              const { data: existing } = await supabase
-                .from('saved_tools' as any)
-                .select('id')
-                .eq('user_id', user.id)
-                .eq('tool_id', Number(agentId))
-                .maybeSingle();
-
-              if (existing) {
-                const { error } = await supabase
-                  .from('saved_tools' as any)
-                  .delete()
-                  .eq('id', (existing as any).id);
-                return !error;
-              }
-
-              const { error } = await supabase
-                .from('saved_tools' as any)
-                .insert({
-                  user_id: user.id,
-                  tool_id: Number(agentId),
-                  folder_id: null
-                });
-
-              return !error;
-            }}
           />
         </aside>
       </div>

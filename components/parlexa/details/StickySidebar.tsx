@@ -4,32 +4,44 @@ import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
 import { useState, useEffect } from 'react';
 import { Bookmark, Share2 } from 'lucide-react';
+import { toggleWishlist } from '@/app/actions/wishlist';
+import { SaveFolderToast } from './SaveFolderToast';
 
 interface StickySidebarProps {
   agent: Agent;
   stats: ReviewStats | null;
   onVisitWebsite?: () => void;
-  onSave?: (agentId: string | number) => Promise<boolean>;
   onShare?: () => void;
   initialSaved?: boolean;
 }
 
-export function StickySidebar({ agent, stats, onVisitWebsite, onSave, onShare, initialSaved = false }: StickySidebarProps) {
+export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSaved = false }: StickySidebarProps) {
   const [isSaved, setIsSaved] = useState(initialSaved);
   const [isSaving, setIsSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     setIsSaved(initialSaved);
   }, [initialSaved]);
 
   const handleSave = async () => {
-    if (!onSave) return;
     setIsSaving(true);
-    const success = await onSave(agent.id);
-    if (success) {
-      setIsSaved(!isSaved);
+    try {
+      const result = await toggleWishlist(Number(agent.id));
+      if (result.error) {
+        window.dispatchEvent(new CustomEvent('open-auth', { detail: { view: 'signin' } }));
+      } else {
+        const nextSaved = result.isSaved || false;
+        setIsSaved(nextSaved);
+        if (nextSaved) {
+          setShowToast(true);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   const handleShare = async () => {
@@ -140,6 +152,11 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onSave, onShare, i
           </div>
         </div>
       </div>
+      <SaveFolderToast 
+        agentId={Number(agent.id)} 
+        isOpen={showToast} 
+        onClose={() => setShowToast(false)} 
+      />
     </div>
   );
 }
