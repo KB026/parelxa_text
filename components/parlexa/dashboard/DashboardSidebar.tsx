@@ -63,7 +63,7 @@ export function DashboardSidebar() {
 
         <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
           <Link 
-            href="/dashboard/orders"
+            href="/dashboard/consumer/orders"
             style={{ 
               display: 'flex', alignItems: 'center', gap: '12px',
               padding: '12px 16px', borderRadius: '12px',

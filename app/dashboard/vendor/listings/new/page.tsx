@@ -179,7 +179,7 @@ export default function NewListingPage() {
                 </div>
               </div>
             </div>
-            <Link href="/vendor/listings" className="listing-btn-next" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <Link href="/dashboard/vendor/listings" className="listing-btn-next" style={{ textDecoration: 'none', display: 'inline-block' }}>
               <ArrowLeft className="w-4 h-4 inline mr-2" /> Back to My Listings
             </Link>
           </div>
@@ -505,7 +505,7 @@ export default function NewListingPage() {
           {step > 1 ? (
             <button type="button" className="listing-btn-back" onClick={() => setStep(step - 1)}><ArrowLeft className="w-4 h-4 inline mr-1" /> Back</button>
           ) : (
-            <Link href="/vendor/listings" className="listing-btn-back" style={{ textDecoration: 'none' }}>Cancel</Link>
+            <Link href="/dashboard/vendor/listings" className="listing-btn-back" style={{ textDecoration: 'none' }}>Cancel</Link>
           )}
 
           {step < 5 ? (

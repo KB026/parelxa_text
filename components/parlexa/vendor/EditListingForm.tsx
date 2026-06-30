@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { updateListing } from '@/app/(vendor)/vendor/listings/actions';
+import { updateListing } from '@/app/dashboard/vendor/listings/actions';
 import { Agent } from '@/lib/types';
 import { CheckCircle2, Check, ArrowRight } from 'lucide-react';
 
@@ -89,7 +89,7 @@ export function EditListingForm({ agent }: { agent: Agent }) {
           <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>
             Your updates for <strong>{form.name}</strong> have been saved and sent for re-moderation.
           </p>
-          <Link href="/vendor/listings" className="listing-btn-next" style={{ textDecoration: 'none' }}>
+          <Link href="/dashboard/vendor/listings" className="listing-btn-next" style={{ textDecoration: 'none' }}>
             Back to Dashboard
           </Link>
         </div>

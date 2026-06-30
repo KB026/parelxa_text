@@ -70,7 +70,7 @@ export default function AboutPage() {
             <Link href="/products" className="btn-primary" style={{ padding: '12px 32px', fontSize: '16px', textDecoration: 'none' }}>
               Explore AI Agents
             </Link>
-            <Link href="/vendor/listings/new" style={{ 
+            <Link href="/dashboard/vendor/listings/new" style={{ 
               padding: '12px 32px', fontSize: '16px', textDecoration: 'none', 
               background: 'transparent', border: '1px solid var(--border)', 
               color: 'var(--text-white)', borderRadius: '8px', fontWeight: 600 

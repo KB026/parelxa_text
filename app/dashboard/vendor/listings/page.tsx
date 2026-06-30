@@ -181,7 +181,7 @@ export default function VendorListings() {
           <p style={{ color: 'var(--text-muted)' }}>Manage your AI tool presence and submission status.</p>
         </div>
         <Link 
-          href="/vendor/listings/new?fresh=true" 
+          href="/dashboard/vendor/listings/new?fresh=true" 
           className="btn-get-started" 
           style={{ padding: '12px 24px', textDecoration: 'none', fontSize: '14px' }}
         >
@@ -268,7 +268,7 @@ export default function VendorListings() {
                       </button>
                     )}
                     <Link 
-                      href={`/vendor/listings/${listing.id}/edit`}
+                      href={`/dashboard/vendor/listings/${listing.id}/edit`}
                       style={{ padding: '10px 18px', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'var(--text-white)', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}
                     >
                       Edit
@@ -296,7 +296,7 @@ export default function VendorListings() {
                       </span>
                     </div>
                     <Link 
-                       href={`/vendor/listings/${listing.id}/edit?resubmit=true`}
+                       href={`/dashboard/vendor/listings/${listing.id}/edit?resubmit=true`}
                        style={{ color: '#ef4444', fontSize: '13px', fontWeight: 800, textDecoration: 'underline' }}
                     >
                       Modify & Resubmit
@@ -318,7 +318,7 @@ export default function VendorListings() {
                   
                   {!listing.is_verified && isLive && (
                     <Link 
-                      href={`/vendor/listings/${listing.id}/verify`}
+                      href={`/dashboard/vendor/listings/${listing.id}/verify`}
                       style={{ color: 'var(--cyan)', fontSize: '13px', fontWeight: 700, textDecoration: 'none' }}
                     >
                       Get Verified Badge →

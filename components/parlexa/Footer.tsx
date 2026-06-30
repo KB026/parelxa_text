@@ -35,7 +35,7 @@ export async function Footer() {
           <h4 className="text-base font-semibold text-slate-100 mb-1">Resources</h4>
           <ul className="list-none flex flex-col gap-3 p-0 m-0">
             <li><Link href="/products" className="text-slate-400 text-sm hover:text-slate-200 transition-colors">All AI Agents</Link></li>
-            <li><Link href="/vendor/listings/new" className="text-slate-400 text-sm hover:text-slate-200 transition-colors">List your tool</Link></li>
+            <li><Link href="/dashboard/vendor/listings/new" className="text-slate-400 text-sm hover:text-slate-200 transition-colors">List your tool</Link></li>
             <li><Link href="/compare" className="text-slate-400 text-sm hover:text-slate-200 transition-colors">Compare Agents</Link></li>
             <li><Link href="/products" className="text-slate-400 text-sm hover:text-slate-200 transition-colors">Search Marketplace</Link></li>
             <li><Link href="/about" className="text-slate-400 text-sm hover:text-slate-200 transition-colors">About Us</Link></li>

@@ -32,7 +32,7 @@ export default function VerifyListingPage() {
 
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      <Link href="/vendor/listings" style={{ color: 'var(--cyan)', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: '24px' }}>
+      <Link href="/dashboard/vendor/listings" style={{ color: 'var(--cyan)', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: '24px' }}>
         ← Back to My Listings
       </Link>
 

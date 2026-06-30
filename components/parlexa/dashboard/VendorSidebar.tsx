@@ -62,7 +62,7 @@ export function VendorSidebar() {
 
         <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
           <Link 
-            href="/vendor/orders"
+            href="/dashboard/vendor/orders"
             style={{ 
               display: 'flex', alignItems: 'center', gap: '12px',
               padding: '12px 16px', borderRadius: '12px',

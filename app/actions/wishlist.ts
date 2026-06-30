@@ -32,7 +32,7 @@ export async function toggleWishlist(agentId: number, folderId?: string | null) 
     if (error) return { error: 'Failed to remove from saved tools' };
     
     revalidatePath('/products/[slug]', 'page');
-    revalidatePath('/dashboard/saved', 'page');
+    revalidatePath('/dashboard/consumer/saved', 'page');
     return { isSaved: false };
   } else {
     // Add
@@ -43,7 +43,7 @@ export async function toggleWishlist(agentId: number, folderId?: string | null) 
     if (error) return { error: 'Failed to save tool' };
     
     revalidatePath('/products/[slug]', 'page');
-    revalidatePath('/dashboard/saved', 'page');
+    revalidatePath('/dashboard/consumer/saved', 'page');
     return { isSaved: true };
   }
 }
@@ -78,7 +78,7 @@ export async function createFolder(name: string): Promise<{ error?: string; fold
 
   if (error) return { error: error.message };
   
-  revalidatePath('/dashboard/saved', 'page');
+  revalidatePath('/dashboard/consumer/saved', 'page');
   return { folder: data as unknown as { id: string; name: string } };
 }
 
@@ -111,6 +111,6 @@ export async function moveToolToFolder(agentId: number, folderId: string | null)
 
   if (error) return { error: error.message };
   
-  revalidatePath('/dashboard/saved', 'page');
+  revalidatePath('/dashboard/consumer/saved', 'page');
   return { success: true };
 }

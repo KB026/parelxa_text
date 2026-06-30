@@ -108,7 +108,7 @@ export default async function VendorOverview() {
             </div>
           </div>
         ) : (
-          <Link href="/vendor/billing" style={{ 
+          <Link href="/dashboard/vendor/billing" style={{ 
             padding: '12px 20px', borderRadius: '12px', background: 'linear-gradient(135deg, #fb923c 0%, #f97316 100%)',
             color: 'black', fontSize: '14px', fontWeight: 700, textDecoration: 'none', transition: 'transform 0.2s',
             display: 'inline-flex', alignItems: 'center', gap: '6px'

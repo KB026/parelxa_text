@@ -15,7 +15,7 @@ export function ListingLink({ user, children, className, style }: ListingLinkPro
     if (user.role === 'vendor' || user.role === 'admin') {
       return (
         <Link 
-          href="/vendor/listings/new?fresh=true" 
+          href="/dashboard/vendor/listings/new?fresh=true" 
           className={className} 
           style={style}
         >
@@ -27,7 +27,7 @@ export function ListingLink({ user, children, className, style }: ListingLinkPro
     // User is logged in but not a vendor. Send them to dashboard with the upgrade prompt
     return (
       <Link 
-        href="/dashboard?auth_err=vendor_required" 
+        href="/dashboard/consumer?auth_err=vendor_required" 
         className={className} 
         style={style}
       >
