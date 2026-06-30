@@ -2,18 +2,31 @@
 
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
+import { useState } from 'react';
+import { Bookmark, Share2 } from 'lucide-react';
 
 interface StickySidebarProps {
   agent: Agent;
   stats: ReviewStats | null;
   onVisitWebsite?: () => void;
+  onSave?: (agentId: string | number) => Promise<boolean>;
   onShare?: () => void;
 }
 
+export function StickySidebar({ agent, stats, onVisitWebsite, onSave, onShare }: StickySidebarProps) {
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-import { SaveToWishlistButton } from './SaveToWishlistButton';
+  const handleSave = async () => {
+    if (!onSave) return;
+    setIsSaving(true);
+    const success = await onSave(agent.id);
+    if (success) {
+      setIsSaved(true);
+    }
+    setIsSaving(false);
+  };
 
-export function StickySidebar({ agent, stats, onVisitWebsite, onShare }: StickySidebarProps) {
   const handleShare = async () => {
     if (onShare) return onShare();
     try {
@@ -31,7 +44,6 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare }: StickyS
       console.log('Error sharing:', err);
     }
   };
-
 
   return (
     <div style={{ position: 'sticky', top: '100px', alignSelf: 'start' }}>
@@ -56,33 +68,59 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare }: StickyS
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-          
           <a 
             href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => onVisitWebsite?.()}
+            className="btn-get-started"
             style={{ 
-              padding: '16px', fontSize: '16px', width: '100%', borderRadius: '12px',
-              background: 'var(--cyan)', border: 'none',
-              color: 'black', fontWeight: 700, cursor: 'pointer',
-              display: 'inline-flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none', boxSizing: 'border-box'
+              padding: '16px', fontSize: '16px', width: '100%', display: 'inline-flex', 
+              justifyContent: 'center', alignItems: 'center', textDecoration: 'none', 
+              boxSizing: 'border-box' 
             }}
           >
             Visit Website
           </a>
           
           <div style={{ display: 'flex', gap: '12px' }}>
-            <SaveToWishlistButton agentId={agent.id.toString()} />
+            {/* Bookmark Button */}
+            <button 
+              onClick={handleSave}
+              disabled={isSaving}
+              style={{ 
+                flex: 1, padding: '12px', borderRadius: '12px',
+                background: isSaved ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+                border: isSaved ? '1px solid #3b82f6' : '1px solid var(--border-subtle)',
+                color: isSaved ? '#3b82f6' : 'var(--text-white)',
+                cursor: 'pointer',
+                opacity: isSaving ? 0.5 : 1,
+                transition: 'all 0.3s ease',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+              title="Save to Wishlist"
+            >
+              <Bookmark 
+                size={20} 
+                fill={isSaved ? 'currentColor' : 'none'}
+                stroke="currentColor"
+                strokeWidth={2}
+              />
+            </button>
+
+            {/* Share Button */}
             <button 
               onClick={handleShare}
               style={{ 
-                flex: 1, padding: '12px', fontSize: '14px', borderRadius: '12px',
+                flex: 1, padding: '12px', borderRadius: '12px',
                 background: 'transparent', border: '1px solid var(--border-subtle)',
-                color: 'var(--text-white)', fontWeight: 600, cursor: 'pointer'
+                color: 'var(--text-white)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.3s ease'
               }}
+              title="Share"
             >
-              Share
+              <Share2 size={20} strokeWidth={2} />
             </button>
           </div>
         </div>

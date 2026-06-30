@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { notFound } from 'next/navigation';
 import { getAgentBySlug, getReviewStats, getReviews, getUserReview, getSimilarAgents } from '@/lib/api';
 
@@ -120,7 +121,39 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
             onVisitWebsite={async () => {
               'use server';
               await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);
+              const supabase = createClient();
+              await supabase
+                .from('lead_clicks' as any)
+                .insert({
+                  agent_id: Number(agent.id),
+                  user_id: session?.user?.id || null,
+                });
             }} 
+            onSave={async (agentId) => {
+              'use server';
+              const supabase = createClient();
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) return false;
+
+              const { data: existing } = await supabase
+                .from('saved_tools' as any)
+                .select('id')
+                .eq('user_id', user.id)
+                .eq('agent_id', agentId)
+                .maybeSingle();
+
+              if (existing) return true;
+
+              const { error } = await supabase
+                .from('saved_tools' as any)
+                .insert({
+                  user_id: user.id,
+                  agent_id: agentId,
+                  folder_name: 'All Tools'
+                });
+
+              return !error;
+            }}
           />
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '80px' }}>
@@ -178,7 +211,39 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
             onVisitWebsite={async () => {
               'use server';
               await trackInteraction(Number(agent.id), 'cta_click', session?.user?.id);
+              const supabase = createClient();
+              await supabase
+                .from('lead_clicks' as any)
+                .insert({
+                  agent_id: Number(agent.id),
+                  user_id: session?.user?.id || null,
+                });
             }} 
+            onSave={async (agentId) => {
+              'use server';
+              const supabase = createClient();
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) return false;
+
+              const { data: existing } = await supabase
+                .from('saved_tools' as any)
+                .select('id')
+                .eq('user_id', user.id)
+                .eq('agent_id', agentId)
+                .maybeSingle();
+
+              if (existing) return true;
+
+              const { error } = await supabase
+                .from('saved_tools' as any)
+                .insert({
+                  user_id: user.id,
+                  agent_id: agentId,
+                  folder_name: 'All Tools'
+                });
+
+              return !error;
+            }}
           />
         </aside>
       </div>

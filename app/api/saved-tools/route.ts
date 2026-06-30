@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-// POST: Save tool to wishlist
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const agentId = body.agentId || body.agent_id;
-
+    const folderName = body.folderName || body.folder_name;
+    
     if (!agentId) {
       return NextResponse.json({ error: 'Missing agentId' }, { status: 400 });
     }
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     // Check if already saved
     const { data: existing } = await supabase
-      .from('saved_tools')
+      .from('saved_tools' as any)
       .select('id')
       .eq('user_id', user.id)
       .eq('agent_id', agentId)
@@ -32,10 +33,11 @@ export async function POST(request: NextRequest) {
 
     // Insert new saved tool
     const { data, error } = await supabase
-      .from('saved_tools')
+      .from('saved_tools' as any)
       .insert({
         user_id: user.id,
         agent_id: agentId,
+        folder_name: folderName || 'All Tools',
       })
       .select();
 
@@ -52,7 +54,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET: Fetch user's saved tools
 export async function GET() {
   try {
     const supabase = createClient();
@@ -63,10 +64,11 @@ export async function GET() {
     }
 
     const { data: savedTools, error } = await supabase
-      .from('saved_tools')
+      .from('saved_tools' as any)
       .select(`
         id,
         agent_id,
+        folder_name,
         created_at,
         agents:agent_id (
           id,
@@ -86,6 +88,7 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
+    console.log('✅ Fetched saved tools:', savedTools?.length);
     return NextResponse.json({ savedTools }, { status: 200 });
   } catch (err) {
     console.error('❌ Fetch error:', err);
@@ -93,7 +96,6 @@ export async function GET() {
   }
 }
 
-// DELETE: Remove tool from wishlist
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
@@ -111,7 +113,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { error } = await supabase
-      .from('saved_tools')
+      .from('saved_tools' as any)
       .delete()
       .eq('user_id', user.id)
       .eq('agent_id', agentId);
@@ -126,5 +128,42 @@ export async function DELETE(request: NextRequest) {
   } catch (err) {
     console.error('❌ Delete error:', err);
     return NextResponse.json({ error: 'Failed to remove tool' }, { status: 500 });
+  }
+}
+
+// PATCH: Move tool to folder
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const agentId = body.agentId || body.agent_id;
+    const folderName = body.folderName || body.folder_name;
+
+    if (!agentId || !folderName) {
+      return NextResponse.json({ error: 'Missing agentId or folderName' }, { status: 400 });
+    }
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { error } = await supabase
+      .from('saved_tools' as any)
+      .update({ folder_name: folderName })
+      .eq('user_id', user.id)
+      .eq('agent_id', agentId);
+
+    if (error) {
+      console.error('Supabase update error:', error);
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    console.log('✅ Tool moved to folder:', folderName);
+    return NextResponse.json({ moved: true }, { status: 200 });
+  } catch (err) {
+    console.error('❌ Move error:', err);
+    return NextResponse.json({ error: 'Failed to move tool' }, { status: 500 });
   }
 }
