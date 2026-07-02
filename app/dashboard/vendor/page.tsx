@@ -46,9 +46,11 @@ export default async function VendorDashboard() {
     if (allClicks) {
       totalClicks = allClicks.length;
       allClicks.forEach(click => {
-        const clickDate = new Date(click.created_at);
         clicksPerAgent[click.agent_id] = (clicksPerAgent[click.agent_id] || 0) + 1;
         
+        if (!click.created_at) return;
+        
+        const clickDate = new Date(click.created_at);
         if (clickDate >= thirtyDaysAgo) {
           leadsThisMonth++;
         } else if (clickDate >= sixtyDaysAgo && clickDate < thirtyDaysAgo) {
