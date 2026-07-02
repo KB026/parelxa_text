@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -80,34 +81,39 @@ export async function POST(req: NextRequest) {
 
     // 2. Try to use OpenAI for intelligent reasoning
     try {
-      const context = agents?.map(a => `- ${a.name} (${a.category}): ${a.summary || a.one_liner}`).join('\n');
+      const context = agents?.map(a => `ID: ${a.id} | Name: ${a.name} | Category: ${a.category} | Description: ${a.summary || a.one_liner}`).join('\n');
 
       const prompt = `
-        You are Parlexa AI, the intelligent assistant for the Parlexa AI Agent Marketplace.
-        User Query: "${query}"
-        
-        Available Tools from our database:
-        ${context || 'No specific matches found in the direct database.'}
-        
-        TASK:
-        1. TONE: Avoid ALL technical jargon (no "multi-channel," "NLP," "operational costs," etc.). Speak like a friendly human assistant.
-        2. FORMAT: Start your response exactly with a variation of: "Yes, automating [User's Request] is very much possible, and it can drastically increase the efficiency of your business. Here are a few tools that we would recommend that you could use to get started."
-        3. RECOMMENDATIONS: Suggest 2-3 specific tools from the provided list.
-        4. NO CATEGORIES: Do not suggest categories or industries. Focus only on the tools.
-        5. CONCISENESS: Keep the entire response under 60 words.
-        
-        Format your response ONLY as a valid JSON object with no markdown formatting around it:
-        {
-          "ai_explanation": "...",
-          "recommended_ids": [id1, id2]
-        }
-      `;
+You are Parlexa AI, an intelligent assistant for the Parlexa AI Agent Marketplace.
+User Query: "${query}"
+Available Tools:
+${context || 'No specific matches found in the direct database.'}
+TASK:
+
+Determine if there is ONE tool that is a strong, near-exact match to the user's query (i.e. it directly and specifically does what they asked for, not just loosely related).
+If such an exact match exists: return it FIRST with match_type: "exact", followed by 2 more tools that are related/complementary with match_type: "related".
+If NO tool is a strong exact match: return your best 3 related tools, ALL with match_type: "related", and set exact_match_found: false in the response.
+If an exact match WAS found, set exact_match_found: true.
+Always return exactly 3 recommendations total (or fewer only if the tool list genuinely has fewer than 3 relevant options).
+Write a friendly, jargon-free explanation (ai_explanation) starting with "Yes, [rephrase of their need] is very much possible..." under 60 words.
+For EACH of the recommended tools, write a short 1-2 sentence search_description that explains HOW that specific tool helps with THIS SPECIFIC QUERY (not a generic summary — tie it back to what the user searched for).
+Return ONLY valid JSON, no markdown fences:
+{
+"ai_explanation": "...",
+"exact_match_found": true,
+"recommendations": [
+{ "id": "tool_id", "search_description": "...", "match_type": "exact" },
+{ "id": "tool_id", "search_description": "...", "match_type": "related" },
+{ "id": "tool_id", "search_description": "...", "match_type": "related" }
+]
+}
+`;
 
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
-        max_tokens: 250,
+        max_tokens: 500,
       });
 
       let text = completion.choices[0].message.content || '{}';
@@ -116,10 +122,17 @@ export async function POST(req: NextRequest) {
       const data = JSON.parse(text);
       
       // Match by ID (handling string/number conversion) or by Name as a fallback
-      const recommendedAgents = agents?.filter(a => 
-        data.recommended_ids?.some((id: string | number) => String(id) === String(a.id)) ||
-        data.recommended_ids?.some((id: string | number) => typeof id === 'string' && id.toLowerCase() === a.name.toLowerCase())
-      ) || [];
+      const recommendedAgents = data.recommendations?.map((rec: any) => {
+        const agent = agents?.find(a => String(a.id) === String(rec.id) || a.name.toLowerCase() === String(rec.id).toLowerCase());
+        if (agent) {
+          return {
+            ...agent,
+            aiDescription: rec.search_description,
+            matchType: rec.match_type
+          };
+        }
+        return null;
+      }).filter(Boolean) || [];
 
       // Log the successful AI search
       await supabase.from('search_queries').insert({
@@ -130,22 +143,33 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         explanation: data.ai_explanation,
+        exactMatchFound: data.exact_match_found || false,
         recommendations: recommendedAgents.length > 0 ? recommendedAgents : agents?.slice(0, 3) || [],
         isAIPowered: true
       });
     } catch (aiErr) {
       console.error('CRITICAL: AI Reasoning failed:', aiErr);
       
+      // Fallback search logic using keyword matching instead of raw slice
+      const searchStr = query.toLowerCase();
+      const fallbackAgents = agents?.filter(a => 
+        a.name.toLowerCase().includes(searchStr) || 
+        (a.summary && a.summary.toLowerCase().includes(searchStr)) || 
+        (a.category && a.category.toLowerCase().includes(searchStr)) ||
+        (a.one_liner && a.one_liner.toLowerCase().includes(searchStr))
+      ).slice(0, 3) || [];
+
       // Log the fallback search
       await supabase.from('search_queries').insert({
         query,
         is_ai_powered: false,
-        recommendation_count: agents?.slice(0, 3).length || 0
+        recommendation_count: fallbackAgents.length
       });
 
       return NextResponse.json({
         explanation: `Yes, finding tools for "${query}" is very much possible! Here are the best options from our marketplace to help you increase efficiency:`,
-        recommendations: agents?.slice(0, 3) || [],
+        exactMatchFound: false,
+        recommendations: fallbackAgents.map(a => ({ ...a, matchType: 'related' })),
         isAIPowered: false
       });
     }

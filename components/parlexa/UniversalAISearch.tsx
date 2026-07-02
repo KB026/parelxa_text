@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -8,6 +9,7 @@ import { Sparkles, Search, Bot, ArrowRight, Wand2 } from 'lucide-react';
 
 interface AISearchResult {
   explanation: string;
+  exactMatchFound?: boolean;
   recommendations: Agent[];
   suggestedCategories: string[];
   isAIPowered?: boolean;
@@ -120,33 +122,76 @@ export function UniversalAISearch() {
                 <p style={{ fontSize: '16px', lineHeight: 1.6, color: 'white', margin: 0 }}>{result.explanation}</p>
               </div>
 
+              {result.exactMatchFound === false && result.recommendations.length > 0 && (
+                <div style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-dim)', fontWeight: 600 }}>
+                  No exact match found — here are similar tools that might help:
+                </div>
+              )}
+
               {result.recommendations.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {result.recommendations.map(agent => (
-                    <div 
-                      key={agent.id}
-                      onClick={() => router.push(`/products/${agent.slug}`)}
-                      style={{ 
-                        display: 'flex', alignItems: 'center', gap: '16px', padding: '16px',
-                        background: 'rgba(255,255,255,0.03)', borderRadius: '16px',
-                        border: '1px solid var(--border-subtle)', cursor: 'pointer',
-                        transition: 'all 0.2s'
-                      }}
-                      className="ai-recommendation-item"
-                    >
-                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Bot className="w-5 h-5 text-sky-400" />
+                  {result.recommendations.map((agent, index) => {
+                    const isExactMatch = result.exactMatchFound && (agent as any).matchType === 'exact';
+                    const showRelatedHeader = result.exactMatchFound && index === 1;
+
+                    return (
+                      <div key={agent.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {showRelatedHeader && (
+                          <div style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-dim)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Related Tools
+                          </div>
+                        )}
+                        <div 
+                          onClick={() => router.push(`/products/${agent.slug}`)}
+                          style={{ 
+                            display: 'flex', alignItems: 'center', gap: '16px', padding: '16px',
+                            background: isExactMatch ? 'rgba(14, 165, 233, 0.08)' : 'rgba(255,255,255,0.03)',
+                            borderRadius: '16px',
+                            border: `1px solid ${isExactMatch ? 'rgba(14, 165, 233, 0.4)' : 'var(--border-subtle)'}`,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                          className="ai-recommendation-item"
+                        >
+                          <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: isExactMatch ? 'rgba(14, 165, 233, 0.2)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Bot className={`w-5 h-5 ${isExactMatch ? 'text-sky-300' : 'text-sky-400'}`} />
+                          </div>
+                          <div style={{ flexGrow: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+                              <div style={{ fontWeight: 700, fontSize: '16px', color: 'white' }}>{agent.name}</div>
+                              {isExactMatch && (
+                                <span style={{ 
+                                  fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '20px', 
+                                  background: 'rgba(14, 165, 233, 0.15)', color: 'var(--cyan)', border: '1px solid rgba(14, 165, 233, 0.3)' 
+                                }}>
+                                  Best Match
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ fontSize: '13px', color: 'var(--text-dim)' }}>{(agent as any).aiDescription || agent.oneLiner || agent.category}</div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--cyan)', fontSize: '13px', fontWeight: 700 }}>
+                            <span>Open Listing</span>
+                            <ArrowRight className="w-4 h-4" />
+                          </div>
+                        </div>
                       </div>
-                      <div style={{ flexGrow: 1 }}>
-                        <div style={{ fontWeight: 700, fontSize: '16px', color: 'white' }}>{agent.name}</div>
-                        <div style={{ fontSize: '13px', color: 'var(--text-dim)' }}>{agent.oneLiner || agent.category}</div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--cyan)', fontSize: '13px', fontWeight: 700 }}>
-                        <span>Open Listing</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
+                </div>
+              )}
+
+              {result.recommendations.length > 1 && (
+                <div style={{ marginTop: '24px', textAlign: 'center' }}>
+                  <a href={`/compare?agents=${result.recommendations.map(a => a.id).join(',')}`}>
+                    <button style={{ 
+                      background: 'var(--cyan)', color: 'black', padding: '12px 32px', 
+                      borderRadius: '16px', fontWeight: 800, fontSize: '14px', border: 'none', cursor: 'pointer',
+                      transition: 'all 0.2s', boxShadow: '0 8px 16px rgba(14, 165, 233, 0.2)'
+                    }}>
+                      Compare These Tools
+                    </button>
+                  </a>
                 </div>
               )}
             </div>

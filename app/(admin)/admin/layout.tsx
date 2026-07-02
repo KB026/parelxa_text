@@ -18,8 +18,14 @@ export default async function AdminLayout({
     redirect('/login?message=Authentication error. Please sign in again.');
   }
 
-  if (!user || user.user_metadata?.role !== 'admin') {
-    redirect('/login?message=Unauthorized access to admin panel');
+  if (!user) {
+    redirect('/dashboard?message=Unauthorized access to admin portal');
+  }
+
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+
+  if (profile?.role !== 'admin') {
+    redirect('/dashboard?message=Unauthorized access to admin portal');
   }
 
   const navLinks = [

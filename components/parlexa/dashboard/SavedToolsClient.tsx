@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { AgentCard } from '@/components/parlexa/AgentCard';
 import { Trash2, FolderPlus, Folder, Check } from 'lucide-react';
 import { Agent } from '@/lib/types';
@@ -77,13 +78,22 @@ export function SavedToolsClient({ initialTools, initialFolders }: SavedToolsCli
           <h1 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 8px' }}>Saved Tools</h1>
           <p style={{ color: 'var(--text-muted)' }}>Organize and manage your integration shortlist.</p>
         </div>
-        <button 
-          onClick={() => setIsCreatingFolder(true)}
-          className="bg-sky-500 hover:bg-sky-400 text-white transition-all shadow-lg shadow-sky-500/20" 
-          style={{ padding: '12px 20px', fontSize: '14px', borderRadius: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          <FolderPlus size={18} /> New Folder
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <Link 
+            href="/products" 
+            className="bg-transparent border border-sky-500/50 hover:bg-sky-500/10 text-sky-400 transition-all" 
+            style={{ padding: '12px 20px', fontSize: '14px', borderRadius: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', textDecoration: 'none' }}
+          >
+            Add More to Wishlist
+          </Link>
+          <button 
+            onClick={() => setIsCreatingFolder(true)}
+            className="bg-sky-500 hover:bg-sky-400 text-white transition-all shadow-lg shadow-sky-500/20" 
+            style={{ padding: '12px 20px', fontSize: '14px', borderRadius: '12px', fontWeight: 600, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            <FolderPlus size={18} /> New Folder
+          </button>
+        </div>
       </div>
 
       {/* Folder Tabs */}

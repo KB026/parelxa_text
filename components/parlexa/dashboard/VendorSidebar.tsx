@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, Shield, Star, Settings, LayoutDashboard, CreditCard } from 'lucide-react';
+import { FileText, Shield, Star, Settings, LayoutDashboard } from 'lucide-react';
 
 export function VendorSidebar() {
   const pathname = usePathname();
@@ -13,7 +13,8 @@ export function VendorSidebar() {
     { label: 'Customer Reviews', href: '/dashboard/vendor/reviews', icon: <Star size={18} /> },
     { label: 'Deep Analytics', href: '/dashboard/vendor/analytics', icon: <FileText size={18} /> },
     { label: 'Verification', href: '/dashboard/vendor/verification', icon: <Shield size={18} /> },
-    { label: 'Billing & Plan', href: '/dashboard/vendor/billing', icon: <CreditCard size={18} /> },
+    // {/* HIDDEN: Billing & Plans - re-enable when billing flow is ready */}
+    // { label: 'Billing & Plan', href: '/dashboard/vendor/billing', icon: <CreditCard size={18} /> },
     { label: 'Settings', href: '/dashboard/vendor/settings', icon: <Settings size={18} /> },
   ];
 
@@ -60,16 +61,39 @@ export function VendorSidebar() {
           );
         })}
 
-        <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
+        <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {/* HIDDEN: Sales & Orders - re-enable when order flow is ready */}
+          {false && (
+            <Link 
+              href="/dashboard/vendor/orders"
+              style={{ 
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '12px 16px', borderRadius: '12px',
+                color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
+              }}
+            >
+              <span>📦</span> Sales & Orders
+            </Link>
+          )}
           <Link 
-            href="/dashboard/vendor/orders"
+            href="/dashboard/consumer/saved-tools"
             style={{ 
               display: 'flex', alignItems: 'center', gap: '12px',
               padding: '12px 16px', borderRadius: '12px',
               color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
             }}
           >
-            <span>📦</span> Sales & Orders
+            <span>🔖</span> Saved Tools
+          </Link>
+          <Link 
+            href="/dashboard/consumer/reviews"
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '12px',
+              padding: '12px 16px', borderRadius: '12px',
+              color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
+            }}
+          >
+            <span>⭐</span> My Reviews
           </Link>
         </div>
       </div>

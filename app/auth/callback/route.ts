@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const type = searchParams.get('type');
-  const next = searchParams.get('next') ?? '/dashboard';
+  const next = searchParams.get('next') ?? '/';
   const roleParam = searchParams.get('role'); // Captured from AuthModal state
 
   if (code) {
@@ -63,9 +63,9 @@ export async function GET(request: Request) {
       // Determine redirect path
       let redirectPath = next;
       if (next === '/dashboard' || next === '/') {
-        if (role === 'vendor') redirectPath = '/vendor/listings';
+        if (role === 'vendor') redirectPath = '/dashboard/vendor/listings';
         else if (role === 'admin') redirectPath = '/admin';
-        else redirectPath = '/dashboard';
+        else redirectPath = next; // if next is '/', keep '/'. if '/dashboard', keep '/dashboard'.
       }
 
       const forwardedHost = request.headers.get('x-forwarded-host');

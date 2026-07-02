@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { AuthModal } from './AuthModal';
+import { VendorUpgradeModal } from './VendorUpgradeModal';
 import { Button } from '@/components/ui/button';
 import { UserProfile, AuthEvent } from '@/lib/types';
 
@@ -98,7 +99,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
               {user.initial}
             </div>
-            <Link href="/dashboard/consumer" className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors hidden md:block">Dashboard</Link>
+            <Link href={user.role === 'admin' ? '/admin' : user.role === 'vendor' ? '/dashboard/vendor' : '/dashboard/consumer'} className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors hidden md:block">Dashboard</Link>
             <form action="/api/auth/signout" method="POST" className="m-0 hidden md:block">
               <Button type="submit" variant="ghost" className="text-red-500 hover:text-red-400 hover:bg-red-500/10 h-auto p-1 text-sm font-medium">Sign Out</Button>
             </form>
@@ -123,7 +124,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
           <div className="flex flex-col gap-6 text-2xl">
             <Link href="/products" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-white transition-colors">All Agents</Link>
             <Link href="/ai-finder" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-white transition-colors">AI Finder</Link>
-            <Link href="/dashboard/consumer" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-white transition-colors">Dashboard</Link>
+            <Link href={user?.role === 'admin' ? '/admin' : user?.role === 'vendor' ? '/dashboard/vendor' : '/dashboard/consumer'} onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-white transition-colors">Dashboard</Link>
             <form action="/api/auth/signout" method="POST" className="m-0 mt-4">
               <Button type="submit" variant="ghost" className="text-red-500 hover:text-red-400 hover:bg-red-500/10 h-auto p-2 text-xl font-medium justify-start">Sign Out</Button>
             </form>
@@ -139,6 +140,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
         initialView={initialView}
         initialRole={initialRole}
       />
+      <VendorUpgradeModal />
     </>
   );
 }

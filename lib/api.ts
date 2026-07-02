@@ -594,7 +594,7 @@ export async function getSavedToolsList(userId: string, folderId?: string | null
   const supabase = createClient() as any;
   let query = supabase
     .from('saved_tools')
-    .select('tool_id, folder_id, agents!fk_saved_tools_agent_id(*)')
+    .select('agent_id, folder_id, agents!saved_tools_agent_id_fkey(*)')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
     
@@ -635,7 +635,7 @@ export async function getVendorAnalytics(userId: string) {
   const [{ count: viewsCount }, clicksData, { count: savesCount }] = await Promise.all([
     supabase.from('agent_interactions').select('*', { count: 'exact', head: true }).in('agent_id', agentIds).eq('action_type', 'view'),
     supabase.from('agent_interactions').select('*', { count: 'exact', head: true }).in('agent_id', agentIds).or('action_type.eq.click,action_type.eq.cta_click'),
-    supabase.from('saved_tools').select('*', { count: 'exact', head: true }).in('tool_id', agentIds)
+    supabase.from('saved_tools').select('*', { count: 'exact', head: true }).in('agent_id', agentIds)
   ]);
   
   return {
@@ -646,25 +646,28 @@ export async function getVendorAnalytics(userId: string) {
   };
 }
 
-export async function getCompareHistory(userId: string) {
-  const supabase = createClient() as any;
+export async function getCompareHistory(userId: string, supabaseClient?: any) {
+  const supabase = supabaseClient || (createClient() as any);
   const { data } = await supabase
     .from('agent_interactions')
-    .select('agent_id, created_at, agents(name)')
+    .select('agent_id, created_at, comparison_id, agents(name)')
     .eq('user_id', userId)
     .eq('action_type', 'compare')
     .order('created_at', { ascending: false });
     
   if (!data) return [];
-  // Group by date (simple day grouping)
+  // Group by comparison_id
   const grouped: Record<string, { id: string, date: string, agents: number[], type: string }> = {};
   data.forEach((row: Record<string, unknown>) => {
+    // Fallback to date grouping if comparison_id is missing for old records
     const d = new Date(row.created_at as string).toISOString().split('T')[0];
-    if (!grouped[d]) {
-      grouped[d] = { id: d, date: d, agents: [], type: 'Custom Comparison' };
+    const compId = (row.comparison_id as string) || d;
+    
+    if (!grouped[compId]) {
+      grouped[compId] = { id: compId, date: row.created_at as string, agents: [], type: 'Custom Comparison' };
     }
-    if (!grouped[d].agents.includes(row.agent_id as number)) {
-      grouped[d].agents.push(row.agent_id as number);
+    if (!grouped[compId].agents.includes(row.agent_id as number)) {
+      grouped[compId].agents.push(row.agent_id as number);
     }
   });
   return Object.values(grouped).filter(g => g.agents.length > 0);

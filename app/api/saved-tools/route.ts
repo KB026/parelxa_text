@@ -2,6 +2,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 // POST: Save tool to wishlist
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +25,7 @@ export async function POST(request: NextRequest) {
     const { data: existing } = await supabase.from('saved_tools' as any)
       .select('id')
       .eq('user_id', user.id)
-      .eq('tool_id', toolId)
+      .eq('agent_id', toolId)
       .maybeSingle();
 
     if (existing) {
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('saved_tools' as any)
-      .insert({ user_id: user.id, tool_id: toolId, folder_id: folderId })
+      .insert({ user_id: user.id, agent_id: toolId, folder_id: folderId })
       .select();
 
     if (error) {
@@ -61,10 +63,10 @@ export async function GET() {
       .from('saved_tools' as any)
       .select(`
         id,
-        tool_id,
+        agent_id,
         folder_id,
         created_at,
-        agents!fk_saved_tools_agent_id (
+        agents!saved_tools_agent_id_fkey (
           id,
           name,
           slug,
@@ -112,7 +114,7 @@ export async function DELETE(request: NextRequest) {
     const { error } = await supabase.from('saved_tools' as any)
       .delete()
       .eq('user_id', user.id)
-      .eq('tool_id', toolId);
+      .eq('agent_id', toolId);
 
     if (error) {
       console.error('Supabase delete error:', error.message);
@@ -146,7 +148,7 @@ export async function PATCH(request: NextRequest) {
     const { error } = await supabase.from('saved_tools' as any)
       .update({ folder_id: folderId })
       .eq('user_id', user.id)
-      .eq('tool_id', toolId);
+      .eq('agent_id', toolId);
 
     if (error) {
       console.error('Supabase update error:', error.message);

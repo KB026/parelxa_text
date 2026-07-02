@@ -24,15 +24,20 @@ export function ListingLink({ user, children, className, style }: ListingLinkPro
       );
     }
     
-    // User is logged in but not a vendor. Send them to dashboard with the upgrade prompt
+    // User is logged in but not a vendor. Show the upgrade modal.
+    const handleUpgrade = (e: React.MouseEvent) => {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('open-vendor-upgrade'));
+    };
+
     return (
-      <Link 
-        href="/dashboard/consumer?auth_err=vendor_required" 
+      <button 
+        onClick={handleUpgrade}
         className={className} 
-        style={style}
+        style={{ ...style, cursor: 'pointer', background: 'none', border: 'none', padding: style?.padding || 0, textAlign: 'inherit', font: 'inherit', color: style?.color || 'inherit' }}
       >
         {children}
-      </Link>
+      </button>
     );
   }
 

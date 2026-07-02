@@ -6,7 +6,10 @@ import { trackClick } from '@/lib/api';
 import { useCompare } from '@/context/CompareContext';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, CheckCircle, Sparkles, MapPin } from 'lucide-react';
+import { Star, CheckCircle, Sparkles, MapPin, Bookmark } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { toggleWishlist } from '@/app/actions/wishlist';
+import { getSavedToolsIds, clearSavedToolsCache } from '@/lib/wishlistClient';
 
 export function AgentCard({ agent }: { agent: Agent }) {
   const { selectedIds, toggleCompare } = useCompare();
@@ -25,6 +28,42 @@ export function AgentCard({ agent }: { agent: Agent }) {
   const hasIndiaPricing = agent?.pricing?.toLowerCase().includes('inr') || agent?.pricing?.toLowerCase().includes('₹');
   
   const isInCompare = selectedIds.includes(agent?.id);
+
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (agent?.id) {
+      getSavedToolsIds().then((ids) => {
+        setIsSaved(ids.includes(Number(agent.id)));
+      });
+    }
+  }, [agent?.id]);
+
+  const handleSave = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSaving || !agent?.id) return;
+    
+    setIsSaving(true);
+    try {
+      const result = await toggleWishlist(Number(agent.id));
+      if (result.error) {
+        if (result.error === 'You must be logged in to save tools.') {
+          window.dispatchEvent(new CustomEvent('open-auth', { detail: { view: 'signin' } }));
+        } else {
+          console.error(result.error);
+        }
+      } else {
+        setIsSaved(result.isSaved || false);
+        clearSavedToolsCache(); // Invalidate cache so other cards update if re-mounted
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleVisitSite = async () => {
     if (isFeatured && promotionId) {
@@ -64,6 +103,21 @@ export function AgentCard({ agent }: { agent: Agent }) {
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
         )}
+      </button>
+
+      {/* Bookmark Save Button */}
+      <button 
+        onClick={handleSave}
+        disabled={isSaving}
+        title={isSaved ? "Saved to Wishlist" : "Save to Wishlist"}
+        className={`absolute top-4 right-14 z-10 w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 pointer-events-auto hover:scale-110 ${isSaved ? 'bg-sky-400 text-black border-none' : 'bg-white/5 border border-white/5 text-white'} ${isSaving ? 'opacity-50' : ''}`}
+      >
+        <Bookmark 
+          size={16} 
+          fill={isSaved ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          strokeWidth={2}
+        />
       </button>
       
       <Link 

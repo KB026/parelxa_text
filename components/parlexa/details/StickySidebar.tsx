@@ -29,7 +29,11 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSa
     try {
       const result = await toggleWishlist(Number(agent.id));
       if (result.error) {
-        window.dispatchEvent(new CustomEvent('open-auth', { detail: { view: 'signin' } }));
+        if (result.error === 'You must be logged in to save tools.') {
+          window.dispatchEvent(new CustomEvent('open-auth', { detail: { view: 'signin' } }));
+        } else {
+          console.error(result.error);
+        }
       } else {
         const nextSaved = result.isSaved || false;
         setIsSaved(nextSaved);

@@ -14,13 +14,29 @@ interface ComparePageClientProps {
 }
 
 export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
-  const { selectedIds, toggleCompare } = useCompare();
+  const { selectedIds, toggleCompare, setCompare } = useCompare();
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
   const [loading, setLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [urlChecked, setUrlChecked] = useState(false);
 
-  // Sync agents when selectedIds change
+  // Parse URL on initial mount
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlIds = params.get('agents') || params.get('ids');
+    if (urlIds) {
+      const parsedIds = urlIds.split(',').map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id));
+      if (parsedIds.length > 0) {
+        setCompare(parsedIds);
+      }
+    }
+    setUrlChecked(true);
+  }, []); // Run once on mount
+
+  // Sync agents when selectedIds change (only after URL check is done to avoid double fetching)
+  useEffect(() => {
+    if (!urlChecked) return;
+    
     const fetchLatest = async () => {
       setLoading(true);
       try {
@@ -100,13 +116,16 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
       setSaveStatus('success');
       setTimeout(() => setSaveStatus('idle'), 3000);
     } else {
-      setSaveStatus('error');
-      alert(res.error || 'Failed to save');
-      setTimeout(() => setSaveStatus('idle'), 3000);
+      setSaveStatus('idle');
+      if (res.error === 'You must be logged in to save comparisons') {
+        window.dispatchEvent(new CustomEvent('open-auth', { detail: { view: 'signin' } }));
+      } else {
+        alert(res.error || 'Failed to save');
+      }
     }
   };
 
-  if (agents.length === 0 && !loading) {
+  if (agents.length === 0 && !loading && urlChecked) {
     return (
       <div style={{ textAlign: 'center', padding: '80px 40px', background: 'var(--bg-card)', borderRadius: '32px', border: '1px solid var(--border-subtle)' }}>
         <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>

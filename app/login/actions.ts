@@ -52,9 +52,13 @@ export async function login(formData: FormData) {
 
   revalidatePath('/', 'layout');
   
-  const role = data.user?.user_metadata?.role;
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single();
+  const role = profile?.role;
+
   if (role === 'vendor') {
-    redirect('/vendor/listings');
+    redirect('/dashboard/vendor/listings');
+  } else if (role === 'admin') {
+    redirect('/admin');
   } else {
     redirect('/dashboard');
   }

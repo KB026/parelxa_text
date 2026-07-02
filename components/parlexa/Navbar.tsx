@@ -15,10 +15,11 @@ export async function Navbar() {
       const supabase = createClient();
       const { data, error } = await supabase.auth.getUser();
       if (!error && data?.user) {
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single();
         userData = {
           id: data.user.id,
           email: data.user.email || '',
-          role: data.user.user_metadata?.role,
+          role: profile?.role || data.user.user_metadata?.role,
           initial: (data.user.email?.[0] || 'U').toUpperCase(),
         };
       }

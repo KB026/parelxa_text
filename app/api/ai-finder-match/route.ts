@@ -84,7 +84,7 @@ Your task:
 Return ONLY a valid JSON array. No other text. Format:
 [
   {
-    "id": "tool_id_here",
+    "id": "agent_id_here",
     "match_score": 95,
     "match_reason": "Perfect for SaaS lead generation at startup scale"
   }

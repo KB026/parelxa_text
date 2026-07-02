@@ -126,12 +126,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
               const supabase = createClient();
               const { data: { user: currentUser } } = await supabase.auth.getUser();
               await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
-              await supabase
-                .from('lead_clicks' as any)
-                .insert({
-                  agent_id: Number(agent.id),
-                  user_id: currentUser?.id || null,
-                });
             }} 
           />
 
@@ -193,12 +187,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
               const supabase = createClient();
               const { data: { user: currentUser } } = await supabase.auth.getUser();
               await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
-              await supabase
-                .from('lead_clicks' as any)
-                .insert({
-                  agent_id: Number(agent.id),
-                  user_id: currentUser?.id || null,
-                });
             }} 
           />
         </aside>

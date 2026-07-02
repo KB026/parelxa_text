@@ -1,10 +1,25 @@
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Bookmark, Star, ArrowRightLeft, User } from 'lucide-react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
 
-export default function ConsumerDashboard() {
+export const dynamic = 'force-dynamic';
+
+export default async function ConsumerDashboard() {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  let savedToolsCount = 0;
+  if (user) {
+    const { count } = await supabase
+      .from('saved_tools' as any)
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+    savedToolsCount = count || 0;
+  }
+
   const quickLinks = [
-    { label: 'Saved Shortlist', desc: 'Manage your bookmarked AI agents and custom folders', href: '/dashboard/consumer/saved-tools', icon: <Bookmark size={24} className="text-sky-400" /> },
+    { label: 'Saved Shortlist', desc: `${savedToolsCount} saved tools organized in your folders`, href: '/dashboard/consumer/saved-tools', icon: <Bookmark size={24} className="text-sky-400" /> },
     { label: 'My Reviews', desc: 'Read and manage reviews you have left for AI tools', href: '/dashboard/consumer/reviews', icon: <Star size={24} className="text-amber-400" /> },
     { label: 'Compare History', desc: 'Review your past side-by-side tool comparisons', href: '/dashboard/consumer/history', icon: <ArrowRightLeft size={24} className="text-emerald-400" /> },
     { label: 'Profile Settings', desc: 'Update your account preferences and credentials', href: '/dashboard/consumer/settings', icon: <User size={24} className="text-purple-400" /> },
@@ -29,7 +44,7 @@ export default function ConsumerDashboard() {
       </div>
 
       {/* Quick Navigation Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', marginBottom: '40px' }}>
         {quickLinks.map((item) => (
           <Link href={item.href} key={item.href} style={{ textDecoration: 'none' }}>
             <div 
@@ -45,14 +60,7 @@ export default function ConsumerDashboard() {
                 transition: 'all 0.2s ease-in-out',
                 cursor: 'pointer'
               }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'var(--cyan)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                e.currentTarget.style.transform = 'none';
-              }}
+              className="hover:border-cyan-400 hover:-translate-y-0.5"
             >
               <div style={{ background: 'rgba(255,255,255,0.03)', width: '56px', height: '56px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {item.icon}
@@ -68,6 +76,26 @@ export default function ConsumerDashboard() {
             </div>
           </Link>
         ))}
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <Link href="/products">
+          <button style={{
+            padding: '14px 28px',
+            background: 'var(--cyan)',
+            color: '#000',
+            borderRadius: '12px',
+            fontWeight: 700,
+            fontSize: '15px',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            Explore Agents →
+          </button>
+        </Link>
       </div>
     </section>
   );

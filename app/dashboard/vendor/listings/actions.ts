@@ -119,7 +119,8 @@ export async function updateListing(agentId: number, formData: FormData) {
     .eq('id', agentId)
     .single();
 
-  const isAdmin = user.user_metadata?.role === 'admin';
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const isAdmin = profile?.role === 'admin';
   if (fetchError || !existing || (existing.user_id !== user.id && !isAdmin)) {
     throw new Error('Unauthorized or Listing Not Found');
   }

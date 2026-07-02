@@ -13,7 +13,7 @@ export default async function CompareHistoryPage() {
   }
 
   const allAgents = await getAgents();
-  const history = await getCompareHistory(user.id);
+  const history = await getCompareHistory(user.id, supabase);
 
   return (
     <section>
@@ -36,16 +36,24 @@ export default async function CompareHistoryPage() {
               
               <div>
                 <div style={{ color: 'var(--text-dim)', fontSize: '12px', textTransform: 'uppercase', marginBottom: '4px' }}>Tools Compared</div>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {item.agents.map(id => {
                     const agent = allAgents.find(a => a.id === id);
                     return (
                       <div key={id} style={{ 
-                        width: '32px', height: '32px', borderRadius: '6px', 
+                        borderRadius: '16px', 
                         background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px'
-                      }} title={agent?.name}>
-                        {agent?.name[0]}
+                        display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', padding: '4px 10px',
+                        fontWeight: 500
+                      }}>
+                        {agent?.logoUrl ? (
+                          <img src={agent.logoUrl} alt={agent.name} style={{ width: '16px', height: '16px', borderRadius: '4px' }} />
+                        ) : (
+                          <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: 'var(--text-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-card)', fontSize: '10px' }}>
+                            {agent?.name?.[0] || '?'}
+                          </div>
+                        )}
+                        {agent?.name || 'Unknown Tool'}
                       </div>
                     );
                   })}

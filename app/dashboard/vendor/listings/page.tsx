@@ -36,7 +36,8 @@ export default function VendorListings() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { redirect('/login'); return; }
 
-    const isAdmin = user.user_metadata?.role === 'admin';
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    const isAdmin = profile?.role === 'admin';
     
     let query = supabase
       .from('agents')

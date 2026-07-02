@@ -108,11 +108,17 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
       resetForm();
       onClose();
       
-      const userRole = data.user?.user_metadata?.role;
-      if (userRole === 'vendor') {
-        window.location.assign('/vendor/listings');
-      } else if (userRole === 'admin') {
-        window.location.assign('/admin');
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+      const userRole = profileData?.role;
+
+      if (userRole === 'admin') {
+        window.location.href = '/admin';
+      } else if (userRole === 'vendor') {
+        window.location.assign('/dashboard/vendor/listings');
       } else {
         window.location.assign('/dashboard');
       }

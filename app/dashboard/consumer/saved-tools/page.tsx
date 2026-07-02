@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { SavedToolsClient } from '@/components/parlexa/dashboard/SavedToolsClient';
 import { getFolders } from '@/app/actions/wishlist';
 import { Agent } from '@/lib/types';
+import { createClient } from '@/lib/supabase/client';
 
 export default function SavedToolsPage() {
   const [tools, setTools] = useState<Agent[]>([]);
@@ -15,8 +16,7 @@ export default function SavedToolsPage() {
     async function loadData() {
       try {
         setLoading(true);
-        // Fetch from GET /api/saved-tools endpoint
-        const res = await fetch('/api/saved-tools');
+        const res = await fetch('/api/saved-tools', { cache: 'no-store' });
         if (!res.ok) {
           if (res.status === 401) {
             setError('Please log in to view your saved tools.');
@@ -58,6 +58,22 @@ export default function SavedToolsPage() {
     }
 
     loadData();
+
+    // Listen for auth changes (logout / login) to refetch and clear stale data
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        setTools([]);
+        setFolders([]);
+        setError('Please log in to view your saved tools.');
+      } else if (event === 'SIGNED_IN') {
+        loadData();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (loading) {

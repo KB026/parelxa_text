@@ -7,6 +7,7 @@ interface CompareContextType {
   toggleCompare: (id: number) => void;
   removeFromCompare: (id: number) => void;
   clearCompare: () => void;
+  setCompare: (ids: number[]) => void;
 }
 
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
@@ -58,8 +59,12 @@ export function CompareProvider({ children }: { children: React.ReactNode }) {
     setSelectedIds([]);
   };
 
+  const setCompare = (ids: number[]) => {
+    setSelectedIds(ids.slice(0, 3));
+  };
+
   return (
-    <CompareContext.Provider value={{ selectedIds, toggleCompare, removeFromCompare, clearCompare }}>
+    <CompareContext.Provider value={{ selectedIds, toggleCompare, removeFromCompare, clearCompare, setCompare }}>
       {children}
     </CompareContext.Provider>
   );

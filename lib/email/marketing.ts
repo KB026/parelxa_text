@@ -63,7 +63,7 @@ export async function triggerSavedToolVerificationAlert(agentId: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .from('saved_tools' as any)
     .select('user_id, profiles(email, notification_prefs)')
-    .eq('tool_id', Number(agentId));
+    .eq('agent_id', Number(agentId));
 
   if (!savesRaw) return;
   const saves = savesRaw as unknown as { user_id: string; profiles: unknown }[];

@@ -12,8 +12,10 @@ export default async function VendorLayout({
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user || user.user_metadata?.role !== 'vendor') {
-    redirect('/login?message=Unauthorized access to vendor portal');
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+
+  if (!user || (profile?.role !== 'vendor' && profile?.role !== 'admin')) {
+    redirect('/dashboard?message=Unauthorized access to vendor portal');
   }
 
   return (

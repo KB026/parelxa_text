@@ -61,16 +61,19 @@ export function DashboardSidebar() {
         })}
 
         <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
-          <Link 
-            href="/dashboard/consumer/orders"
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '12px 16px', borderRadius: '12px',
-              color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
-            }}
-          >
-            <Package size={18} /> My Orders
-          </Link>
+          {/* HIDDEN: My Orders - re-enable when order flow is ready */}
+          {false && (
+            <Link 
+              href="/dashboard/consumer/orders"
+              style={{ 
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '12px 16px', borderRadius: '12px',
+                color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
+              }}
+            >
+              <Package size={18} /> My Orders
+            </Link>
+          )}
         </div>
       </div>
     </aside>

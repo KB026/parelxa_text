@@ -28,7 +28,8 @@ export async function DELETE(
     return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
   }
 
-  const isAdmin = user.user_metadata?.role === 'admin';
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const isAdmin = profile?.role === 'admin';
   if (listing.user_id !== user.id && !isAdmin) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
