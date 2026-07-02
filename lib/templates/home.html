@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parlexa — India's First AI Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #080d1a;
+  --bg-secondary: #0d1524;
+  --bg-card: #111c2e;
+  --bg-card-hover: #162035;
+  --bg-elevated: #1a2540;
+  --blue-primary: #1565c0;
+  --blue-hover: #1976d2;
+  --cyan: #38bdf8;
+  --cyan-dark: #0ea5e9;
+  --text-white: #f1f5f9;
+  --text-muted: #7a90b0;
+  --text-dim: #4a5f80;
+  --gold: #f59e0b;
+  --gold-dark: #d97706;
+  --green: #10b981;
+  --red: #ef4444;
+  --border: rgba(56,189,248,0.12);
+  --border-subtle: rgba(255,255,255,0.06);
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-white);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; }
+input, textarea { font-family: inherit; }
+.page { display: none; min-height: 80vh; }
+.page.active { display: block; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 3px; }
+
+/* ── NAVBAR ── */
+.navbar {
+  position: fixed; top:0; left:0; right:0; z-index: 1000;
+  background: rgba(8,13,26,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  height: 64px;
+  display: flex; align-items: center;
+  padding: 0 40px;
+  gap: 32px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: linear-gradient(135deg, #0ea5e9, #1565c0);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; color: #fff;
+}
+.nav-logo-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px; font-weight: 700; color: var(--cyan);
+}
+.nav-links {
+  display: flex; align-items: center; gap: 28px;
+  flex: 1;
+}
+.nav-link {
+  font-size: 14px; font-weight: 500;
+  color: var(--text-muted); cursor: pointer;
+  transition: color 0.2s;
+  display: flex; align-items: center; gap: 6px;
+  position: relative;
+  background: none; border: none;
+}
+.nav-link:hover, .nav-link.active { color: var(--text-white); }
+.nav-badge {
+  font-size: 10px; font-weight: 600; padding: 2px 6px;
+  background: var(--cyan); color: #000; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.btn-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text-white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all 0.2s;
+}
+.btn-icon:hover { background: var(--bg-elevated); border-color: var(--cyan); }
+.btn-primary {
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  background: var(--blue-primary); color: #fff;
+  border: none; font-size: 14px; font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-primary:hover { background: var(--blue-hover); transform: translateY(-1px); }
+.compare-badge {
+  background: var(--gold); color: #000;
+  border-radius: 50%; width: 18px; height: 18px;
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  position: absolute; top: -6px; right: -6px;
+}
+
+/* ── CATEGORIES DROPDOWN ── */
+.nav-categories { position: relative; }
+.nav-categories:hover .categories-dropdown { display: block; }
+.categories-dropdown {
+  display: none; position: absolute; top: 100%; left: -12px;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 8px; min-width: 220px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  margin-top: 8px; z-index: 100;
+}
+.dropdown-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 8px;
+  font-size: 13px; color: var(--text-muted);
+  cursor: pointer; transition: all 0.15s;
+}
+.dropdown-item:hover { background: var(--bg-card); color: var(--text-white); }
+.dropdown-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 100px 40px 80px;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(21,101,192,0.18) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 80% 60%, rgba(56,189,248,0.08) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.5;
+}
+.hero-content { position: relative; z-index: 1; max-width: 800px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--cyan);
+  background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);
+  padding: 6px 14px; border-radius: 20px; margin-bottom: 28px;
+}
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(44px, 7vw, 72px);
+  font-weight: 700; line-height: 1.1;
+  letter-spacing: -1.5px;
+  background: linear-gradient(135deg, #fff 0%, var(--cyan) 60%, #38bdf8 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+.hero-sub {
+  font-size: 18px; color: var(--text-muted); max-width: 600px;
+  margin: 0 auto 40px; line-height: 1.7;
+}
+.hero-search {
+  display: flex; align-items: center; gap: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  max-width: 580px; width: 100%; margin: 0 auto 24px;
+  box-shadow: 0 0 0 0 rgba(56,189,248,0);
+  transition: box-shadow 0.3s;
+}
+.hero-search:focus-within {
+  border-color: rgba(56,189,248,0.4);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.08);
+}
+.hero-search-icon { padding: 0 16px; color: var(--text-dim); font-size: 18px; }
+.hero-search input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--text-white); font-size: 15px; padding: 14px 0;
+}
+.hero-search input::placeholder { color: var(--text-dim); }
+.hero-search .btn-primary { margin: 6px; border-radius: 8px; padding: 10px 22px; }
+.hero-badges { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.hero-badge {
+  font-size: 13px; color: var(--text-muted);
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  padding: 7px 14px; border-radius: 20px;
+}
+
+/* ── SECTION ── */
+.section { padding: 80px 40px; max-width: 1320px; margin: 0 auto; }
+.section-header { text-align: center; margin-bottom: 48px; }
+.section-header h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  color: var(--text-white); margin-bottom: 10px;
+}
+.section-header p { color: var(--text-muted); font-size: 16px; }
+.section-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 32px;
+}
+.section-row h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
+.btn-link {
+  font-size: 14px; font-weight: 600; color: var(--cyan);
+  background: none; border: none; display: flex; align-items: center; gap: 6px;
+  cursor: pointer; transition: gap 0.2s;
+}
+.btn-link:hover { gap: 10px; }
+
+/* ── FINDER CTA ── */
+.finder-cta {
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, rgba(21,101,192,0.15) 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 40px; margin: 0 40px 0;
+  max-width: 1320px; margin: 0 auto;
+}
+.finder-cta-content { flex: 1; }
+.cta-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--cyan);
+  background: rgba(56,189,248,0.1); padding: 5px 12px; border-radius: 20px;
+  margin-bottom: 16px;
+}
+.finder-cta h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px; font-weight: 700; margin-bottom: 12px;
+}
+.finder-cta p { color: var(--text-muted); font-size: 16px; max-width: 480px; margin-bottom: 24px; }
+.finder-cta-actions { display: flex; align-items: center; gap: 16px; }
+.btn-primary-large {
+  padding: 13px 28px; border-radius: var(--radius);
+  background: var(--blue-primary); color: #fff;
+  border: none; font-size: 15px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+}
+.btn-primary-large:hover { background: var(--blue-hover); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(21,101,192,0.4); }
+.cta-time { font-size: 13px; color: var(--text-dim); }
+.finder-cta-visual {
+  width: 120px; height: 120px; border-radius: 24px;
+  background: linear-gradient(135deg, #0ea5e9, #1565c0);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px; flex-shrink: 0;
+  box-shadow: 0 16px 48px rgba(14,165,233,0.25);
+}
+
+/* ── CATEGORY GRID ── */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.cat-card {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius); padding: 24px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.cat-card:hover {
+  border-color: var(--border);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+.cat-icon {
+  width: 48px; height: 48px; border-radius: 10px;
+  background: linear-gradient(135deg, #0ea5e9, #1565c0);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.cat-name { font-size: 15px; font-weight: 600; }
+.cat-count { font-size: 13px; color: var(--text-muted); }
+
+/* ── AGENT CARDS ── */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.agent-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex; flex-direction: column; gap: 12px;
+  position: relative;
+}
+.agent-card:hover {
+  border-color: rgba(56,189,248,0.25);
+  background: var(--bg-card-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.cat-pill {
+  font-size: 11px; font-weight: 600; padding: 4px 10px;
+  border-radius: 20px; background: #1d4ed8; color: #fff;
+}
+.rating-badge {
+  background: #92400e; color: #fbbf24;
+  font-size: 12px; font-weight: 700; padding: 4px 8px;
+  border-radius: 6px; display: flex; align-items: center; gap: 4px;
+}
+.card-name { font-size: 17px; font-weight: 700; color: var(--text-white); }
+.card-sub { font-size: 12px; color: var(--cyan); font-weight: 500; margin-top: 2px; }
+.card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; flex: 1; }
+.card-divider { border: none; border-top: 1px solid var(--border-subtle); margin: 4px 0; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; }
+.card-reviews { font-size: 12px; color: var(--text-dim); }
+.card-price { font-size: 14px; font-weight: 700; color: var(--cyan); }
+.card-price.free { color: var(--green); }
+
+/* Verified Badge Styles */
+.verified-badge {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 50%;
+  position: relative;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+.verified-badge::after {
+  content: '✓';
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+}
+.badge-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.badge-tooltip .tooltip-text {
+  visibility: hidden;
+  width: 140px;
+  background-color: #1e293b;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 10;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -70px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 11px;
+  font-weight: 500;
+  pointer-events: none;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.badge-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ── FINDER RESULT CARDS ── */
+.result-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 24px; position: relative;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.result-card:hover { border-color: var(--border); transform: translateY(-2px); }
+.best-match-badge {
+  position: absolute; top: -10px; left: 20px;
+  background: var(--gold-dark); color: #fff;
+  font-size: 11px; font-weight: 700; padding: 4px 10px;
+  border-radius: 20px; display: flex; align-items: center; gap: 4px;
+}
+.result-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.agent-avatar {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: linear-gradient(135deg, #0ea5e9, #1565c0);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.result-meta { flex: 1; }
+.result-name { font-size: 16px; font-weight: 700; }
+.match-pct {
+  font-size: 12px; font-weight: 600; color: var(--gold);
+  background: rgba(245,158,11,0.15); padding: 3px 8px; border-radius: 20px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.perfect-fit {
+  font-size: 12px; color: var(--green); font-weight: 500;
+  display: flex; align-items: center; gap: 5px; margin-bottom: 10px;
+}
+.result-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+.result-features { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.feature-check { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.feature-check::before { content: '✓'; color: var(--green); font-weight: 700; }
+.result-footer { display: flex; align-items: center; justify-content: space-between; }
+.result-price { font-size: 16px; font-weight: 700; color: var(--cyan); }
+.result-price small { font-size: 11px; color: var(--text-dim); font-weight: 400; }
+.result-rating { background: #92400e; color: #fbbf24; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
+
+/* ── AI FINDER ── */
+.finder-page { padding: 100px 40px 80px; max-width: 900px; margin: 0 auto; }
+.finder-header { text-align: center; margin-bottom: 48px; }
+.finder-header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 36px; font-weight: 700; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.finder-header p { color: var(--text-muted); font-size: 16px; }
+.finder-progress { display: flex; gap: 6px; margin: 24px auto; max-width: 220px; }
+.progress-step {
+  flex: 1; height: 4px; border-radius: 2px;
+  background: var(--bg-elevated); transition: background 0.3s;
+}
+.progress-step.active { background: var(--cyan); }
+.progress-step.done { background: rgba(56,189,248,0.4); }
+.finder-question { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 32px; }
+.finder-question small { font-size: 14px; color: var(--text-dim); font-weight: 400; display: block; margin-top: 6px; }
+.finder-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.finder-grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+.finder-grid-budget { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+.finder-option {
+  background: var(--bg-card); border: 2px solid var(--border-subtle);
+  border-radius: var(--radius); padding: 20px 16px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+  text-align: left;
+}
+.finder-option:hover { border-color: rgba(56,189,248,0.3); background: var(--bg-card-hover); }
+.finder-option.selected { border-color: var(--cyan); background: rgba(56,189,248,0.08); }
+.finder-option .opt-icon { font-size: 28px; }
+.finder-option .opt-label { font-size: 14px; font-weight: 600; }
+.finder-option-flat {
+  background: var(--bg-card); border: 2px solid var(--border-subtle);
+  border-radius: var(--radius); padding: 16px 20px;
+  cursor: pointer; transition: all 0.2s; font-size: 15px; font-weight: 500;
+  text-align: left; display: flex; align-items: center;
+  position: relative;
+}
+.finder-option-flat:hover { border-color: rgba(56,189,248,0.3); }
+.finder-option-flat.selected { border-color: var(--cyan); background: rgba(56,189,248,0.08); }
+.finder-option-checkbox {
+  width: 20px; height: 20px; border: 2px solid var(--border);
+  border-radius: 5px; margin-right: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.finder-option-flat.selected .finder-option-checkbox {
+  background: var(--cyan); border-color: var(--cyan); color: #000;
+  font-size: 12px; font-weight: 700;
+}
+.finder-actions { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 32px; }
+.btn-back {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: color 0.2s;
+}
+.btn-back:hover { color: var(--text-white); }
+.btn-get-recs {
+  padding: 13px 32px; border-radius: var(--radius);
+  background: var(--blue-primary); color: #fff;
+  border: none; font-size: 15px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+}
+.btn-get-recs:hover { background: var(--blue-hover); transform: translateY(-2px); }
+.btn-get-recs:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ── SEARCH PAGE ── */
+.search-page { padding: 100px 40px 80px; max-width: 1200px; margin: 0 auto; }
+.search-header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+.back-link { font-size: 13px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.back-link:hover { color: var(--text-white); }
+.search-bar-large {
+  display: flex; align-items: center; gap: 0;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; margin-bottom: 40px;
+}
+.search-bar-large:focus-within { border-color: rgba(56,189,248,0.4); }
+.search-bar-large .search-icon { padding: 0 20px; color: var(--text-dim); font-size: 20px; }
+.search-bar-large input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--text-white); font-size: 16px; padding: 16px 0;
+}
+.search-bar-large .btn-primary { margin: 8px; border-radius: 8px; padding: 12px 28px; font-size: 15px; }
+
+/* ── COMPARE ── */
+.compare-page { padding: 100px 40px 80px; max-width: 1320px; margin: 0 auto; }
+.compare-selected {
+  display: flex; gap: 16px; margin-bottom: 40px;
+  padding: 24px; background: var(--bg-card); border-radius: var(--radius);
+  border: 1px solid var(--border-subtle);
+}
+.compare-slot {
+  flex: 1; border: 2px dashed var(--border);
+  border-radius: var(--radius); padding: 20px; min-height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim); font-size: 13px;
+  transition: all 0.2s;
+}
+.compare-slot.filled {
+  border-style: solid; border-color: var(--border-subtle);
+  background: var(--bg-elevated);
+  flex-direction: column; align-items: flex-start; gap: 8px; position: relative;
+}
+.compare-slot-remove {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(239,68,68,0.15); color: var(--red);
+  border: none; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.compare-slot-remove:hover { background: rgba(239,68,68,0.3); }
+.compare-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.compare-empty {
+  text-align: center; padding: 80px 40px; color: var(--text-muted);
+}
+.compare-section-title {
+  font-size: 16px; font-weight: 700; color: var(--text-white);
+  padding: 16px 0 12px; border-top: 1px solid var(--border-subtle); margin-top: 8px;
+}
+.compare-col { display: flex; flex-direction: column; gap: 0; }
+.compare-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.compare-value { font-size: 14px; color: var(--text-white); }
+.feature-tag {
+  display: inline-block; background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  font-size: 11px; color: var(--text-muted);
+  padding: 4px 8px; border-radius: 6px; margin: 2px;
+}
+
+/* ── FILTERS ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; margin-bottom: 32px;
+}
+.filter-chip {
+  padding: 7px 16px; border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  background: transparent; color: var(--text-muted);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-chip:hover { border-color: var(--border); color: var(--text-white); }
+.filter-chip.active {
+  background: rgba(56,189,248,0.12);
+  border-color: rgba(56,189,248,0.4);
+  color: var(--cyan);
+}
+
+/* ── ALL AGENTS PAGE ── */
+.agents-page { padding: 100px 40px 80px; max-width: 1320px; margin: 0 auto; }
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 36px; font-weight: 700; margin-bottom: 8px;
+}
+.page-subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 32px; }
+
+/* ── AGENT DETAIL MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: 20px; padding: 0; max-width: 760px; width: 100%;
+  max-height: 90vh; overflow-y: auto; position: relative;
+}
+.modal-header {
+  padding: 28px 28px 0; position: sticky; top: 0;
+  background: var(--bg-secondary); border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 20px; z-index: 1;
+}
+.modal-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--bg-elevated); border: none; color: var(--text-muted);
+  font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: var(--bg-card); color: var(--text-white); }
+.modal-body { padding: 24px 28px 28px; }
+.detail-section { margin-bottom: 24px; }
+.detail-section h3 { font-size: 14px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.detail-section p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.detail-tag {
+  font-size: 12px; color: var(--text-muted);
+  background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+  padding: 5px 12px; border-radius: 20px;
+}
+.meta-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+.meta-item { }
+.meta-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.meta-value { font-size: 14px; color: var(--text-white); font-weight: 500; }
+.meta-value a { color: var(--cyan); }
+.modal-footer { padding: 0 28px 28px; display: flex; gap: 12px; }
+.btn-get-started {
+  flex: 1; padding: 13px; border-radius: var(--radius);
+  background: var(--blue-primary); color: #fff; border: none;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all 0.2s;
+}
+.btn-get-started:hover { background: var(--blue-hover); }
+.btn-add-compare {
+  padding: 13px 20px; border-radius: var(--radius);
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-white); font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
+}
+.btn-add-compare:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn-add-compare.added { border-color: var(--green); color: var(--green); }
+
+/* ── AI NEWS TICKER ── */
+.news-ticker {
+  background: var(--bg-card); border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 10px 40px; display: flex; align-items: center; gap: 20px;
+  overflow: hidden;
+}
+.news-label {
+  flex-shrink: 0; background: var(--cyan); color: #000;
+  font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 5px;
+}
+.news-scroll { flex: 1; overflow: hidden; position: relative; height: 20px; }
+.news-track {
+  display: flex; gap: 60px; white-space: nowrap;
+  animation: scrollNews 30s linear infinite;
+}
+.news-item { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+@keyframes scrollNews {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg-card); border-top: 1px solid var(--border-subtle);
+  padding: 60px 40px 40px;
+}
+.footer-inner {
+  max-width: 1320px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px;
+}
+.footer-brand p { color: var(--text-muted); font-size: 14px; margin: 12px 0 20px; line-height: 1.7; }
+.footer-socials { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); font-size: 16px; cursor: pointer;
+  transition: all 0.2s;
+}
+.social-btn:hover { border-color: var(--border); color: var(--text-white); }
+.footer-col h4 { font-size: 14px; font-weight: 600; color: var(--text-white); margin-bottom: 16px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li { font-size: 13px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+.footer-col ul li:hover { color: var(--text-white); }
+.footer-bottom {
+  max-width: 1320px; margin: 40px auto 0; padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-bottom p { font-size: 13px; color: var(--text-dim); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--text-dim); cursor: pointer; }
+.footer-links a:hover { color: var(--text-muted); }
+
+/* ── RECOMMENDATIONS PAGE ── */
+.recs-page { padding: 100px 40px 80px; max-width: 1320px; margin: 0 auto; }
+.recs-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+.recs-header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px; font-weight: 700;
+  display: flex; align-items: center; gap: 12px;
+}
+.recs-header p { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
+.btn-start-over {
+  padding: 10px 20px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-muted); font-size: 14px; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-start-over:hover { border-color: var(--border); color: var(--text-white); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 3000;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 20px;
+  font-size: 14px; color: var(--text-white);
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: var(--shadow); transform: translateY(100px); opacity: 0;
+  transition: all 0.3s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(16,185,129,0.3); }
+.toast.error { border-color: rgba(239,68,68,0.3); }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 80px 40px; }
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state h3 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.empty-state p { color: var(--text-muted); font-size: 14px; }
+
+/* ── CATEGORY PAGE ── */
+.category-page { padding: 100px 40px 80px; max-width: 1320px; margin: 0 auto; }
+.category-banner {
+  background: linear-gradient(135deg, var(--bg-elevated), rgba(21,101,192,0.12));
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 40px; margin-bottom: 48px;
+  display: flex; align-items: center; gap: 20px;
+}
+.category-banner-icon {
+  width: 72px; height: 72px; border-radius: 16px;
+  background: linear-gradient(135deg, #0ea5e9, #1565c0);
+  display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;
+}
+.category-banner h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px; font-weight: 700;
+}
+.category-banner p { color: var(--text-muted); font-size: 15px; margin-top: 6px; }
+
+/* ── LOADING ── */
+.loading-dots { display: flex; gap: 6px; justify-content: center; padding: 40px; }
+.loading-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--cyan);
+  animation: bounce 1.4s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .navbar { padding: 0 20px; gap: 16px; }
+  .finder-cta { flex-direction: column; padding: 32px 24px; }
+  .finder-cta-visual { display: none; }
+  .hero { padding: 100px 20px 60px; }
+  .section { padding: 60px 20px; }
+  .agents-grid { grid-template-columns: 1fr; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .finder-grid-3 { grid-template-columns: repeat(2,1fr); }
+  .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+  .meta-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">P</div>
+    <span class="nav-logo-text">Parlexa</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('all-agents')">All Agents</button>
+    <button class="nav-link" onclick="showPage('ai-finder',{step:1})">
+      AI Finder <span class="nav-badge">NEW</span>
+    </button>
+    <div class="nav-categories nav-link">
+      Categories ▾
+      <div class="categories-dropdown" id="categoriesDropdown"></div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="btn-icon" onclick="showPage('search')" title="Search">🔍</button>
+    <button class="btn-primary" style="position:relative" onclick="showPage('compare')">
+      Compare
+      <span class="compare-badge" id="compareBadge" style="display:none">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">⚡ India's Premier AI Discovery Platform</div>
+      <h1>India's First AI<br>Marketplace</h1>
+      <p class="hero-sub">Discover AI-powered tools built in India, for India, by India. Transform your business with intelligent automation.</p>
+      <div class="hero-search">
+        <span class="hero-search-icon">🔍</span>
+        <input type="text" id="heroSearchInput" placeholder="Search AI agents by name, category, or feature..." onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="btn-primary" onclick="doSearch()">Search</button>
+      </div>
+      <div class="hero-badges">
+        <span class="hero-badge">🇮🇳 100% Indian-origin tools</span>
+        <span class="hero-badge">🏪 SMB-focused solutions</span>
+        <span class="hero-badge">⚡ 100+ AI agents</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Finder CTA -->
+  <div style="padding: 0 40px; max-width: 1320px; margin: 0 auto;" id="aiFinderContainer">
+    <div class="finder-cta">
+      <div class="finder-cta-content">
+        <div class="cta-tag">⚡ AI-Powered</div>
+        <h2>Not sure where to start?</h2>
+        <p>Answer 4 quick questions and our AI will recommend the perfect agents based on your industry, budget, and specific needs. Get personalized matches in seconds!</p>
+        <div class="finder-cta-actions">
+          <button class="btn-primary-large" onclick="showPage('ai-finder',{step:1})">
+            ✦ Get AI Recommendations
+          </button>
+          <span class="cta-time">Takes less than 60 seconds</span>
+        </div>
+      </div>
+      <div class="finder-cta-visual">⚡</div>
+    </div>
+  </div>
+
+  <!-- DISCOVERY SECTIONS -->
+
+  <!-- Browse by Industry -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Browse by Industry</h2>
+      <p>Specialized AI solutions for your business vertical</p>
+    </div>
+    <div class="categories-grid" id="homeCategoriesGrid"></div>
+  </div>
+
+  <!-- Top Rated -->
+  <div class="section" style="padding-top:0">
+    <div class="section-row">
+      <h2>📈 Top Rated AI Agents</h2>
+      <button class="btn-link" onclick="showPage('all-agents')">View All →</button>
+    </div>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:28px">Most loved by Indian businesses</p>
+    <div class="agents-grid" id="topRatedGrid"></div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div style="background:linear-gradient(135deg,var(--bg-card),rgba(21,101,192,0.12)); padding:100px 40px; text-align:center; border-top:1px solid var(--border-subtle);">
+    <h2 style="font-family:'Space Grotesk',sans-serif; font-size:48px; font-weight:700; margin-bottom:20px;">Ready to Transform Your<br>Business with AI?</h2>
+    <p style="color:var(--text-muted);font-size:18px;margin-bottom:36px">Join thousands of Indian businesses leveraging AI to automate, optimize, and grow.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-primary-large" onclick="showPage('all-agents')">Explore All Agents →</button>
+      <button style="padding:13px 28px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--cyan);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;" onclick="showPage('compare')">⚡ Compare Agents</button>
+    </div>
+  </div>
+
+  <!-- AI News Ticker -->
+  <div class="news-ticker">
+    <div class="news-label">📈 AI NEWS</div>
+    <div class="news-scroll">
+      <div class="news-track" id="newsTicker"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="nav-logo-icon">P</div>
+          <span class="nav-logo-text">Parlexa</span>
+        </div>
+        <p>India's premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built specifically for Indian businesses.</p>
+        <div class="footer-socials">
+          <div class="social-btn">𝕏</div>
+          <div class="social-btn">in</div>
+          <div class="social-btn">✉</div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul id="footerCategories"></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li onclick="showPage('all-agents')">All AI Agents</li>
+          <li onclick="showPage('compare')">Compare Agents</li>
+          <li onclick="showPage('search')">Search</li>
+          <li>Help & Support</li>
+          <li>About Us</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Made with ❤️ in India</p>
+      <p>© 2025 Parlexa. All rights reserved.</p>
+      <div class="footer-links">
+        <a>Privacy Policy</a>
+        <a>Terms</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ALL AGENTS PAGE -->
+<div id="page-all-agents" class="page">
+  <div class="agents-page">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <button class="back-link" onclick="showPage('home')">← Back to Home</button>
+    </div>
+    <h1 class="page-title">All AI Agents</h1>
+    <p class="page-subtitle" id="allAgentsSubtitle">Discover 100+ curated AI agents for Indian businesses</p>
+    <div class="filter-bar" id="allAgentsFilters"></div>
+    <div class="agents-grid" id="allAgentsGrid"></div>
+  </div>
+</div>
+
+<!-- CATEGORY PAGE -->
+<div id="page-category" class="page">
+  <div class="category-page">
+    <button class="back-link" onclick="showPage('home')" style="margin-bottom:24px;display:inline-flex">← Back to Home</button>
+    <div class="category-banner" id="categoryBanner"></div>
+    <div class="filter-bar" id="categorySubFilters"></div>
+    <div class="agents-grid" id="categoryGrid"></div>
+  </div>
+</div>
+
+<!-- SEARCH PAGE -->
+<div id="page-search" class="page">
+  <div class="search-page">
+    <button class="back-link" onclick="showPage('home')" style="margin-bottom:20px;display:inline-flex">← Back to Home</button>
+    <h1 class="page-title">Search AI Agents</h1>
+    <div class="search-bar-large">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search by name, category, or feature..." onkeydown="if(event.key==='Enter')runSearch()">
+      <button class="btn-primary" onclick="runSearch()">Search</button>
+    </div>
+    <div class="agents-grid" id="searchGrid"></div>
+  </div>
+</div>
+
+<!-- AI FINDER PAGE -->
+<div id="page-ai-finder" class="page">
+  <div class="finder-page">
+    <div class="finder-header">
+      <h1>⚡ AI-Powered Agent Finder</h1>
+      <p>Answer a few questions and we'll recommend the perfect AI agents for your business</p>
+      <div class="finder-progress" id="finderProgress"></div>
+    </div>
+    <div id="finderContent"></div>
+  </div>
+</div>
+
+<!-- RECOMMENDATIONS PAGE -->
+<div id="page-recommendations" class="page">
+  <div class="recs-page">
+    <div class="recs-header">
+      <div>
+        <h1>✦ Your AI Agent Recommendations</h1>
+        <p id="recsSubtitle">Based on your selections</p>
+      </div>
+      <button class="btn-start-over" onclick="showPage('ai-finder',{step:1})">Start Over</button>
+    </div>
+    <div class="agents-grid" id="recsGrid"></div>
+  </div>
+</div>
+
+<!-- COMPARE PAGE -->
+<div id="page-compare" class="page">
+  <div class="compare-page">
+    <button class="back-link" onclick="showPage('home')" style="margin-bottom:24px;display:inline-flex">← Back to Home</button>
+    <h1 class="page-title">Compare AI Agents</h1>
+    <p class="page-subtitle">Side-by-side comparison of up to 3 agents</p>
+    <div class="compare-selected" id="compareSlots"></div>
+    <div id="compareAddSection">
+      <h3 style="font-size:18px;font-weight:600;margin-bottom:20px;">Add agents to compare</h3>
+      <div class="filter-bar" id="compareFilters"></div>
+      <div class="agents-grid" id="compareAddGrid"></div>
+    </div>
+    <div id="compareTableSection" style="display:none"></div>
+  </div>
+</div>
+
+<!-- AGENT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="agentModal">
+    <div class="modal-header" id="modalHeader"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const COMPANIES = [{"id":1,"name":"Krutrim","is_verified":true,"founders":"Bhavish Aggarwal","founderLinkedin":"https://www.linkedin.com/in/bhavishaggarwal/","website":"https://olakrutrim.com","city":"Bengaluru","rawIndustry":"Artificial Intelligence","category":"AI & LLMs","subCategory":"Large Language Models","summary":"India's first AI unicorn building LLMs trained on Indian languages and culture.","foundedYear":2022,"useCases":"Government & Public Services, Education, Healthcare, Media & Entertainment, BFSI — Indic language AI for citizen services, regional content, multilingual customer support","pricing":"Free tier available","rating":3.8,"reviews":608},{"id":2,"name":"Sarvam AI","is_verified":true,"founders":"Vivek Raghavan, Pratyush Kumar","founderLinkedin":"https://www.linkedin.com/in/vivekraghavan1/","website":"https://www.sarvam.ai","city":"Bengaluru","rawIndustry":"Artificial Intelligence","category":"AI & LLMs","subCategory":"Large Language Models","summary":"Building full-stack GenAI platform with LLMs optimized for 10+ Indian languages.","foundedYear":2023,"useCases":"Telecom, BFSI, Healthcare, E-Commerce, Agriculture — Voice AI and Indic LLMs for regional language customer engagement and last-mile service delivery","pricing":"Contact for pricing","rating":4.0,"reviews":254},{"id":3,"name":"Mad Street Den (Vue.ai)","founders":"Ashwini Asokan, Anand Chandrasekaran","founderLinkedin":"https://www.linkedin.com/in/ashwiniasokan/","website":"https://www.madstreetden.com","city":"Chennai","rawIndustry":"Retail Technology","category":"Retail & E-Commerce","subCategory":"Computer Vision / GenAI","summary":"AI platform for retail automation using computer vision and generative AI.","foundedYear":2016,"useCases":"Retail & E-Commerce, Fashion, Logistics, Insurance, Healthcare — AI-powered product tagging, visual search, catalogue automation and demand forecasting","pricing":"Free","rating":3.9,"reviews":909},{"id":4,"name":"Wysa","is_verified":true,"founders":"Jo Aggarwal, Ramakant Vempati","founderLinkedin":"https://www.linkedin.com/in/joaggarwal/","website":"https://www.wysa.com","city":"Bengaluru","rawIndustry":"Mental Health Tech","category":"Healthcare","subCategory":"Conversational AI","summary":"AI-powered mental health chatbot used by 6.5M+ users across 95 countries.","foundedYear":2016,"useCases":"Healthcare, Corporate HR & Employee Wellness, Insurance, Education — AI mental health support, employee burnout detection, therapy triage and wellness coaching","pricing":"Free","rating":3.8,"reviews":492},{"id":5,"name":"Neysa Networks","founders":"Sharad Sanghi, Anindya Das","founderLinkedin":"https://www.linkedin.com/in/sharadsanghi/","website":"https://www.neysa.ai","city":"Mumbai","rawIndustry":"Cloud Infrastructure","category":"Developer Tools & Infra","subCategory":"AI Infrastructure / GPU Cloud","summary":"Managed GPU cloud platform enabling enterprises to train and deploy AI at scale.","foundedYear":2023,"useCases":"Technology, BFSI, Healthcare, Research & Academia, Manufacturing — GPU cloud for model training, AI inference, large-scale data processing and ML pipelines","pricing":"₹10,000/month","rating":4.4,"reviews":99},{"id":6,"name":"Fractal Analytics","founders":"Srikanth Velamakanni, Pranay Agrawal","founderLinkedin":"https://www.linkedin.com/in/srikanth-velamakanni-07905/","website":"https://fractal.ai","city":"Mumbai","rawIndustry":"Enterprise Analytics","category":"Enterprise & Automation","subCategory":"Decision Intelligence","summary":"Enterprise AI company delivering consumer insights and decision intelligence for Fortune 500 clients.","foundedYear":2000,"useCases":"FMCG, Retail, Insurance, BFSI, Healthcare — Consumer insights, risk analytics, predictive modelling and AI-driven decision intelligence for Fortune 500 enterprises","pricing":"₹10,000/month","rating":4.0,"reviews":1375},{"id":7,"name":"Haptik","founders":"Aakrit Vaish, Swapan Rajdev","founderLinkedin":"https://www.linkedin.com/in/aakritvaish/","website":"https://haptik.ai","city":"Mumbai","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Conversational AI","summary":"Enterprise conversational AI platform building chatbots and virtual assistants for global brands.","foundedYear":2013,"useCases":"E-Commerce, BFSI, Telecom, Travel & Hospitality, Healthcare — Conversational AI for customer support automation, lead generation and transactional chatbots","pricing":"₹2,999/month","rating":4.3,"reviews":964},{"id":8,"name":"Qure.ai","founders":"Prashant Warier, Pooja Rao","founderLinkedin":"https://www.linkedin.com/in/prashantwarier/","website":"https://qure.ai","city":"Mumbai","rawIndustry":"Healthcare Technology","category":"Healthcare","subCategory":"Medical Imaging AI","summary":"Deep learning platform interpreting X-rays and CT scans for faster clinical diagnosis globally.","foundedYear":2016,"useCases":"Healthcare, Public Health, Insurance — AI radiology for early TB, pneumonia and cancer detection from chest X-rays and CT scans in low-resource settings","pricing":"Custom pricing","rating":4.1,"reviews":58},{"id":9,"name":"Yellow.ai","founders":"Raghu Ravinutala, Jaya Kishore Gollar","founderLinkedin":"https://www.linkedin.com/in/raghu-ravinutala/","website":"https://yellow.ai","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Conversational AI","summary":"AI-powered customer service automation platform serving enterprises across 35+ languages.","foundedYear":2016,"useCases":"BFSI, Retail, Telecom, Logistics, Travel — Omnichannel AI for customer service automation, ticketing, lead qualification and agent assist","pricing":"₹12,000/month","rating":4.6,"reviews":741},{"id":10,"name":"Locus","founders":"Nishith Rastogi, Geet Garg","founderLinkedin":"https://www.linkedin.com/in/nishithrastogi/","website":"https://locus.sh","city":"Bengaluru","rawIndustry":"Logistics & Supply Chain","category":"Logistics & Supply Chain","subCategory":"Logistics Optimization AI","summary":"AI-driven dispatch and route optimization platform for last-mile delivery and supply chains.","foundedYear":2015,"useCases":"Logistics, Retail & E-Commerce, FMCG, Pharma — Route optimisation, dynamic dispatch and delivery scheduling to reduce last-mile cost","pricing":"Contact for pricing","rating":4.0,"reviews":734},{"id":11,"name":"Uniphore","founders":"Umesh Sachdev, Ravi Saraogi","founderLinkedin":"https://www.linkedin.com/in/umeshsachdev/","website":"https://www.uniphore.com","city":"Chennai","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Voice AI / Conversational AI","summary":"Conversational AI platform combining voice recognition and emotion detection for enterprise CX.","foundedYear":2008,"useCases":"BFSI, Insurance, Telecom, Healthcare, Retail — Voice AI for contact centre automation, agent coaching, call compliance and emotion analytics","pricing":"₹5,000/month","rating":3.9,"reviews":243},{"id":12,"name":"Kore.ai","founders":"Raj Koneru","founderLinkedin":"https://www.linkedin.com/in/rajkoneru/","website":"https://kore.ai","city":"Hyderabad","rawIndustry":"Enterprise Software","category":"Enterprise & Automation","subCategory":"Conversational AI Platform","summary":"Enterprise-grade conversational AI platform for building intelligent virtual assistants and chatbots.","foundedYear":2014,"useCases":"BFSI, Healthcare, Retail, HR, IT — Enterprise virtual assistants for employee self-service, customer support, IT helpdesk and banking queries","pricing":"₹30,000/month","rating":4.7,"reviews":1281},{"id":13,"name":"Observe.AI","founders":"Swapnil Jain, Akash Singh, Sharath Keshava Narayana, Vikas Reddy","founderLinkedin":"https://www.linkedin.com/in/swapniljain09/","website":"https://www.observe.ai","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Contact Center AI","summary":"Conversational intelligence platform transforming contact centers with real-time AI guidance.","foundedYear":2017,"useCases":"BFSI, Insurance, Telecom, Healthcare, E-Commerce — Real-time agent guidance, QA automation, compliance monitoring and conversation analytics for contact centres","pricing":"Free (10K users)","rating":4.7,"reviews":985},{"id":14,"name":"Entropik","founders":"Ranjan Kumar","founderLinkedin":"https://www.linkedin.com/in/ranjankr/","website":"https://entropik.io","city":"Bengaluru","rawIndustry":"Market Research","category":"Marketing & Sales","subCategory":"Human Insights AI","summary":"AI platform decoding human emotions and behavior for consumer and user research.","foundedYear":2016,"useCases":"FMCG, Advertising & Media, Retail, Automotive, Pharma — Emotion AI for ad testing, UX research, packaging design validation and consumer behaviour analysis","pricing":"₹4,999/month","rating":3.9,"reviews":820},{"id":15,"name":"SigTuple","founders":"Rohit Kumar Pandey, Tathagato Rai Dastidar, Apurv Anand","founderLinkedin":"https://www.linkedin.com/in/rohitkumarpandey/","website":"https://sigtuple.com","city":"Bengaluru","rawIndustry":"Healthcare Technology","category":"Healthcare","subCategory":"Medical Diagnostics AI","summary":"AI-powered smart microscopy for automated blood and urine sample analysis in labs.","foundedYear":2015,"useCases":"Healthcare, Diagnostics & Pathology Labs, Public Health — Automated haematology and urinalysis reducing manual microscopy errors and turnaround time","pricing":"Free","rating":4.4,"reviews":1332},{"id":16,"name":"Arya.ai","founders":"Deekshith Marla","founderLinkedin":"https://www.linkedin.com/in/deekshithmarla/","website":"https://arya.ai","city":"Mumbai","rawIndustry":"Financial Services","category":"FinTech","subCategory":"FinTech AI","summary":"Regulatory-compliant AI platform helping banks and insurers deploy deep learning at scale.","foundedYear":2015,"useCases":"BFSI, Insurance, Lending, Wealth Management — Credit risk scoring, fraud detection, KYC automation and regulatory-compliant AI model deployment","pricing":"Custom pricing","rating":4.8,"reviews":785},{"id":17,"name":"Flutura","founders":"Krishnan Raman, Derick Jose","founderLinkedin":"https://www.linkedin.com/in/krishnanraman/","website":"https://flutura.com","city":"Bengaluru","rawIndustry":"Industrial IoT","category":"Developer Tools & Infra","subCategory":"AI for Industry 4.0","summary":"IoT and AI analytics platform delivering operational insights for energy and engineering sectors.","foundedYear":2012,"useCases":"Oil & Gas, Manufacturing, Energy & Utilities, Engineering — IoT sensor analytics for predictive maintenance, downtime reduction and operational efficiency","pricing":"₹25,000/month","rating":4.0,"reviews":187},{"id":18,"name":"Manthan","founders":"Atul Jalan","founderLinkedin":"https://www.linkedin.com/in/atuljalanmanthan/","website":"https://www.manthan.com","city":"Bengaluru","rawIndustry":"Retail Analytics","category":"Retail & E-Commerce","subCategory":"Retail AI Platform","summary":"AI-powered analytics platform for retail brands delivering prescriptive customer insights.","foundedYear":2003,"useCases":"Retail, FMCG, Fashion, Grocery — AI demand forecasting, assortment planning, promotion optimisation and hyper-local customer analytics","pricing":"Contact for pricing","rating":4.5,"reviews":637},{"id":19,"name":"CropIn","founders":"Krishna Kumar, Kunal Prasad","founderLinkedin":"https://www.linkedin.com/in/krishna-kumar-0001/","website":"https://www.cropin.com","city":"Bengaluru","rawIndustry":"Agriculture Technology","category":"AgriTech","subCategory":"AgriTech AI","summary":"Machine learning platform digitizing farms and supply chains to improve crop yield globally.","foundedYear":2010,"useCases":"Agriculture, Agri-Finance, Food & Beverage, Government — Farm digitisation, crop yield prediction, supply chain traceability and agri-insurance risk assessment","pricing":"Free","rating":4.7,"reviews":251},{"id":20,"name":"LogiNext","founders":"Dhruvil Sanghvi, Manisha Raisinghani","founderLinkedin":"https://www.linkedin.com/in/dhruvil-sanghvi/","website":"https://www.loginext.com","city":"Mumbai","rawIndustry":"Logistics & Supply Chain","category":"Logistics & Supply Chain","subCategory":"Logistics AI SaaS","summary":"AI-powered logistics SaaS for real-time tracking, route planning, and workforce management.","foundedYear":2014,"useCases":"Logistics, Retail, FMCG, Food Delivery, Field Services — Real-time delivery tracking, route planning, driver management and SLA compliance","pricing":"Contact for pricing","rating":4.1,"reviews":1346},{"id":21,"name":"Spyne","founders":"Deepti Prasad, Sanjay Kumar","founderLinkedin":"https://www.linkedin.com/in/deepti-prasad-spyne/","website":"https://www.spyne.ai","city":"Delhi","rawIndustry":"E-Commerce Technology","category":"Retail & E-Commerce","subCategory":"Visual AI / Image Generation","summary":"AI studio automating product image and video creation for e-commerce and automotive brands.","foundedYear":2018,"useCases":"Automotive, E-Commerce, Real Estate, Insurance — AI-generated product images and videos at scale replacing expensive photography studios","pricing":"₹15,000/month","rating":4.0,"reviews":772},{"id":22,"name":"LimeChat","founders":"Aniket Bajpai, Nikhil Gupta","founderLinkedin":"https://www.linkedin.com/in/aniket-bajpai/","website":"https://limechat.ai","city":"Delhi","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Conversational AI / WhatsApp","summary":"Conversational AI platform automating D2C customer support on WhatsApp, Instagram and more.","foundedYear":2020,"useCases":"D2C Retail, Fashion, Beauty & Personal Care, FMCG — WhatsApp and social commerce automation for order support, abandoned cart recovery and retention","pricing":"₹12,000/month","rating":4.5,"reviews":1482},{"id":23,"name":"Gnani.ai","founders":"Ganesh Gopalan, Abhiram Bhandarkar","founderLinkedin":"https://www.linkedin.com/in/ganeshgopalan1/","website":"https://gnani.ai","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Voice AI / Speech Recognition","summary":"Multilingual voice AI platform with speech recognition and voice biometrics for enterprises.","foundedYear":2017,"useCases":"BFSI, Telecom, Healthcare, Government — Multilingual speech recognition, voice biometrics, IVR automation and vernacular call centre AI","pricing":"₹5,000/month","rating":4.5,"reviews":395},{"id":24,"name":"Scribble Data","founders":"Venkata Pingali, Indrayudh Ghoshal","founderLinkedin":"https://www.linkedin.com/in/venkatapingali/","website":"https://www.scribbledata.io","city":"Bengaluru","rawIndustry":"Insurance Technology","category":"FinTech","subCategory":"Domain-specific AI Assistants","summary":"Domain-specific AI assistants for large insurers to scale back-office operations.","foundedYear":2019,"useCases":"Insurance, Financial Services, Healthcare — Domain-specific AI assistants for underwriting, claims processing and back-office automation","pricing":"Custom pricing","rating":4.6,"reviews":379},{"id":25,"name":"Expertia AI","founders":"Kanishk Shukla, Akshay Gugnani","founderLinkedin":"https://www.linkedin.com/in/kanishkshukla/","website":"https://www.expertia.ai","city":"Bengaluru","rawIndustry":"Human Resources","category":"HR & Workforce","subCategory":"HR Tech AI / Recruitment","summary":"AI recruitment platform cutting hiring time to 24 hours through automated sourcing and screening.","foundedYear":2020,"useCases":"Human Resources, IT & Technology, Staffing & Recruitment, BFSI — AI-automated sourcing, screening and interviewing cutting time-to-hire significantly","pricing":"₹1,499/month","rating":4.2,"reviews":1355},{"id":26,"name":"Skit.ai (Vernacular AI)","founders":"Sourabh Gupta","founderLinkedin":"https://www.linkedin.com/in/sourabh-gupta-venternacular/","website":"https://skit.ai","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Voice AI / Call Automation","summary":"Voice AI platform automating enterprise phone calls with human-like multilingual voice agents.","foundedYear":2017,"useCases":"BFSI, Telecom, Logistics, Healthcare — Outbound and inbound voice AI agents for collections, appointment scheduling and customer verification","pricing":"₹2,999/month","rating":4.0,"reviews":709},{"id":27,"name":"Avaamo","founders":"Ram Menon, Sriram Chakravarthy","founderLinkedin":"https://www.linkedin.com/in/rammenon1/","website":"https://avaamo.ai","city":"Bengaluru","rawIndustry":"Enterprise Technology","category":"Enterprise & Automation","subCategory":"Conversational AI","summary":"Deep-learning conversational AI solving high-impact enterprise use cases across industries.","foundedYear":2014,"useCases":"Healthcare, BFSI, HR, IT Services — Deep-learning virtual assistants for patient intake, claims status, employee onboarding and IT support","pricing":"Contact for pricing","rating":4.1,"reviews":110},{"id":28,"name":"Shipsy","founders":"Soham Chokshi, Dhruv Agrawal","founderLinkedin":"https://www.linkedin.com/in/sohamchokshi/","website":"https://shipsy.io","city":"Gurugram","rawIndustry":"Logistics & Supply Chain","category":"Logistics & Supply Chain","subCategory":"Logistics AI Analytics","summary":"Full-stack logistics SaaS using ML for shipment visibility, route optimization and carrier analytics.","foundedYear":2016,"useCases":"Logistics, Retail, Pharma, FMCG — Shipment tracking, freight analytics, carrier selection and cross-border logistics intelligence","pricing":"Contact for pricing","rating":4.2,"reviews":180},{"id":29,"name":"Intello Labs","founders":"Himanshu Pandey, Abhishek Negi","founderLinkedin":"https://www.linkedin.com/in/himanshu-pandey-intellolabs/","website":"https://intellolabs.com","city":"Gurugram","rawIndustry":"Agriculture Technology","category":"AgriTech","subCategory":"Computer Vision / AgriTech","summary":"Computer vision platform automating quality assessment of fresh produce to cut food waste.","foundedYear":2016,"useCases":"Agriculture, Food & Beverage, Retail, Food Processing — Computer vision quality grading of fresh produce to reduce waste and standardise trade","pricing":"Free","rating":4.8,"reviews":1206},{"id":30,"name":"Uncanny Vision","founders":"Ranjith Parakkal, Madhu Sudhan","founderLinkedin":"https://www.linkedin.com/in/ranjithparakkal/","website":"https://uncannyvision.com","city":"Bengaluru","rawIndustry":"Security & Surveillance","category":"Developer Tools & Infra","subCategory":"Edge AI / Computer Vision","summary":"Deep learning-powered edge surveillance solutions for real-time security and threat detection.","foundedYear":2013,"useCases":"Security & Surveillance, Retail, Smart Cities, Manufacturing — Edge AI video analytics for real-time threat detection, crowd analysis and theft prevention","pricing":"Free tier","rating":4.0,"reviews":1067},{"id":31,"name":"QpiAI","founders":"Dr. Nagendra Nagaraja","founderLinkedin":"https://www.linkedin.com/in/nagendra-nagaraja/","website":"https://qpiai.tech","city":"Bengaluru","rawIndustry":"Deep Tech","category":"AI & LLMs","subCategory":"Quantum AI","summary":"Quantum computing and AI startup building hybrid quantum-classical algorithms for enterprise.","foundedYear":2019,"useCases":"Pharma, BFSI, Logistics, Defence & Aerospace — Quantum-AI hybrid algorithms for drug discovery, portfolio optimisation and route scheduling","pricing":"₹25,000/month","rating":4.8,"reviews":1361},{"id":32,"name":"Innefu Labs","founders":"Tarun Wig, Abhishek Sharma","founderLinkedin":"https://www.linkedin.com/in/tarunwig/","website":"https://www.innefu.com","city":"Delhi","rawIndustry":"Cybersecurity","category":"Developer Tools & Infra","subCategory":"Predictive Security AI","summary":"AI-powered cybersecurity and intelligence platform used by defense, law enforcement and enterprises.","foundedYear":2016,"useCases":"Defence, Law Enforcement, Government, BFSI — Predictive threat intelligence, facial recognition, social media monitoring and fraud analytics","pricing":"Contact for pricing","rating":4.0,"reviews":330},{"id":33,"name":"Predis.ai","founders":"Anirudh Singla, Tanvir Singh","founderLinkedin":"https://www.linkedin.com/in/anirudh-singla/","website":"https://predis.ai","city":"Bengaluru","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"AI Content Generation","summary":"AI-powered social media content creation tool generating posts, videos and ad creatives.","foundedYear":2021,"useCases":"Marketing & Advertising, E-Commerce, Retail, Media & Entertainment — AI social media content generation, ad creatives and brand storytelling at scale","pricing":"₹8,000/month","rating":4.6,"reviews":1148},{"id":34,"name":"Staqu Technologies","founders":"Atul Rai, Pankaj Sharma, Ayondeep Sarkar, Chetan Agrawal","founderLinkedin":"https://www.linkedin.com/in/atulraistaqu/","website":"https://www.staqu.com","city":"Gurugram","rawIndustry":"Artificial Intelligence","category":"AI & LLMs","subCategory":"Computer Vision / Surveillance AI","summary":"Computer vision platform for video surveillance, facial recognition and audio analytics.","foundedYear":2015,"useCases":"Law Enforcement, Retail, Smart Cities, Manufacturing — Video analytics, facial recognition and audio AI for surveillance and public safety","pricing":"₹50,000/month","rating":4.6,"reviews":922},{"id":35,"name":"Leena AI","founders":"Adit Jain, Anand Prajapati","founderLinkedin":"https://www.linkedin.com/in/aditjain91/","website":"https://leena.ai","city":"Gurugram","rawIndustry":"Human Resources","category":"HR & Workforce","subCategory":"HR Automation AI","summary":"AI-powered HR helpdesk automating employee queries and workflows for large enterprises.","foundedYear":2018,"useCases":"Human Resources, IT, Manufacturing, BFSI — AI HR helpdesk for policy queries, leave management, onboarding workflows and employee experience","pricing":"₹5,999/month","rating":4.2,"reviews":494},{"id":36,"name":"Rephrase.ai","founders":"Ashray Malhotra, Shivam Mangla, Nisheeth Lahoti","founderLinkedin":"https://www.linkedin.com/in/ashraymalhotra/","website":"https://www.rephrase.ai","city":"Mumbai","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"AI Video Generation","summary":"Text-to-video AI studio creating personalized synthetic media with virtual presenters at scale.","foundedYear":2019,"useCases":"Marketing, E-Commerce, EdTech, BFSI — Personalised AI video generation with virtual presenters for sales outreach and training at scale","pricing":"₹8,000/month","rating":4.4,"reviews":231},{"id":37,"name":"Pixis","founders":"Shubham A., Vrushank Vyas, Hari Valiyath","founderLinkedin":"https://www.linkedin.com/in/shubham-a-pixis/","website":"https://pixis.ai","city":"Bengaluru","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"AI Marketing Codeless Platform","summary":"Codeless AI marketing platform enabling brands to optimize campaigns across digital channels.","foundedYear":2019,"useCases":"E-Commerce, FMCG, Fashion, D2C Retail, Travel — Codeless AI for marketing budget optimisation, audience targeting and creative performance","pricing":"₹2,999/month","rating":4.7,"reviews":358},{"id":38,"name":"Niramai Health Analytix","founders":"Geetha Manjunath, Nidhi Mathur","founderLinkedin":"https://www.linkedin.com/in/geetha-manjunath-niramai/","website":"https://www.niramai.com","city":"Bengaluru","rawIndustry":"Healthcare Technology","category":"Healthcare","subCategory":"Medical AI / Cancer Detection","summary":"Thermography-based AI solution for affordable early-stage breast cancer detection.","foundedYear":2016,"useCases":"Healthcare, Insurance, Women's Health — Affordable AI-powered breast cancer screening using thermography for Tier 2/3 cities and rural India","pricing":"Contact for pricing","rating":4.7,"reviews":909},{"id":39,"name":"Mihup.ai","founders":"Tapan Barman, Biplab Chakraborty","founderLinkedin":"https://www.linkedin.com/in/tapan-barman/","website":"https://mihup.com","city":"Kolkata","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Conversational Intelligence","summary":"AI-driven conversational intelligence platform for real-time agent coaching in contact centers.","foundedYear":2016,"useCases":"BFSI, Insurance, Telecom — Real-time agent coaching, quality monitoring and conversation intelligence for contact centres","pricing":"₹2,999/month","rating":3.9,"reviews":826},{"id":40,"name":"Pepper Content","founders":"Anirudh Singla, Rishabh Shekhar","founderLinkedin":"https://www.linkedin.com/in/anirudh-singla-peppertype/","website":"https://www.peppercontent.io","city":"Mumbai","rawIndustry":"Content Technology","category":"Marketing & Sales","subCategory":"AI Content Marketplace","summary":"AI content marketplace connecting brands with 60,000+ creators for scalable content production.","foundedYear":2017,"useCases":"Marketing, E-Commerce, SaaS, BFSI, EdTech — Scalable AI-assisted content creation including blogs, product descriptions, social media and videos","pricing":"₹4,999/month","rating":4.9,"reviews":1128},{"id":41,"name":"Bobble AI","founders":"Ankit Prasad","founderLinkedin":"https://www.linkedin.com/in/ankit-prasad-bobble/","website":"https://bobble.ai","city":"Gurugram","rawIndustry":"Consumer Technology","category":"Enterprise & Automation","subCategory":"Conversational Media AI","summary":"AI keyboard app offering hyper-contextual stickers, GIFs and memes in 100+ languages.","foundedYear":2012,"useCases":"Consumer Apps, Social Media, E-Commerce, Telecom — Contextual AI keyboard with stickers and GIFs for hyper-personalised in-app communication","pricing":"₹30,000/month","rating":4.9,"reviews":68},{"id":42,"name":"Exotel","founders":"Shivakumar Ganesan, Ishwar Sridharan, Siddharth Ramesh","founderLinkedin":"https://www.linkedin.com/in/shivku/","website":"https://exotel.com","city":"Bengaluru","rawIndustry":"Communication Technology","category":"Customer Experience","subCategory":"AI-powered Cloud Telephony","summary":"Cloud communication platform with AI for smart call routing, transcription and agent assist.","foundedYear":2011,"useCases":"E-Commerce, Logistics, Healthcare, BFSI, EdTech — Cloud telephony with AI for smart IVR, call transcription, agent assist and customer communication","pricing":"₹5,000/month","rating":4.5,"reviews":1144},{"id":43,"name":"MoEngage","founders":"Raviteja Dodda, Yashwanth Kumar","founderLinkedin":"https://www.linkedin.com/in/raviteja-dodda/","website":"https://www.moengage.com","city":"Bengaluru","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"AI Customer Engagement","summary":"Insights-led customer engagement platform using AI to personalize marketing across channels.","foundedYear":2014,"useCases":"E-Commerce, BFSI, Travel, Media — AI-powered customer engagement and push notification optimisation for omnichannel retention","pricing":"$32/month","rating":4.6,"reviews":741},{"id":44,"name":"CleverTap","founders":"Sunil Thomas, Anand Jain, Suresh Kondamudi","founderLinkedin":"https://www.linkedin.com/in/sunilthomasclevertap/","website":"https://clevertap.com","city":"Mumbai","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"AI Customer Analytics","summary":"All-in-one customer retention platform using AI to predict churn and drive personalized engagement.","foundedYear":2013,"useCases":"E-Commerce, FinTech, Gaming, EdTech, Media — AI churn prediction, user segmentation and personalised lifecycle marketing automation","pricing":"₹2,999/month","rating":4.1,"reviews":368},{"id":45,"name":"SirionLabs","founders":"Ajay Agrawal, Claude Marais, Vipul Dahiya","founderLinkedin":"https://www.linkedin.com/in/ajay-agrawal-sirion/","website":"https://www.sirionlabs.com","city":"Gurugram","rawIndustry":"Legal Technology","category":"Enterprise & Automation","subCategory":"Contract AI / CLM","summary":"AI-powered contract lifecycle management platform for faster, smarter contracting.","foundedYear":2012,"useCases":"Legal, Procurement, BFSI, IT Services, Pharma — AI contract analytics, obligation tracking, risk flagging and CLM for enterprise procurement","pricing":"Custom pricing","rating":3.8,"reviews":584},{"id":46,"name":"Darwinbox","founders":"Chaitanya Peddi, Rohit Chennamaneni, Jayant Paleti","founderLinkedin":"https://www.linkedin.com/in/chaitanyapeddi/","website":"https://darwinbox.com","city":"Hyderabad","rawIndustry":"Human Resources","category":"HR & Workforce","subCategory":"HR AI Platform","summary":"Cloud-based HR platform leveraging AI to automate hiring, payroll and people analytics.","foundedYear":2015,"useCases":"HR across all industries — AI-powered hiring, workforce planning, payroll, performance management and people analytics","pricing":"₹5,999/month","rating":4.6,"reviews":1084},{"id":47,"name":"Mu Sigma","founders":"Dhiraj Rajaram","founderLinkedin":"https://www.linkedin.com/in/dhirajrajaram/","website":"https://www.mu-sigma.com","city":"Bengaluru","rawIndustry":"Data Analytics","category":"Enterprise & Automation","subCategory":"Decision Sciences AI","summary":"Data analytics and decision sciences firm helping Fortune 500s embed AI into business decisions.","foundedYear":2004,"useCases":"FMCG, Retail, Healthcare, Insurance, Technology — Data engineering, decision science and analytics-as-a-service for large enterprises","pricing":"Contact for pricing","rating":4.8,"reviews":656},{"id":48,"name":"JIFFY.ai","founders":"Babu Sivadasan","founderLinkedin":"https://www.linkedin.com/in/babusivadasan/","website":"https://jiffy.ai","city":"Chennai","rawIndustry":"Enterprise Automation","category":"Enterprise & Automation","subCategory":"Intelligent Process Automation","summary":"AI-powered automation platform combining RPA, NLP and ML to streamline enterprise workflows.","foundedYear":2018,"useCases":"BFSI, Insurance, Healthcare, BPO — Intelligent process automation combining RPA and NLP to eliminate manual document-heavy workflows","pricing":"₹10,000/month","rating":4.5,"reviews":358},{"id":49,"name":"Whatfix","founders":"Khadim Batti, Vara Kumar","founderLinkedin":"https://www.linkedin.com/in/khadimbatti/","website":"https://whatfix.com","city":"Bengaluru","rawIndustry":"Enterprise Software","category":"Enterprise & Automation","subCategory":"Digital Adoption AI","summary":"AI-powered digital adoption platform with in-app guidance, onboarding and employee training.","foundedYear":2014,"useCases":"IT & SaaS, BFSI, Healthcare, Manufacturing, HR — AI in-app guidance for faster software adoption, employee training and productivity","pricing":"₹30,000/month","rating":4.6,"reviews":1149},{"id":50,"name":"Mindtickle","founders":"Krishna Depura, Nishant Mungali, Deepak Diwakar, Mohit Garg","founderLinkedin":"https://www.linkedin.com/in/krishnadepura/","website":"https://www.mindtickle.com","city":"Pune","rawIndustry":"Sales Technology","category":"Marketing & Sales","subCategory":"Sales Readiness AI","summary":"Sales readiness and enablement platform using AI to coach, upskill and certify revenue teams.","foundedYear":2012,"useCases":"Sales across BFSI, SaaS, Pharma, Manufacturing — AI sales readiness, coaching, content management and revenue team certification","pricing":"₹4,999/month","rating":4.8,"reviews":1271},{"id":51,"name":"LeadSquared","founders":"Nilesh Patel, Prashant Singh","founderLinkedin":"https://www.linkedin.com/in/nileshpatel73/","website":"https://www.leadsquared.com","city":"Bengaluru","rawIndustry":"Sales Technology","category":"Marketing & Sales","subCategory":"Sales CRM AI","summary":"AI-powered marketing automation and CRM platform improving lead conversion for enterprises.","foundedYear":2011,"useCases":"EdTech, Healthcare, BFSI, Real Estate, Insurance — AI CRM and marketing automation for lead management and sales pipeline acceleration","pricing":"$32/month","rating":4.3,"reviews":274},{"id":52,"name":"Zoho AI (Zia)","founders":"Sridhar Vembu","founderLinkedin":"https://www.linkedin.com/in/sridharvembu/","website":"https://www.zoho.com/zia/","city":"Chennai","rawIndustry":"Enterprise Software","category":"Enterprise & Automation","subCategory":"AI-Powered Business Suite","summary":"Embedded AI assistant Zia powering intelligent insights, automation and predictions across Zoho Suite.","foundedYear":1996,"useCases":"SME and Enterprise across all sectors — Embedded AI for sales forecasting, workflow automation, anomaly detection and business intelligence","pricing":"₹30,000/month","rating":4.8,"reviews":674},{"id":53,"name":"Freshworks (Freddy AI)","founders":"Girish Mathrubootham, Shan Krishnasamy","founderLinkedin":"https://www.linkedin.com/in/girishmcom/","website":"https://www.freshworks.com","city":"Chennai","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"AI-Powered CRM & Helpdesk","summary":"Cloud software company with Freddy AI enabling intelligent customer support and sales automation.","foundedYear":2010,"useCases":"IT, E-Commerce, BFSI, SaaS — AI-powered customer support ticketing, chatbots, CRM and sales automation for SMBs and enterprises","pricing":"₹12,000/month","rating":3.9,"reviews":1206},{"id":54,"name":"CloudSEK","founders":"Rahul Sasi","founderLinkedin":"https://www.linkedin.com/in/rahulsasi/","website":"https://cloudsek.com","city":"Bengaluru","rawIndustry":"Cybersecurity","category":"Developer Tools & Infra","subCategory":"Threat Intelligence AI","summary":"AI-powered digital risk monitoring platform detecting cyber threats across the dark web.","foundedYear":2017,"useCases":"BFSI, Government, IT & Technology, Healthcare — Dark web and digital threat monitoring to protect brand, data and infrastructure","pricing":"Pay per use","rating":3.9,"reviews":1040},{"id":55,"name":"Docsumo","founders":"Rushabh Sheth, Bikram Bhatta","founderLinkedin":"https://www.linkedin.com/in/rushabhsheth1/","website":"https://docsumo.com","city":"Mumbai","rawIndustry":"Financial Services","category":"FinTech","subCategory":"Document AI / Intelligent OCR","summary":"AI document processing platform extracting and structuring data from complex financial documents.","foundedYear":2019,"useCases":"BFSI, Insurance, Logistics, Real Estate — Intelligent OCR for extracting structured data from invoices, bank statements and contracts","pricing":"Contact for pricing","rating":4.9,"reviews":1135},{"id":56,"name":"Crayon Data","founders":"Suresh Shankar","founderLinkedin":"https://www.linkedin.com/in/suresh-shankar-crayon/","website":"https://crayondata.ai","city":"Chennai","rawIndustry":"Financial Services","category":"FinTech","subCategory":"Customer AI / Hyper-personalization","summary":"AI engine delivering hyper-personalized experiences for banks and card companies globally.","foundedYear":2012,"useCases":"BFSI, Retail Banking, Card Networks — AI hyper-personalisation engine for credit card offers, product recommendations and customer retention","pricing":"₹20,000/month","rating":3.9,"reviews":1018},{"id":57,"name":"Atomicwork","founders":"Vijay Rayapati, Parsuram Vijayasankar, Kiran Darisi","founderLinkedin":"https://www.linkedin.com/in/vijayrayapati/","website":"https://www.atomicwork.com","city":"Hyderabad","rawIndustry":"Enterprise IT","category":"Enterprise & Automation","subCategory":"AI IT Service Management","summary":"Modern AI-powered IT service management platform automating employee support and workflows.","foundedYear":2022,"useCases":"IT, HR, Finance — AI-native IT service management for employee support, request routing and IT workflow automation","pricing":"₹10,000/month","rating":4.0,"reviews":1125},{"id":58,"name":"Zenoti","founders":"Sudheer Koneru, Dheeraj Koneru","founderLinkedin":"https://www.linkedin.com/in/sudheerkoneru/","website":"https://www.zenoti.com","city":"Hyderabad","rawIndustry":"Wellness Technology","category":"Healthcare","subCategory":"AI SaaS for Beauty & Wellness","summary":"AI-powered SaaS platform for salons, spas and wellness centers managing bookings and growth.","foundedYear":2010,"useCases":"Beauty & Wellness, Hospitality — AI SaaS for spa/salon appointment booking, loyalty programmes, inventory and revenue management","pricing":"Custom pricing","rating":4.3,"reviews":478},{"id":59,"name":"Testsigma","founders":"Krithika Krishnamurthy","founderLinkedin":"https://www.linkedin.com/in/krithikakrishnamurthy/","website":"https://testsigma.com","city":"Bengaluru","rawIndustry":"Developer Tools","category":"Developer Tools & Infra","subCategory":"AI Test Automation","summary":"AI-powered test automation platform enabling fast and reliable software testing at scale.","foundedYear":2016,"useCases":"Technology, BFSI, E-Commerce, Healthcare — Cloud-based AI test automation for web, mobile and API reducing QA cycle time","pricing":"₹25,000/month","rating":4.6,"reviews":1457},{"id":60,"name":"Gan.ai","founders":"Sanket Shah, Mudit Jaju","founderLinkedin":"https://www.linkedin.com/in/sanketshah1/","website":"https://gan.ai","city":"Bengaluru","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"Personalized AI Video Generation","summary":"AI video platform creating millions of personalized video messages at scale for marketing.","foundedYear":2021,"useCases":"E-Commerce, BFSI, EdTech, Marketing — Hyper-personalised AI video messages for customer onboarding, sales outreach and retention campaigns","pricing":"₹8,000/month","rating":4.6,"reviews":862},{"id":61,"name":"Hiver","founders":"Niraj Ranjan Rout, Nitesh Nandy","founderLinkedin":"https://www.linkedin.com/in/nirajranjan/","website":"https://hiverhq.com","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Email AI Collaboration","summary":"AI-powered email collaboration tool turning Gmail into a shared helpdesk for support teams.","foundedYear":2011,"useCases":"E-Commerce, SaaS, Professional Services, IT — AI email collaboration and helpdesk on Gmail for shared inbox management and support","pricing":"Free (10K users)","rating":4.3,"reviews":1104},{"id":62,"name":"Swym","founders":"Narayana Gopinathan","founderLinkedin":"https://www.linkedin.com/in/narayanagopinathan/","website":"https://swym.it","city":"Bengaluru","rawIndustry":"E-Commerce Technology","category":"Retail & E-Commerce","subCategory":"E-commerce AI Personalization","summary":"AI-powered e-commerce personalization platform helping Shopify merchants convert more shoppers.","foundedYear":2012,"useCases":"Retail & E-Commerce, Fashion, Home Décor — AI wishlists, back-in-stock alerts and personalised product recommendations for Shopify stores","pricing":"₹0.20/execution","rating":3.9,"reviews":505},{"id":63,"name":"Kognitos","founders":"Binny Gill","founderLinkedin":"https://www.linkedin.com/in/binnygill/","website":"https://kognitos.com","city":"Bengaluru","rawIndustry":"Enterprise Automation","category":"Enterprise & Automation","subCategory":"Natural Language Automation","summary":"Business automation platform using natural language to build and run enterprise AI workflows.","foundedYear":2021,"useCases":"Finance & Accounting, Operations, HR, Supply Chain — Natural language business automation for invoice processing, reporting and data workflows","pricing":"Contact for pricing","rating":4.2,"reviews":1249},{"id":64,"name":"Amber by inFeedo","founders":"Varun Puri, Tanmaya Jain","founderLinkedin":"https://www.linkedin.com/in/varunpuri1/","website":"https://infeedo.ai","city":"Gurugram","rawIndustry":"Human Resources","category":"HR & Workforce","subCategory":"Employee Engagement AI","summary":"AI-powered employee engagement platform using conversational AI to capture and act on feedback.","foundedYear":2016,"useCases":"HR across all industries — AI chatbot for continuous employee pulse, engagement measurement and attrition risk prediction","pricing":"₹5,999/month","rating":4.1,"reviews":496},{"id":65,"name":"OnFinance","founders":"Anuj Srivastava, Priyesh Srivastava","founderLinkedin":"https://www.linkedin.com/in/anujsrivastava-ai/","website":"https://www.onfinance.ai","city":"Bengaluru","rawIndustry":"Financial Services","category":"FinTech","subCategory":"FinTech AI Copilot","summary":"AI co-pilots for banks and wealth managers covering equity research, compliance and advisory.","foundedYear":2023,"useCases":"BFSI, Wealth Management, Asset Management — AI copilots for equity research, portfolio advisory, compliance reporting and client management","pricing":"Contact for pricing","rating":3.9,"reviews":1337},{"id":66,"name":"OrbitShift","founders":"Saurabh Mishra, Swapnil Saykar","founderLinkedin":"https://www.linkedin.com/in/saurabhmishraindia/","website":"https://orbitshift.com","city":"Bengaluru","rawIndustry":"Sales Technology","category":"Marketing & Sales","subCategory":"Sales Intelligence AI","summary":"AI-based sales intelligence platform delivering account insights and targeted pitch generation.","foundedYear":2022,"useCases":"B2B Sales, Technology, SaaS, Professional Services — AI account intelligence for targeted prospecting, competitive insights and personalised outreach","pricing":"₹2,999/month","rating":4.1,"reviews":109},{"id":67,"name":"Laxis","founders":"Pankaj Gupta","founderLinkedin":"https://www.linkedin.com/in/pankajgupta-laxis/","website":"https://www.laxis.com","city":"Bengaluru","rawIndustry":"Productivity","category":"Enterprise & Automation","subCategory":"Meeting AI / Revenue Intelligence","summary":"AI meeting assistant and revenue intelligence platform for sales teams to capture insights.","foundedYear":2019,"useCases":"Sales, Consulting, Recruitment, Marketing — AI meeting transcription, action item extraction and CRM auto-fill for revenue teams","pricing":"₹30,000/month","rating":3.9,"reviews":532},{"id":68,"name":"Zuddl","founders":"Bharath Varma, Vedha Sayyaparaju","founderLinkedin":"https://www.linkedin.com/in/bharathvarma/","website":"https://zuddl.com","city":"Bengaluru","rawIndustry":"Event Technology","category":"Enterprise & Automation","subCategory":"AI Event Management Platform","summary":"AI-powered event platform simplifying virtual, hybrid and in-person event management for B2B.","foundedYear":2020,"useCases":"B2B Marketing, Technology, Professional Services — AI event platform for demand generation, virtual conferences and community engagement","pricing":"₹30,000/month","rating":4.5,"reviews":483},{"id":69,"name":"SurveySparrow","founders":"Shihab Muhammed, Subin Sebastian","founderLinkedin":"https://www.linkedin.com/in/shihabmuhammed/","website":"https://surveysparrow.com","city":"Kochi","rawIndustry":"Enterprise Software","category":"Enterprise & Automation","subCategory":"AI Survey & Feedback Platform","summary":"Omnichannel survey platform with AI-driven analytics for customer and employee experience.","foundedYear":2017,"useCases":"HR, Customer Experience, Healthcare, Education — Conversational AI surveys for NPS, CSAT, employee feedback and market research","pricing":"₹10,000/month","rating":3.9,"reviews":1214},{"id":70,"name":"Richpanel","founders":"Madhav Bhandari","founderLinkedin":"https://www.linkedin.com/in/madhavbhandari/","website":"https://richpanel.com","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"AI Customer Support Agent","summary":"AI customer support platform helping e-commerce brands resolve 90%+ tickets autonomously.","foundedYear":2020,"useCases":"D2C E-Commerce, Fashion, Beauty, Consumer Electronics — AI-driven customer support autonomously resolving order queries, returns and complaints","pricing":"₹2,999/month","rating":4.3,"reviews":1013},{"id":71,"name":"Pocket FM","founders":"Rohan Nayak, Nishanth KS, Prateek Dixit","founderLinkedin":"https://www.linkedin.com/in/rohannayak/","website":"https://pocketfm.com","city":"Bengaluru","rawIndustry":"Entertainment Technology","category":"Marketing & Sales","subCategory":"AI Audio & Content Platform","summary":"Audio entertainment platform using AI to create and personalize serialized audio shows.","foundedYear":2018,"useCases":"Media & Entertainment, EdTech, Telecom — AI audio content creation, personalisation and monetisation for serialised shows in regional languages","pricing":"Free","rating":4.0,"reviews":243},{"id":72,"name":"Aindra Systems","founders":"Himangi Sareen, Bhavya Bhardwaj","founderLinkedin":"https://www.linkedin.com/in/himangi-sareen/","website":"https://aindra.in","city":"Bengaluru","rawIndustry":"Healthcare Technology","category":"Healthcare","subCategory":"AI Cancer Screening","summary":"AI-powered cervical cancer screening system enabling early detection in low-resource settings.","foundedYear":2012,"useCases":"Healthcare, Public Health, Women's Health — AI point-of-care cancer screening for early detection in primary health centres and rural clinics","pricing":"₹4,999/month","rating":4.2,"reviews":886},{"id":73,"name":"Pratilipi","founders":"Ranjeet Pratap Singh, Prashast Vardhan, Rahul Ranjan, Sahradayi Modi","founderLinkedin":"https://www.linkedin.com/in/ranjeetpratapsingh/","website":"https://pratilipi.com","city":"Bengaluru","rawIndustry":"Content Technology","category":"Marketing & Sales","subCategory":"AI Publishing Platform","summary":"India's largest vernacular storytelling platform using AI to personalize regional language content.","foundedYear":2015,"useCases":"Media & Entertainment, Publishing, EdTech — AI content personalisation and discovery for vernacular readers across 12 Indian languages","pricing":"Free","rating":4.8,"reviews":155},{"id":74,"name":"DhiWise","founders":"Mehul Akbari, Vishal Virani","founderLinkedin":"https://www.linkedin.com/in/mehulakbari/","website":"https://dhiwise.com","city":"Surat","rawIndustry":"Developer Tools","category":"Developer Tools & Infra","subCategory":"AI Code Generation","summary":"Developer AI platform converting Figma designs into production-ready app code automatically.","foundedYear":2021,"useCases":"Software Development, IT Services, Startups — AI developer tooling converting UI designs into production Flutter, React and Android code","pricing":"Pay per use","rating":3.9,"reviews":739},{"id":75,"name":"KissanAI","founders":"Pratik Desai","founderLinkedin":"https://www.linkedin.com/in/pratikdesai/","website":"https://kissan.ai","city":"Surat","rawIndustry":"Agriculture Technology","category":"AgriTech","subCategory":"GenAI for Agri / Agri LLM","summary":"GenAI platform for agriculture with multilingual AgriCopilot and domain-specific Agri LLMs.","foundedYear":2023,"useCases":"Agriculture, Agri-Finance, Rural Services — AI advisory for farmers on crop diseases, weather, mandi prices and input recommendations","pricing":"Free","rating":4.1,"reviews":434},{"id":76,"name":"Soket Labs","founders":"Abhishek Upperwal","founderLinkedin":"https://www.linkedin.com/in/abhishekupperwal/","website":"https://soket.ai","city":"Bengaluru","rawIndustry":"AI Research","category":"AI & LLMs","subCategory":"Open-Source LLM Research","summary":"AI research firm building open-source multilingual LLMs including Pragna-1B for Indian languages.","foundedYear":2023,"useCases":"Research & Academia, Government, EdTech, Healthcare — Open-source multilingual LLMs for Indic NLP applications and low-resource language AI","pricing":"Pay per use","rating":4.3,"reviews":909},{"id":77,"name":"Shorthills AI","founders":"Pawan Prabhat, Paramdeep Singh","founderLinkedin":"https://www.linkedin.com/in/pawan-prabhat/","website":"https://www.shorthills.ai","city":"Gurugram","rawIndustry":"Enterprise Technology","category":"Enterprise & Automation","subCategory":"Custom AI Solutions","summary":"Bootstrapped company building bespoke AI tools and enterprise applications for US and India.","foundedYear":2018,"useCases":"Enterprise Technology, BFSI, Healthcare, Retail — Custom AI solution development including RAG systems, LLM apps and data pipelines","pricing":"₹15,000/month","rating":4.1,"reviews":556},{"id":78,"name":"Upliance AI","founders":"Mahek Mody, Mohit Sharma","founderLinkedin":"https://www.linkedin.com/in/mahekmody/","website":"https://upliance.ai","city":"Bengaluru","rawIndustry":"Consumer Technology","category":"Enterprise & Automation","subCategory":"AI Smart Appliances","summary":"AI-powered cooking appliance platform helping home cooks discover and make 500+ dishes.","foundedYear":2021,"useCases":"Consumer Technology, Food & Beverage, Health & Wellness — AI-guided home cooking with personalised recipe recommendations and smart appliance integration","pricing":"Contact for pricing","rating":4.3,"reviews":1172},{"id":79,"name":"Helium (gethelium.co)","founders":"Shray Arora, Sidharth Sahni","founderLinkedin":"https://www.linkedin.com/in/shrayarora/","website":"https://www.gethelium.co","city":"Delhi","rawIndustry":"E-Commerce Technology","category":"Retail & E-Commerce","subCategory":"Headless Commerce AI","summary":"AI and reactive headless storefront platform helping D2C e-commerce brands improve conversions.","foundedYear":2022,"useCases":"D2C E-Commerce, Fashion, Beauty, Lifestyle — Headless AI storefront boosting online conversion through personalised shopping experiences","pricing":"Contact for pricing","rating":3.9,"reviews":1152},{"id":80,"name":"Galytix","founders":"Harsh Kapoor","founderLinkedin":"https://www.linkedin.com/in/harshkapoor-galytix/","website":"https://galytix.com","city":"Mumbai","rawIndustry":"Financial Services","category":"FinTech","subCategory":"AI Data Fabric / FinTech","summary":"AI data fabric platform enabling financial institutions to accelerate analytics and risk intelligence.","foundedYear":2018,"useCases":"BFSI, Insurance, Asset Management — AI data fabric for risk intelligence, regulatory reporting and real-time financial analytics","pricing":"Contact for pricing","rating":4.9,"reviews":529},{"id":81,"name":"Tagbox","founders":"Naman Kothari, Aman Jain","founderLinkedin":"https://www.linkedin.com/in/namankothari/","website":"https://tagbox.com","city":"Bengaluru","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"User-Generated Content AI","summary":"AI-powered UGC platform helping brands collect, curate and publish authentic customer content.","foundedYear":2016,"useCases":"E-Commerce, Fashion, Travel, FMCG — UGC AI to collect, rights-manage and display customer photos and reviews for social proof","pricing":"₹8,000/month","rating":4.2,"reviews":1030},{"id":82,"name":"SalesBlink","founders":"Praveen Kumar","founderLinkedin":"https://www.linkedin.com/in/praveen-kumar-salesblink/","website":"https://salesblink.io","city":"Ahmedabad","rawIndustry":"Sales Technology","category":"Marketing & Sales","subCategory":"AI Sales Outreach Automation","summary":"AI-powered cold outreach automation tool for personalized email sequences and follow-ups.","foundedYear":2020,"useCases":"B2B Sales, SaaS, Marketing Agencies, Startups — AI cold email automation with personalised sequences improving reply rates for outbound sales","pricing":"₹8,000/month","rating":4.8,"reviews":165},{"id":83,"name":"Bolna AI","founders":"Bharat Agarwal, Utkarsh Garg","founderLinkedin":"https://www.linkedin.com/in/bharat-agarwal-bolna/","website":"https://bolna.dev","city":"Bengaluru","rawIndustry":"Enterprise Technology","category":"Enterprise & Automation","subCategory":"Voice AI Orchestration","summary":"Voice AI orchestration platform enabling Indian enterprises to automate calls using AI agents.","foundedYear":2023,"useCases":"BFSI, Logistics, Healthcare, Telecom — AI voice agents for outbound calling, appointment reminders, collections and customer surveys","pricing":"₹15,000/month","rating":4.2,"reviews":844},{"id":84,"name":"Flam","founders":"Shourya Agarwal, Kushal Negi","founderLinkedin":"https://www.linkedin.com/in/shooryaagarwal/","website":"https://flam.app","city":"Bengaluru","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"AR / AI Media Platform","summary":"Augmented reality AI platform enabling brands to create phygital marketing experiences.","foundedYear":2021,"useCases":"FMCG, Retail, Automotive, Media & Entertainment — Phygital AR AI experiences on product packaging and print for brand engagement","pricing":"$32/month","rating":4.8,"reviews":976},{"id":85,"name":"Vishwa AI","founders":"Sai Sharan, Mohit Kumar","founderLinkedin":"https://www.linkedin.com/in/sai-sharan-vishwai/","website":"https://vishwa.ai","city":"Bengaluru","rawIndustry":"Financial Services","category":"FinTech","subCategory":"Document Intelligence AI","summary":"AI platform automating document extraction and risk workflows for fintech and enterprises.","foundedYear":2023,"useCases":"BFSI, Lending, Insurance, Real Estate — AI document intelligence for KYC, loan origination, risk underwriting and compliance workflows","pricing":"Free","rating":4.3,"reviews":1183},{"id":86,"name":"Dalvoy AI","founders":"Ritik Agrawal, Akash Sharma","founderLinkedin":"https://www.linkedin.com/in/ritikagrawal-dalvoy/","website":"https://dalvoy.com","city":"Delhi","rawIndustry":"Education Technology","category":"EdTech","subCategory":"GenAI for UPSC Prep","summary":"GenAI platform evaluating UPSC mains answers using AI trained on 1,000+ topper answer sheets.","foundedYear":2024,"useCases":"Education, Government Services, EdTech — GenAI for UPSC and competitive exam preparation with AI answer evaluation and mentoring","pricing":"₹1,499/3 months","rating":4.6,"reviews":362},{"id":87,"name":"KOGO","founders":"Raj K Gopalakrishnan, Praveer Kochhar","founderLinkedin":"https://www.linkedin.com/in/rajkgopalakrishnan/","website":"https://kogo.ai","city":"Bengaluru","rawIndustry":"Enterprise Technology","category":"Enterprise & Automation","subCategory":"AI Operating System / LAM","summary":"AI OS built on large action models enabling industries to create autonomous business AI agents.","foundedYear":2018,"useCases":"Manufacturing, Logistics, BFSI, Healthcare — Large action model AI agents automating complex multi-step business processes end-to-end","pricing":"₹15,000/month","rating":4.1,"reviews":164},{"id":88,"name":"Ripik.ai","founders":"Dinesh Rathi, Aman Goel","founderLinkedin":"https://www.linkedin.com/in/dinesh-rathi-ripik/","website":"https://ripik.ai","city":"Delhi","rawIndustry":"Manufacturing Technology","category":"Developer Tools & Infra","subCategory":"Industrial Computer Vision","summary":"Industrial AI platform using computer vision for quality inspection and process automation.","foundedYear":2021,"useCases":"Manufacturing, Automotive, Steel, Pharma, FMCG — Industrial computer vision for defect detection, visual QC and production line optimisation","pricing":"₹25,000/month","rating":4.6,"reviews":169},{"id":89,"name":"Airveda","founders":"Namita Gupta, Ronak Sutaria","founderLinkedin":"https://www.linkedin.com/in/namitagupta-airveda/","website":"https://www.airveda.com","city":"Delhi","rawIndustry":"Environmental Technology","category":"AgriTech","subCategory":"AI Air Quality Monitoring","summary":"AI-powered air quality monitoring solution providing hyper-local pollution insights.","foundedYear":2015,"useCases":"Government, Real Estate, Construction, Healthcare, Smart Cities — AI air quality sensing for urban planning, ESG compliance and public health monitoring","pricing":"Contact for pricing","rating":4.1,"reviews":147},{"id":90,"name":"Fluid AI","founders":"Abhinav Aggarwal","founderLinkedin":"https://www.linkedin.com/in/abhinavaggarwal-fluid/","website":"https://www.fluid.ai","city":"Mumbai","rawIndustry":"Enterprise Technology","category":"Enterprise & Automation","subCategory":"Enterprise GenAI Platform","summary":"Generative AI platform helping financial institutions deploy compliant AI-powered assistants.","foundedYear":2015,"useCases":"BFSI, Insurance, Wealth Management — Compliant generative AI assistants for banking customer service, advisor tools and back office","pricing":"₹10,000/month","rating":4.3,"reviews":1132},{"id":91,"name":"Zipteams","founders":"Aashish Srinivasan","founderLinkedin":"https://www.linkedin.com/in/aashishsrinivasan/","website":"https://zipteams.com","city":"Bengaluru","rawIndustry":"Sales Technology","category":"Marketing & Sales","subCategory":"AI Sales Conversation Intelligence","summary":"AI sales platform analyzing customer calls to surface insights and coach sales teams.","foundedYear":2020,"useCases":"B2B Sales, SaaS, Real Estate, EdTech — AI conversation intelligence analysing sales calls to improve pitch quality and close rates","pricing":"₹8,000/month","rating":3.9,"reviews":1085},{"id":92,"name":"Almabase","founders":"Kalyan Kumar, Abhijeet Vijayvergia","founderLinkedin":"https://www.linkedin.com/in/kalyan-kumar-almabase/","website":"https://www.almabase.com","city":"Bengaluru","rawIndustry":"Education Technology","category":"EdTech","subCategory":"AI Alumni Engagement Platform","summary":"AI-powered alumni management platform helping universities deepen engagement and fundraising.","foundedYear":2014,"useCases":"Higher Education, Non-Profits, Alumni Associations — AI alumni engagement for event management, mentoring networks and fundraising campaigns","pricing":"Free","rating":4.7,"reviews":185},{"id":93,"name":"Juspay","founders":"Vimal Kumar, Ramanathan RV","founderLinkedin":"https://www.linkedin.com/in/vimalkumar-juspay/","website":"https://juspay.in","city":"Bengaluru","rawIndustry":"Financial Technology","category":"FinTech","subCategory":"AI-Powered Payments","summary":"Hyperlocal AI payments orchestration platform processing millions of transactions for banks.","foundedYear":2012,"useCases":"BFSI, E-Commerce, FinTech, Retail — AI-powered payments orchestration, smart routing and fraud prevention at massive transaction scale","pricing":"Custom pricing","rating":3.9,"reviews":526},{"id":94,"name":"BharatGPT","founders":"Haptik & partners consortium","founderLinkedin":"https://www.linkedin.com/company/bharatgpt/","website":"https://bharatgpt.ai","city":"Mumbai","rawIndustry":"Artificial Intelligence","category":"AI & LLMs","subCategory":"Indic Large Language Model","summary":"Industry consortium building BharatGPT, a large language model fine-tuned for Indian languages.","foundedYear":2023,"useCases":"Government, Healthcare, Education, BFSI, Telecom — Indic LLM powering public services, regional content and citizen-facing AI applications","pricing":"₹25,000/month","rating":3.9,"reviews":1211},{"id":95,"name":"Senseforth.ai","founders":"Rajkumar J","founderLinkedin":"https://www.linkedin.com/in/rajkumarj-senseforth/","website":"https://senseforth.ai","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Conversational AI Platform","summary":"AI-powered conversational platform for banking and insurance customer engagement automation.","foundedYear":2017,"useCases":"BFSI, Insurance, Government — Conversational AI for banking queries, loan applications, insurance claims and customer onboarding","pricing":"₹12,000/month","rating":4.4,"reviews":126},{"id":96,"name":"Spotdraft","founders":"Madhav Bhatt, Shashank Bijapur","founderLinkedin":"https://www.linkedin.com/in/madhavbhatt/","website":"https://www.spotdraft.com","city":"Delhi","rawIndustry":"Legal Technology","category":"Enterprise & Automation","subCategory":"AI Contract Management","summary":"AI-powered contract review, drafting and management platform reducing legal turnaround time.","foundedYear":2017,"useCases":"Legal, Procurement, BFSI, SaaS, Real Estate — AI contract review, clause extraction, risk detection and workflow automation for legal teams","pricing":"₹10,000/month","rating":3.9,"reviews":1391},{"id":97,"name":"Sprinklr AI","founders":"Ragy Thomas","founderLinkedin":"https://www.linkedin.com/in/ragythomas/","website":"https://www.sprinklr.com","city":"Bengaluru","rawIndustry":"Customer Experience","category":"Customer Experience","subCategory":"Unified AI CX Platform","summary":"Unified AI CXM platform managing customer experience across 30+ channels for global brands.","foundedYear":2009,"useCases":"Enterprise across Retail, BFSI, Telecom, Automotive — Unified AI customer experience management across social, messaging, email and voice channels","pricing":"₹2,999/month","rating":4.4,"reviews":692},{"id":98,"name":"Netcore Cloud (Smartech AI)","founders":"Rajesh Jain","founderLinkedin":"https://www.linkedin.com/in/rajeshexperiential/","website":"https://netcorecloud.com","city":"Mumbai","rawIndustry":"Marketing Technology","category":"Marketing & Sales","subCategory":"AI Customer Engagement","summary":"AI-powered marketing automation and customer engagement cloud for personalized campaigns.","foundedYear":1997,"useCases":"E-Commerce, BFSI, Travel, Media — AI marketing automation, email personalisation and customer journey orchestration at scale","pricing":"$32/month","rating":4.0,"reviews":688},{"id":99,"name":"Pixxel","founders":"Awais Ahmed, Kshitij Khandelwal","founderLinkedin":"https://www.linkedin.com/in/awaisahmed-pixxel/","website":"https://www.pixxel.space","city":"Bengaluru","rawIndustry":"Space Technology","category":"Developer Tools & Infra","subCategory":"AI Satellite Imagery Analytics","summary":"Space tech startup using AI to analyze hyperspectral satellite imagery for agriculture and climate.","foundedYear":2019,"useCases":"Agriculture, Climate & Environment, Oil & Gas, Defence — AI hyperspectral satellite analytics for crop health, pollution mapping and infrastructure monitoring","pricing":"₹10,000/month","rating":4.1,"reviews":313},{"id":100,"name":"HealthKart (AI Health)","founders":"Sameer Maheshwari, Prashant Tandon","founderLinkedin":"https://www.linkedin.com/in/sameermaheshwari/","website":"https://www.healthkart.com","city":"Gurugram","rawIndustry":"Health Technology","category":"Healthcare","subCategory":"AI-Powered Health Commerce","summary":"AI-driven health and nutrition platform personalizing supplement recommendations at scale.","foundedYear":2011,"useCases":"Healthcare, Wellness, Fitness, Nutrition — AI-driven personalised supplement and nutrition recommendations for fitness goals and health outcomes","pricing":"₹999/month","rating":4.3,"reviews":193}];
+
+const CATEGORIES = [
+  {name:'AI & LLMs', icon:'🤖', color:'#0ea5e9', desc:'Foundation models, LLMs and AI research platforms'},
+  {name:'Customer Experience', icon:'💬', color:'#8b5cf6', desc:'Conversational AI, CX automation and support'},
+  {name:'Marketing & Sales', icon:'📣', color:'#ec4899', desc:'MarTech, content creation and sales intelligence'},
+  {name:'Enterprise & Automation', icon:'⚙️', color:'#f59e0b', desc:'Process automation, ERP and enterprise AI'},
+  {name:'HR & Workforce', icon:'👥', color:'#10b981', desc:'Recruitment, HR automation and employee engagement'},
+  {name:'Healthcare', icon:'🏥', color:'#06b6d4', desc:'Medical AI, diagnostics and wellness platforms'},
+  {name:'FinTech', icon:'💰', color:'#22c55e', desc:'Banking AI, payments and financial analytics'},
+  {name:'Retail & E-Commerce', icon:'🛍️', color:'#f97316', desc:'E-commerce personalization and retail analytics'},
+  {name:'Developer Tools & Infra', icon:'🛠️', color:'#6366f1', desc:'DevTools, cloud infra, security and IoT AI'},
+  {name:'Logistics & Supply Chain', icon:'🚚', color:'#84cc16', desc:'Route optimization, tracking and logistics AI'},
+  {name:'AgriTech', icon:'🌾', color:'#a3e635', desc:'AI for farming, crop management and sustainability'},
+  {name:'EdTech', icon:'🎓', color:'#fb923c', desc:'AI-powered learning, assessment and education platforms'},
+];
+
+const CAT_COLORS = {};
+CATEGORIES.forEach(c => CAT_COLORS[c.name] = c.color);
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let compareList = [];
+let finderAnswers = { industry:'', budget:'', techLevel:'', challenges:[] };
+let finderStep = 1;
+let currentCategory = '';
+
+// ═══════════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════════
+function showPage(page, data = {}) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page)?.classList.add('active');
+  window.scrollTo(0, 0);
+  if (page === 'all-agents') renderAllAgents(data.category || '');
+  if (page === 'category') renderCategoryPage(data.cat);
+  if (page === 'ai-finder') startFinder(data.step || 1);
+  if (page === 'search') { renderSearch(''); setTimeout(()=>document.getElementById('searchInput')?.focus(),100); }
+  if (page === 'compare') renderCompare();
+}
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function catColor(cat) {
+  return CAT_COLORS[cat] || '#1565c0';
+}
+function priceClass(p) {
+  const low = p.toLowerCase();
+  if(low==='free'||low.startsWith('free')||low.startsWith('₹0')) return 'free';
+  return '';
+}
+function agentCardHTML(c, showAddCompare = false) {
+  const isFree = c.pricing.toLowerCase().startsWith('free') || c.pricing === 'Free tier' || c.pricing === 'Free tier available';
+  const inCmp = compareList.some(x=>x.id===c.id);
+  return `
+  <div class="agent-card" onclick="openModal(${c.id})">
+    <div class="card-top">
+      <span class="cat-pill" style="background:${catColor(c.category)}22;color:${catColor(c.category)};border:1px solid ${catColor(c.category)}44">${c.category}</span>
+      <div class="rating-badge">★ ${c.rating.toFixed(1)}</div>
+    </div>
+    <div>
+      <div class="card-name" style="display:flex;align-items:center;gap:6px">
+        ${c.name}
+        ${c.is_verified ? `
+          <span class="badge-tooltip">
+            <span class="verified-badge"></span>
+            <span class="tooltip-text">Verified by the Parlexa team</span>
+          </span>
+        ` : ''}
+      </div>
+      <div class="card-sub">${c.subCategory}</div>
+    </div>
+    <div class="card-desc">${c.summary}</div>
+    <hr class="card-divider">
+    <div class="card-footer">
+      <span class="card-reviews">${c.reviews.toLocaleString()} reviews</span>
+      <span class="card-price ${isFree?'free':''}">${c.pricing}</span>
+    </div>
+    ${showAddCompare ? `<button class="btn-add-compare ${inCmp?'added':''}" style="margin-top:10px;width:100%" onclick="event.stopPropagation();toggleCompare(${c.id})">${inCmp?'✓ Added to Compare':'+ Compare'}</button>` : ''}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// HOME INIT
+// ═══════════════════════════════════════════════
+function initHome() {
+  // Categories grid
+  const cg = document.getElementById('homeCategoriesGrid');
+  if(cg) {
+    const counts = {};
+    COMPANIES.forEach(c => { counts[c.category] = (counts[c.category]||0)+1; });
+    cg.innerHTML = CATEGORIES.map(cat => `
+      <div class="cat-card" onclick="showPage('category',{cat:'${cat.name}'})">
+        <div class="cat-icon" style="background:linear-gradient(135deg,${cat.color}33,${cat.color}22);font-size:24px">${cat.icon}</div>
+        <div class="cat-name">${cat.name}</div>
+        <div class="cat-count">${counts[cat.name]||0} AI agents available</div>
+      </div>`).join('');
+  }
+  // Top rated (sorted by rating, take top 6)
+  const tg = document.getElementById('topRatedGrid');
+  if(tg) {
+    const top = [...COMPANIES].sort((a,b)=>b.rating-a.rating||b.reviews-a.reviews).slice(0,6);
+    tg.innerHTML = top.map(c=>agentCardHTML(c)).join('');
+  }
+  // Footer categories
+  const fc = document.getElementById('footerCategories');
+  if(fc) fc.innerHTML = CATEGORIES.map(c=>`<li onclick="showPage('category',{cat:'${c.name}'})">${c.name}</li>`).join('');
+  // Categories dropdown
+  const cd = document.getElementById('categoriesDropdown');
+  if(cd) cd.innerHTML = CATEGORIES.map(c=>`
+    <div class="dropdown-item" onclick="showPage('category',{cat:'${c.name}'})">
+      <span>${c.icon}</span> ${c.name}
+    </div>`).join('');
+  // News ticker
+  const news = [
+    'Sam Altman: AGI could arrive sooner than expected at MIT speech · r/singularity',
+    'Krutrim raises $50M in Series B to expand Indic LLM capabilities · TechCrunch India',
+    'India AI market projected to reach $17B by 2027 at 45% CAGR · NASSCOM Report',
+    'Sarvam AI launches multilingual voice API for 10+ Indian languages · Product Hunt',
+    'Yellow.ai expands to 40+ languages with new voice AI module · ET Tech',
+    'DPIIT to launch AI sandbox for Indian startups · Ministry of Commerce',
+    'Freshworks Freddy AI now handles 70% of customer queries autonomously · Businessline',
+  ];
+  const nt = document.getElementById('newsTicker');
+  if(nt) {
+    const doubled = [...news,...news];
+    nt.innerHTML = doubled.map(n=>`<span class="news-item">${n}</span>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// ALL AGENTS
+// ═══════════════════════════════════════════════
+function renderAllAgents(activeCat = '') {
+  const filters = document.getElementById('allAgentsFilters');
+  const grid = document.getElementById('allAgentsGrid');
+  const subtitle = document.getElementById('allAgentsSubtitle');
+  const allCats = ['All', ...CATEGORIES.map(c=>c.name)];
+  if(filters) filters.innerHTML = allCats.map(cat=>`
+    <button class="filter-chip ${(!activeCat&&cat==='All')||(activeCat===cat)?'active':''}" onclick="filterAgents('${cat==='All'?'':cat}')">${cat}</button>`).join('');
+  const shown = activeCat ? COMPANIES.filter(c=>c.category===activeCat) : COMPANIES;
+  if(grid) grid.innerHTML = shown.map(c=>agentCardHTML(c)).join('');
+  if(subtitle) subtitle.textContent = `Showing ${shown.length} AI agents${activeCat?' in '+activeCat:''}`;
+}
+function filterAgents(cat) {
+  document.querySelectorAll('#allAgentsFilters .filter-chip').forEach(b => {
+    b.classList.toggle('active', (!cat&&b.textContent==='All')||(cat&&b.textContent===cat));
+  });
+  const shown = cat ? COMPANIES.filter(c=>c.category===cat) : COMPANIES;
+  document.getElementById('allAgentsGrid').innerHTML = shown.map(c=>agentCardHTML(c)).join('');
+  document.getElementById('allAgentsSubtitle').textContent = `Showing ${shown.length} AI agents${cat?' in '+cat:''}`;
+}
+
+// ═══════════════════════════════════════════════
+// CATEGORY PAGE
+// ═══════════════════════════════════════════════
+function renderCategoryPage(catName) {
+  const catMeta = CATEGORIES.find(c=>c.name===catName) || {name:catName,icon:'⚡',color:'#1565c0',desc:''};
+  const agents = COMPANIES.filter(c=>c.category===catName);
+  const banner = document.getElementById('categoryBanner');
+  if(banner) banner.innerHTML = `
+    <div class="category-banner-icon" style="background:linear-gradient(135deg,${catMeta.color}44,${catMeta.color}22)">${catMeta.icon}</div>
+    <div>
+      <h1>${catName}</h1>
+      <p>${catMeta.desc} · <strong>${agents.length} agents available</strong></p>
+    </div>`;
+  // Sub-category filters
+  const subs = [...new Set(agents.map(a=>a.subCategory))];
+  const subFilters = document.getElementById('categorySubFilters');
+  if(subFilters) subFilters.innerHTML = ['All',...subs].map(s=>`
+    <button class="filter-chip ${s==='All'?'active':''}" onclick="filterCategorySub('${catName}','${s==='All'?'':s}',this)">${s}</button>`).join('');
+  const grid = document.getElementById('categoryGrid');
+  if(grid) grid.innerHTML = agents.map(c=>agentCardHTML(c)).join('');
+  currentCategory = catName;
+}
+function filterCategorySub(catName, sub, btn) {
+  document.querySelectorAll('#categorySubFilters .filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const agents = COMPANIES.filter(c=>c.category===catName && (sub===''||c.subCategory===sub));
+  document.getElementById('categoryGrid').innerHTML = agents.map(c=>agentCardHTML(c)).join('');
+}
+
+// ═══════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════
+function doSearch() {
+  const q = document.getElementById('heroSearchInput').value.trim();
+  showPage('search');
+  if(q) { document.getElementById('searchInput').value = q; runSearch(); }
+}
+function runSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const results = q ? COMPANIES.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.category.toLowerCase().includes(q) ||
+    c.subCategory.toLowerCase().includes(q) ||
+    c.summary.toLowerCase().includes(q) ||
+    c.useCases.toLowerCase().includes(q) ||
+    c.city.toLowerCase().includes(q)
+  ) : COMPANIES;
+  const grid = document.getElementById('searchGrid');
+  if(results.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>No results found</h3><p>Try a different search term or browse by category</p></div>`;
+  } else {
+    grid.innerHTML = results.map(c=>agentCardHTML(c)).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════
+function openModal(id) {
+  const c = COMPANIES.find(x=>x.id===id);
+  if(!c) return;
+  const inCmp = compareList.some(x=>x.id===c.id);
+  const isFree = c.pricing.toLowerCase().startsWith('free');
+  document.getElementById('modalHeader').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <div class="agent-avatar" style="width:56px;height:56px;border-radius:14px;font-size:26px">${c.name[0]}</div>
+      <div>
+        <div style="font-size:22px;font-weight:700;display:flex;align-items:center;gap:8px">
+          ${c.name}
+          ${c.is_verified ? `
+            <span class="badge-tooltip">
+              <span class="verified-badge" style="width:20px;height:20px;"></span>
+              <span class="tooltip-text">Verified by the Parlexa team</span>
+            </span>
+          ` : ''}
+        </div>
+        <div style="font-size:13px;color:var(--cyan);margin-top:3px">${c.subCategory}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div class="rating-badge" style="font-size:14px;padding:6px 12px">★ ${c.rating.toFixed(1)}</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px">${c.reviews.toLocaleString()} reviews</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span class="cat-pill" style="background:${catColor(c.category)}22;color:${catColor(c.category)};border:1px solid ${catColor(c.category)}44;font-size:12px">${c.category}</span>
+      <span style="font-size:12px;color:var(--text-dim);padding:4px 0">📍 ${c.city} · Est. ${c.foundedYear}</span>
+    </div>`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-section">
+      <h3>About</h3>
+      <p>${c.summary}</p>
+    </div>
+    <div class="detail-section">
+      <h3>Use Cases & Industries Served</h3>
+      <p style="font-size:13px">${c.useCases}</p>
+    </div>
+    <div class="detail-section">
+      <h3>Pricing</h3>
+      <div style="font-size:20px;font-weight:700;color:${isFree?'var(--green)':'var(--cyan)'}">${c.pricing}</div>
+    </div>
+    <div class="detail-section">
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-label">Founded</div><div class="meta-value">${c.foundedYear}</div></div>
+        <div class="meta-item"><div class="meta-label">HQ</div><div class="meta-value">${c.city}</div></div>
+        <div class="meta-item"><div class="meta-label">Founders</div><div class="meta-value">${c.founders}</div></div>
+        <div class="meta-item"><div class="meta-label">Category</div><div class="meta-value">${c.rawIndustry}</div></div>
+      </div>
+    </div>`;
+  document.getElementById('modalFooter').innerHTML = `
+    <a href="${c.website}" target="_blank" class="btn-get-started">Get Started ↗</a>
+    <button class="btn-add-compare ${inCmp?'added':''}" id="modalCmpBtn" onclick="toggleCompare(${c.id})">${inCmp?'✓ Added':'+ Compare'}</button>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(e) {
+  if(!e || e.target===document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════
+// COMPARE
+// ═══════════════════════════════════════════════
+function toggleCompare(id) {
+  const c = COMPANIES.find(x=>x.id===id);
+  const idx = compareList.findIndex(x=>x.id===id);
+  if(idx>=0) {
+    compareList.splice(idx,1);
+    showToast(`${c.name} removed from compare`);
+  } else {
+    if(compareList.length>=3) { showToast('Max 3 agents in compare','error'); return; }
+    compareList.push(c);
+    showToast(`${c.name} added to compare ✓`,'success');
+  }
+  updateCompareBadge();
+  // Update modal btn if open
+  const btn = document.getElementById('modalCmpBtn');
+  if(btn) { const inC = compareList.some(x=>x.id===id); btn.textContent = inC?'✓ Added':'+ Compare'; btn.className = 'btn-add-compare'+(inC?' added':''); }
+  if(document.getElementById('page-compare').classList.contains('active')) renderCompare();
+}
+function updateCompareBadge() {
+  const badge = document.getElementById('compareBadge');
+  badge.style.display = compareList.length ? 'flex' : 'none';
+  badge.textContent = compareList.length;
+}
+function renderCompare() {
+  // Slots
+  const slots = document.getElementById('compareSlots');
+  let sHTML = '';
+  for(let i=0;i<3;i++) {
+    const c = compareList[i];
+    sHTML += c ? `<div class="compare-slot filled">
+      <button class="compare-slot-remove" onclick="toggleCompare(${c.id})">✕</button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="agent-avatar" style="width:36px;height:36px;font-size:16px">${c.name[0]}</div>
+        <div><div style="font-size:14px;font-weight:600">${c.name}</div>
+        <div style="font-size:11px;color:var(--text-dim)">${c.category}</div></div>
+      </div>
+      <div class="rating-badge" style="font-size:11px">★ ${c.rating.toFixed(1)} · ${c.reviews} reviews</div>
+    </div>` : `<div class="compare-slot">+ Add agent to compare</div>`;
+  }
+  if(slots) slots.innerHTML = sHTML;
+
+  // Table
+  const tableSection = document.getElementById('compareTableSection');
+  if(compareList.length < 2) {
+    tableSection.style.display = 'none';
+  } else {
+    tableSection.style.display = 'block';
+    const cols = compareList.map((c,i) => {
+      const features = c.subCategory.split('/'||',').concat(['India-compliant','Indic language support','API access']).slice(0,5);
+      return `<div class="compare-col">
+        <div class="compare-section-title" style="margin-top:0">Pricing</div>
+        <div class="compare-label">Model</div>
+        <div class="compare-value" style="margin-bottom:12px">${c.pricing.includes('Contact')||c.pricing.includes('Custom')?'Enterprise':'SaaS'}</div>
+        <div class="compare-label">Starting Price</div>
+        <div class="compare-value" style="font-size:18px;font-weight:700;color:var(--cyan);margin-bottom:16px">${c.pricing}</div>
+        <div class="compare-section-title">Sub-Category</div>
+        <div class="compare-value" style="margin-bottom:12px">${c.subCategory}</div>
+        <div class="compare-section-title">Use Cases</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:12px">${c.useCases.substring(0,140)}...</div>
+        <div class="compare-section-title">Founders</div>
+        <div class="compare-value" style="margin-bottom:12px;font-size:13px">${c.founders.split(',')[0]}</div>
+        <div class="compare-section-title">HQ · Founded</div>
+        <div class="compare-value" style="margin-bottom:16px">${c.city} · ${c.foundedYear}</div>
+        <div class="compare-section-title">Technical Expertise</div>
+        <div class="compare-value" style="margin-bottom:16px">Low – Medium</div>
+        <button class="btn-get-started" style="margin-top:8px" onclick="window.open('${c.website}','_blank')">View Full Details ↗</button>
+      </div>`;
+    });
+    tableSection.innerHTML = `<h3 style="font-size:18px;font-weight:600;margin-bottom:20px">Side-by-Side Comparison</h3><div class="compare-grid">${cols.join('')}</div>`;
+  }
+
+  // Add grid
+  const addSection = document.getElementById('compareAddSection');
+  if(compareList.length >= 3) { addSection.style.display = 'none'; return; }
+  addSection.style.display = 'block';
+  const addFilters = document.getElementById('compareFilters');
+  if(addFilters) addFilters.innerHTML = ['All',...CATEGORIES.map(c=>c.name)].map(cat=>`
+    <button class="filter-chip ${cat==='All'?'active':''}" onclick="filterCompareAdd('${cat==='All'?'':cat}',this)">${cat}</button>`).join('');
+  const addGrid = document.getElementById('compareAddGrid');
+  if(addGrid) addGrid.innerHTML = COMPANIES.filter(c=>!compareList.some(x=>x.id===c.id)).map(c=>agentCardHTML(c,true)).join('');
+}
+function filterCompareAdd(cat, btn) {
+  document.querySelectorAll('#compareFilters .filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const shown = cat ? COMPANIES.filter(c=>c.category===cat&&!compareList.some(x=>x.id===c.id)) : COMPANIES.filter(c=>!compareList.some(x=>x.id===c.id));
+  document.getElementById('compareAddGrid').innerHTML = shown.map(c=>agentCardHTML(c,true)).join('');
+}
+
+// ═══════════════════════════════════════════════
+// AI FINDER
+// ═══════════════════════════════════════════════
+const FINDER_STEPS = [
+  {
+    q: "What's your business industry?",
+    type: 'single',
+    key: 'industry',
+    options: [
+      {label:'E-Commerce & Retail', icon:'🛍️', kw:['retail','e-commerce','ecommerce','fashion','fmcg','d2c','shopify','grocery']},
+      {label:'Finance & Banking', icon:'🏦', kw:['bfsi','banking','finance','fintech','insurance','lending','wealth']},
+      {label:'Healthcare & Wellness', icon:'🏥', kw:['healthcare','health','medical','pharma','wellness','hospital','diagnostics']},
+      {label:'Marketing & Advertising', icon:'📣', kw:['marketing','advertising','media','content','brand','social','campaign']},
+      {label:'Technology & SaaS', icon:'💻', kw:['technology','saas','software','it','tech','developer','startup']},
+      {label:'Education', icon:'🎓', kw:['education','edtech','learning','university','school','training']},
+      {label:'Manufacturing & Industrial', icon:'🏭', kw:['manufacturing','industrial','factory','production','iot','supply chain']},
+      {label:'Agriculture', icon:'🌾', kw:['agriculture','agri','farming','crop','rural','food']},
+      {label:'Other / Multiple', icon:'⚡', kw:[]},
+    ]
+  },
+  {
+    q: "What's your monthly budget?",
+    type: 'budget',
+    key: 'budget',
+    options: [
+      {label:'Free', icon:'', kw:['free']},
+      {label:'₹1 – ₹25,000/month', icon:'', kw:['₹2,999','₹5,000','₹8,000','₹10,000','₹12,000','₹15,000','₹999','₹1,499','$32']},
+      {label:'₹25,000 – ₹75,000/month', icon:'', kw:['₹25,000','₹30,000','₹50,000']},
+      {label:'₹75,000 – ₹1,50,000/month', icon:'', kw:['₹75,000','₹1,20,000']},
+      {label:'₹1,50,000+ / Enterprise', icon:'', kw:['contact','custom','enterprise']},
+    ]
+  },
+  {
+    q: "What's your technical expertise level?",
+    type: 'single',
+    key: 'techLevel',
+    options: [
+      {label:'No technical skills needed', icon:'👋', kw:[]},
+      {label:'Basic technical knowledge', icon:'🔧', kw:[]},
+      {label:'Some technical expertise', icon:'💡', kw:[]},
+      {label:'Advanced technical skills', icon:'🚀', kw:[]},
+    ]
+  },
+  {
+    q: "What challenges are you looking to solve?",
+    sub: 'Select all that apply',
+    type: 'multi',
+    key: 'challenges',
+    options: [
+      {label:'Customer support automation', kw:['customer support','helpdesk','chatbot','cx','contact centre']},
+      {label:'Lead generation & sales', kw:['lead','sales','crm','outreach','prospect']},
+      {label:'Content creation & marketing', kw:['content','marketing','social media','video','creative']},
+      {label:'Data analytics & insights', kw:['analytics','insights','data','reporting','intelligence']},
+      {label:'HR & recruitment automation', kw:['hr','recruitment','hiring','employee','workforce']},
+      {label:'Process & workflow automation', kw:['automation','workflow','rpa','process','nlp']},
+      {label:'Document & OCR processing', kw:['document','ocr','contract','invoice','kyc']},
+      {label:'Fraud detection & security', kw:['fraud','security','threat','risk','compliance']},
+      {label:'Multilingual & regional language', kw:['language','indic','regional','multilingual','vernacular','hindi']},
+      {label:'Supply chain & logistics', kw:['logistics','supply chain','delivery','route','shipment']},
+    ]
+  }
+];
+
+function startFinder(step = 1) {
+  finderStep = step;
+  if(step === 1) finderAnswers = {industry:'',budget:'',techLevel:'',challenges:[]};
+  renderFinderStep();
+}
+function renderFinderStep() {
+  const prog = document.getElementById('finderProgress');
+  prog.innerHTML = [1,2,3,4].map(i=>`<div class="progress-step ${i<finderStep?'done':i===finderStep?'active':''}"></div>`).join('');
+  const stepData = FINDER_STEPS[finderStep-1];
+  const content = document.getElementById('finderContent');
+  let html = `<div class="finder-question">${stepData.q}${stepData.sub?`<small>${stepData.sub}</small>`:''}</div>`;
+  if(stepData.type === 'single') {
+    const gridClass = stepData.options.length > 4 ? 'finder-grid-3' : 'finder-grid-2';
+    html += `<div class="${gridClass}">`;
+    html += stepData.options.map((opt,i) => `
+      <div class="finder-option ${finderAnswers[stepData.key]===opt.label?'selected':''}" onclick="selectFinderOption('${stepData.key}','${opt.label}',this)">
+        ${opt.icon?`<div class="opt-icon">${opt.icon}</div>`:''}
+        <div class="opt-label">${opt.label}</div>
+      </div>`).join('');
+    html += '</div>';
+  } else if(stepData.type === 'budget') {
+    html += `<div class="finder-grid-budget">`;
+    html += stepData.options.map(opt => `
+      <div class="finder-option-flat ${finderAnswers.budget===opt.label?'selected':''}" onclick="selectBudget('${opt.label}',this)">
+        ${opt.label}
+      </div>`).join('');
+    html += '</div>';
+  } else if(stepData.type === 'multi') {
+    html += `<div class="finder-grid-2">`;
+    html += stepData.options.map(opt => {
+      const checked = finderAnswers.challenges.includes(opt.label);
+      return `<div class="finder-option-flat ${checked?'selected':''}" onclick="toggleChallenge('${opt.label}',this)">
+        <div class="finder-option-checkbox">${checked?'✓':''}</div>
+        ${opt.label}
+      </div>`;
+    }).join('');
+    html += '</div>';
+  }
+  // Actions
+  html += `<div class="finder-actions">`;
+  if(finderStep > 1) html += `<button class="btn-back" onclick="startFinder(${finderStep-1})">← Back</button>`;
+  if(finderStep < 4) {
+    const disabled = !finderAnswers[stepData.key] && stepData.type !== 'multi';
+    html += `<button class="btn-get-recs" ${disabled?'disabled':''} onclick="nextFinderStep()" id="finderNextBtn">Next →</button>`;
+  } else {
+    const hasChallenge = finderAnswers.challenges.length > 0;
+    html += `<button class="btn-get-recs" onclick="getRecommendations()">Get Recommendations ✦</button>`;
+  }
+  html += `</div>`;
+  content.innerHTML = html;
+}
+function selectFinderOption(key, val, el) {
+  finderAnswers[key] = val;
+  el.closest('div').querySelectorAll('.finder-option').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('finderNextBtn')?.removeAttribute('disabled');
+}
+function selectBudget(val, el) {
+  finderAnswers.budget = val;
+  el.closest('div').querySelectorAll('.finder-option-flat').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('finderNextBtn')?.removeAttribute('disabled');
+}
+function toggleChallenge(val, el) {
+  const idx = finderAnswers.challenges.indexOf(val);
+  if(idx>=0) finderAnswers.challenges.splice(idx,1);
+  else finderAnswers.challenges.push(val);
+  el.classList.toggle('selected', finderAnswers.challenges.includes(val));
+  const cb = el.querySelector('.finder-option-checkbox');
+  if(cb) cb.textContent = finderAnswers.challenges.includes(val) ? '✓' : '';
+}
+function nextFinderStep() {
+  finderStep++;
+  renderFinderStep();
+}
+function getRecommendations() {
+  // Score every company
+  const industryStep = FINDER_STEPS[0];
+  const industryOpt = industryStep.options.find(o=>o.label===finderAnswers.industry);
+  const industryKws = industryOpt ? industryOpt.kw : [];
+  const challengeKws = finderAnswers.challenges.flatMap(ch => {
+    const opt = FINDER_STEPS[3].options.find(o=>o.label===ch);
+    return opt ? opt.kw : [];
+  });
+  const budgetOpt = FINDER_STEPS[1].options.find(o=>o.label===finderAnswers.budget);
+  const budgetKws = budgetOpt ? budgetOpt.kw : [];
+
+  const scored = COMPANIES.map(c => {
+    const corpus = (c.summary + ' ' + c.useCases + ' ' + c.category + ' ' + c.subCategory + ' ' + c.rawIndustry).toLowerCase();
+    const pricing = c.pricing.toLowerCase();
+    // Industry score (0-40)
+    let indScore = 0;
+    industryKws.forEach(kw => { if(corpus.includes(kw)) indScore += 8; });
+    indScore = Math.min(40, indScore);
+    if(finderAnswers.industry === 'Other / Multiple') indScore = 20;
+    // Challenge score (0-40)
+    let chalScore = 0;
+    challengeKws.forEach(kw => { if(corpus.includes(kw)) chalScore += 6; });
+    chalScore = Math.min(40, chalScore);
+    // Budget score (0-15)
+    let budScore = 0;
+    if(budgetKws.some(kw=>pricing.includes(kw))) budScore = 15;
+    else if(finderAnswers.budget==='₹1 – ₹25,000/month' && !pricing.includes('₹30,000')&&!pricing.includes('₹50,000')) budScore = 8;
+    else if(finderAnswers.budget==='₹1,50,000+ / Enterprise') budScore = 12;
+    // Rating bonus (0-5)
+    const ratingBonus = Math.round((c.rating - 3.5) * 10);
+    const totalScore = indScore + chalScore + budScore + ratingBonus;
+    const matchPct = Math.min(99, Math.max(55, Math.round(totalScore * 1.1)));
+    return {...c, score: totalScore, matchPct};
+  }).sort((a,b)=>b.score-a.score||b.rating-a.rating);
+
+  const top = scored.slice(0,9);
+  const grid = document.getElementById('recsGrid');
+  const subtitle = document.getElementById('recsSubtitle');
+  if(subtitle) subtitle.textContent = `Based on your ${finderAnswers.industry || 'business'} needs and ${finderAnswers.budget || 'your'} budget`;
+  if(grid) {
+    grid.innerHTML = top.map((c,i) => {
+      const isBest = i === 0;
+      const features = c.useCases.split('—')[1]?.split(',').slice(0,2).map(s=>s.trim()) || ['Industry-specific AI', 'India-compliant solution'];
+      const isFree = c.pricing.toLowerCase().startsWith('free');
+      return `
+      <div class="result-card" onclick="openModal(${c.id})">
+        ${isBest?`<div class="best-match-badge">📈 Best Match</div>`:''}
+        <div class="result-top">
+          <div class="agent-avatar">${c.name[0]}</div>
+          <div class="result-meta">
+            <div class="result-name" style="display:flex;align-items:center;gap:6px">
+              ${c.name}
+              ${c.is_verified ? `
+                <span class="badge-tooltip">
+                  <span class="verified-badge"></span>
+                  <span class="tooltip-text">Verified by the Parlexa team</span>
+                </span>
+              ` : ''}
+            </div>
+            <div class="match-pct">✦ ${c.matchPct}% match</div>
+          </div>
+          <div class="rating-badge">★ ${c.rating.toFixed(1)}</div>
+        </div>
+        <div class="perfect-fit">💡 Perfect fit for your industry</div>
+        <div class="result-desc">${c.summary}</div>
+        <div class="result-features">
+          ${features.map(f=>`<div class="feature-check">${f.substring(0,60)}</div>`).join('')}
+        </div>
+        <div class="result-footer">
+          <div class="result-price"><small>Starting from</small><br>${c.pricing}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  showPage('recommendations');
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', ()=>{
+  initHome();
+  showPage('home');
+  // Close modal on Escape
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+});
+</script>
+</body>
+</html>
