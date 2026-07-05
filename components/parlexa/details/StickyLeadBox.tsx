@@ -57,7 +57,7 @@ export function StickyLeadBox({ agent, initialSaved = false, onVisitWebsite }: S
         setTimeout(() => setIsCopied(false), 2000);
       }
     } catch (err) {
-      // ignore
+      console.error('Error sharing:', err);
     }
   };
 

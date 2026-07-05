@@ -2,9 +2,6 @@
 
 import { Agent } from '@/lib/types';
 import { useState, useEffect, useRef } from 'react';
-import { Bookmark, Share2, GitCompare, Check } from 'lucide-react';
-import { useCompare } from '@/context/CompareContext';
-import { toggleWishlist } from '@/app/actions/wishlist';
 import { SaveFolderToast } from './SaveFolderToast';
 
 function useTilt() {
@@ -70,74 +67,16 @@ function useTilt() {
 
 interface HeroSectionProps {
   agent: Agent;
-  onVisitWebsite?: () => void;
-  initialSaved?: boolean;
 }
 
 export function HeroSection({ 
-  agent, 
-  onVisitWebsite, 
-  initialSaved = false
+  agent
 }: HeroSectionProps) {
-  const [isSaved, setIsSaved] = useState(initialSaved);
-  const [isSaving, setIsSaving] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  
-  const { selectedIds, toggleCompare } = useCompare();
-  const isInCompare = selectedIds.includes(agent.id);
-  const [isCopied, setIsCopied] = useState(false);
   const [featuredImgError, setFeaturedImgError] = useState(false);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [thumbErrors, setThumbErrors] = useState<Record<number, boolean>>({});
 
   const tilt = useTilt();
-
-  useEffect(() => {
-    setIsSaved(initialSaved);
-  }, [initialSaved]);
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const result = await toggleWishlist(Number(agent.id));
-      if (result.error) {
-        if (result.error === 'You must be logged in to save tools.') {
-          window.dispatchEvent(new CustomEvent('open-auth', { detail: { view: 'signin' } }));
-        } else {
-          console.error(result.error);
-        }
-      } else {
-        const nextSaved = result.isSaved || false;
-        setIsSaved(nextSaved);
-        if (nextSaved) {
-          setShowToast(true);
-        }
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleShare = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: agent.name,
-          text: agent.oneLiner || agent.summary,
-          url: window.location.href,
-        });
-      } else {
-        await navigator.clipboard.writeText(window.location.href);
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-      }
-    } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') return;
-      console.error('Error sharing:', err);
-    }
-  };
 
   const mediaItems: { type: 'video' | 'image', url: string }[] = [];
   if (agent.videoUrl) mediaItems.push({ type: 'video', url: agent.videoUrl });
@@ -285,12 +224,6 @@ export function HeroSection({
           )}
         </div>
       </div>
-      
-      <SaveFolderToast 
-        agentId={Number(agent.id)} 
-        isOpen={showToast} 
-        onClose={() => setShowToast(false)} 
-      />
     </section>
   );
 }

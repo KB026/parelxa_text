@@ -127,13 +127,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
             <div className="order-1 flex flex-col gap-12 lg:mb-12">
               <HeroSection 
                 agent={agent} 
-                initialSaved={isSaved}
-                onVisitWebsite={async () => {
-                  'use server';
-                  const supabase = createClient();
-                  const { data: { user: currentUser } } = await supabase.auth.getUser();
-                  await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
-                }} 
               />
             </div>
 
