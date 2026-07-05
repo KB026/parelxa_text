@@ -2,7 +2,6 @@
 
 import { Agent } from '@/lib/types';
 import { useState, useEffect, useRef } from 'react';
-import { SaveFolderToast } from './SaveFolderToast';
 
 function useTilt() {
   const ref = useRef<HTMLDivElement>(null);
