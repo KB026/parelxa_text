@@ -1,16 +1,16 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export function SortSelector() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const currentSort = searchParams.get('sort') || 'relevance';
 
   const handleSort = (sort: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('sort', sort);
-    router.push(`/products?${params.toString()}`);
+    window.history.replaceState(null, '', `/products?${params.toString()}`);
+    window.dispatchEvent(new Event('filters-changed'));
   };
 
   return (

@@ -19,8 +19,8 @@ export function PricingSection({
   usdPrice
 }: PricingSectionProps) {
   return (
-    <section style={{ marginBottom: '64px' }}>
-      <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px' }}>Pricing & Plans</h3>
+    <section>
+      <h3 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '24px', color: 'var(--text-white)' }}>Pricing & Plans</h3>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
         {/* Main Pricing Card */}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Agent } from '@/lib/types';
@@ -10,74 +11,94 @@ interface SimilarToolsProps {
 }
 
 export function SimilarTools({ tools }: SimilarToolsProps) {
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+
   if (tools.length === 0) return null;
 
+  // Duplicate for seamless infinite scrolling
+  const duplicatedTools = [...tools, ...tools];
+
   return (
-    <section style={{ marginTop: '80px', borderTop: '1px solid var(--border-subtle)', paddingTop: '80px' }}>
-      <h3 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '32px' }}>Similar AI Tools</h3>
+    <section className="border-t border-white/5 py-12 overflow-hidden w-full">
+      <style jsx global>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 40s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee {
+            animation: none !important;
+            flex-wrap: wrap;
+          }
+        }
+      `}</style>
       
-      <div style={{ 
-        display: 'flex', gap: '24px', overflowX: 'auto', paddingBottom: '32px',
-        scrollbarWidth: 'none', msOverflowStyle: 'none'
-      }}>
-        {tools.map(tool => (
-          <Link 
-            key={tool.id}
-            href={`/products/${tool.slug}`}
-            style={{ 
-              minWidth: '280px', maxWidth: '280px', background: 'var(--bg-card)', 
-              border: '1px solid var(--border-subtle)', borderRadius: '20px', padding: '24px',
-              textDecoration: 'none', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              display: 'flex', flexDirection: 'column', gap: '16px'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-              e.currentTarget.style.borderColor = 'var(--cyan)';
-              e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.3)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.borderColor = 'var(--border-subtle)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-              <div style={{ 
-                width: '56px', height: '56px', borderRadius: '12px', background: 'var(--bg-secondary)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
-                flexShrink: 0, overflow: 'hidden'
-              }}>
-                {tool.logoUrl ? <Image src={tool.logoUrl} alt="" width={56} height={56} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : tool.name[0]}
-              </div>
-              <div style={{ overflow: 'hidden' }}>
-                <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: 'var(--text-white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tool.name}</h4>
-                <div style={{ color: 'var(--cyan)', fontSize: '12px', marginTop: '2px' }}>{tool.category}</div>
-              </div>
+      <h3 className="text-2xl font-extrabold mb-8 text-white px-4 lg:px-0">Similar AI Tools</h3>
+      
+      {/* Marquee Wrapper */}
+      <div className="w-full relative flex group">
+        <div className="flex gap-6 whitespace-nowrap will-change-transform animate-marquee">
+          {duplicatedTools.map((tool, idx) => (
+            <div 
+              key={`${tool.id}-${idx}`} 
+              className="inline-block w-[320px] shrink-0 whitespace-normal transition-all duration-500 ease-out hover:scale-[1.02] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1"
+            >
+              <Link href={`/products/${tool.slug}`} className="block no-underline h-full">
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 h-full flex flex-col justify-between group-card cursor-pointer">
+                  
+                  <div>
+                    <div className="flex items-start gap-4 mb-4">
+                      {/* Logo */}
+                      <div className="w-14 h-14 rounded-xl bg-[#0f172a] border border-white/5 flex items-center justify-center overflow-hidden shrink-0">
+                        {tool.logoUrl && !imgErrors[tool.id] ? (
+                          <Image 
+                            src={tool.logoUrl} 
+                            alt={tool.name} 
+                            width={56} height={56} 
+                            style={{ objectFit: 'cover' }}
+                            onError={() => setImgErrors(prev => ({ ...prev, [tool.id]: true }))}
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="text-xl font-bold text-white/30">
+                            {tool.name.substring(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="overflow-hidden">
+                        <h4 className="text-lg font-bold text-white m-0 group-hover:text-cyan-400 transition-colors line-clamp-1 truncate">{tool.name}</h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <StarRating rating={tool.rating || 0} size="sm" />
+                          <span className="text-xs text-white/50 font-bold">{tool.rating ? tool.rating.toFixed(1) : '0.0'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-white/60 line-clamp-2 leading-relaxed m-0 whitespace-normal">
+                      {tool.oneLiner || (tool.summary && tool.summary.split('.')[0] + '.')}
+                    </p>
+                  </div>
+                  
+                  <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-4">
+                    <span className="text-xs font-semibold px-2 py-1 bg-white/5 text-white/70 rounded-md uppercase tracking-wider">
+                      {tool.category || 'AI Tool'}
+                    </span>
+                    <span className="text-cyan-400 text-sm font-semibold flex items-center gap-1 group-card-hover:gap-2 transition-all">
+                      View details <span aria-hidden="true">&rarr;</span>
+                    </span>
+                  </div>
+                </div>
+              </Link>
             </div>
-
-            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5 }}>
-              {tool.oneLiner || tool.summary?.split('.')[0] + '.'}
-            </p>
-
-            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <StarRating rating={tool.rating} size="sm" />
-                <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-white)' }}>{tool.rating ? tool.rating.toFixed(1) : '0.0'}</span>
-              </div>
-              <div style={{ 
-                fontSize: '12px', 
-                color: 'var(--cyan)', 
-                fontWeight: 600,
-                maxWidth: '120px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }} title={tool.pricing}>
-                {tool.pricing}
-              </div>
-            </div>
-          </Link>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

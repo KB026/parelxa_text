@@ -1,4 +1,5 @@
 'use client';
+import { ArrowRight } from 'lucide-react';
 
 interface CompanySectionProps {
   companyName?: string;
@@ -18,41 +19,48 @@ export function CompanySection({
   companyBlurb 
 }: CompanySectionProps) {
   return (
-    <section style={{ marginBottom: '64px' }}>
-      <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px' }}>Built by {companyName || 'the Team'}</h3>
-      
-      <div style={{ 
-        padding: '32px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', 
-        borderRadius: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px'
-      }}>
-        {/* Company Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
-          <div>
-            <div style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '4px' }}>Founded In</div>
-            <div style={{ fontSize: '18px', fontWeight: 700 }}>{foundingYear || 'N/A'}</div>
+    <section>
+      <div className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1">
+        {/* Header */}
+        <div className="p-6 border-b border-white/5">
+          <h3 className="m-0 text-xl font-bold text-white">Company Stats</h3>
+          <p className="mt-2 mb-0 text-sm text-white/70 leading-relaxed">
+            {companyBlurb || `A forward-thinking company focused on pushing the boundaries of AI in India. Built by ${companyName || 'the Team'}.`}
+          </p>
+        </div>
+
+        {/* 2x2 Grid */}
+        <div className="grid grid-cols-2 gap-[1px] bg-white/5">
+          <div className="p-6 bg-[#0f172a]">
+            <div className="text-white/50 text-xs font-semibold tracking-wider uppercase mb-2">Founded</div>
+            <div className="text-lg font-bold text-white">{foundingYear || 'N/A'}</div>
           </div>
-          <div>
-            <div style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '4px' }}>Headquarters</div>
-            <div style={{ fontSize: '18px', fontWeight: 700 }}>{city || 'India'}</div>
+          <div className="p-6 bg-[#0f172a]">
+            <div className="text-white/50 text-xs font-semibold tracking-wider uppercase mb-2">HQ</div>
+            <div className="text-lg font-bold text-white">{city || 'India'}</div>
           </div>
-          <div>
-            <div style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '4px' }}>Team Size</div>
-            <div style={{ fontSize: '18px', fontWeight: 700 }}>{teamSize || '1-10'} members</div>
+          <div className="p-6 bg-[#0f172a]">
+            <div className="text-white/50 text-xs font-semibold tracking-wider uppercase mb-2">Team Size</div>
+            <div className="text-lg font-bold text-white">{teamSize || '1-10'} members</div>
           </div>
-          <div>
-            <div style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '4px' }}>Presence</div>
-            <div style={{ fontSize: '14px', fontWeight: 700 }}>
-              <a href={companyLinkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--cyan)' }}>LinkedIn ↗</a>
-            </div>
+          <div className="p-6 bg-[#0f172a]">
+            <div className="text-white/50 text-xs font-semibold tracking-wider uppercase mb-2">Funding</div>
+            <div className="text-lg font-bold text-white">Undisclosed</div>
           </div>
         </div>
 
-        {/* Company Blurb */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <p style={{ margin: 0, color: 'var(--text-muted)', lineHeight: 1.6, fontSize: '15px' }}>
-            {companyBlurb || `A forward-thinking company focused on pushing the boundaries of AI in India. Founded in ${city}, they have been building innovative tools since ${foundingYear}.`}
-          </p>
-        </div>
+        {/* Footer Link */}
+        {companyLinkedin && (
+          <a 
+            href={companyLinkedin} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 p-4 bg-white/[0.02] hover:bg-white/[0.04] text-white text-sm font-semibold no-underline transition-colors border-t border-white/5"
+          >
+            LinkedIn Profile
+            <ArrowRight size={16} />
+          </a>
+        )}
       </div>
     </section>
   );

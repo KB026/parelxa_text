@@ -31,7 +31,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
       }
     }
     setUrlChecked(true);
-  }, []); // Run once on mount
+  }, [setCompare]); // Run once on mount
 
   // Sync agents when selectedIds change (only after URL check is done to avoid double fetching)
   useEffect(() => {
@@ -55,7 +55,7 @@ export function ComparePageClient({ initialAgents }: ComparePageClientProps) {
     if (currentIds !== syncIds) {
       fetchLatest();
     }
-  }, [selectedIds, agents]);
+  }, [selectedIds, agents, urlChecked]);
 
   // Update URL for sharing
   useEffect(() => {

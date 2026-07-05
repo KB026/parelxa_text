@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Category } from '@/lib/types';
 import { useState } from 'react';
 import { X } from 'lucide-react';
@@ -11,7 +11,6 @@ interface FilterPanelProps {
 }
 
 export function FilterPanel({ categories, industries }: FilterPanelProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -37,11 +36,14 @@ export function FilterPanel({ categories, industries }: FilterPanelProps) {
     }
     
     params.delete('page'); // Reset pagination on filter change
-    router.push(`/products?${params.toString()}`);
+    
+    window.history.replaceState(null, '', `/products?${params.toString()}`);
+    window.dispatchEvent(new Event('filters-changed'));
   };
 
   const clearAll = () => {
-    router.push('/products');
+    window.history.replaceState(null, '', '/products');
+    window.dispatchEvent(new Event('filters-changed'));
   };
 
   const FilterSection = ({ title, children }: { title: string, children: React.ReactNode }) => (

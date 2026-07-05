@@ -59,7 +59,7 @@ export function ReviewSystem({
   }
 
   return (
-    <div style={{ marginTop: '64px', borderTop: '1px solid var(--border-subtle)', paddingTop: '64px' }}>
+    <div className="border-t border-white/5 pt-12">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
         <div>
           <h2 style={{ fontSize: '32px', fontWeight: 800, margin: '0 0 8px' }}>User Reviews</h2>
@@ -122,7 +122,7 @@ export function ReviewSystem({
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
         {reviews.filter(r => r.id !== userReview?.id).map(review => (
           <ReviewCard key={review.id} review={review} isVendor={isVendor} />
         ))}

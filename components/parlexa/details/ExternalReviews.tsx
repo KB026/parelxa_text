@@ -29,9 +29,9 @@ export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
   };
 
   return (
-    <section style={{ marginTop: '80px', borderTop: '1px solid var(--border-subtle)', paddingTop: '60px' }}>
+    <section>
       <div style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px' }}>Market Proof Around the Web</h2>
+        <h3 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px', color: 'var(--text-white)' }}>Market Proof Around the Web</h3>
         <p style={{ color: 'var(--text-dim)', fontSize: '15px' }}>What enterprise buyers and makers are saying about {agentName} on other platforms.</p>
       </div>
 

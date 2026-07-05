@@ -21,6 +21,9 @@ export type Database = {
           created_at: string | null
           id: string
           user_id: string | null
+          traffic_source: string | null
+          visitor_location: string | null
+          search_keyword: string | null
         }
         Insert: {
           action_type: string
@@ -28,6 +31,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           user_id?: string | null
+          traffic_source?: string | null
+          visitor_location?: string | null
+          search_keyword?: string | null
         }
         Update: {
           action_type?: string
@@ -35,6 +41,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           user_id?: string | null
+          traffic_source?: string | null
+          visitor_location?: string | null
+          search_keyword?: string | null
         }
         Relationships: [
           {

@@ -114,14 +114,23 @@ export function ReviewStatsComponent({ stats }: ReviewStatsProps) {
 
       {/* Breakdown Bars */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {[5, 4, 3, 2, 1].map(star => {
+        {[5, 4, 3, 2, 1].map((star, index) => {
           const count = stats.breakdown[star] || 0;
-          const percentage = (count / stats.totalReviews) * 100;
+          const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
           return (
             <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-dim)', width: '40px' }}>{star} Stars</span>
               <div style={{ flex: 1, height: '8px', background: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${percentage}%`, height: '100%', background: '#fbbf24', borderRadius: '4px' }} />
+                <div 
+                  className="animate-bar-fill"
+                  style={{ 
+                    width: `${percentage}%`, 
+                    height: '100%', 
+                    background: 'linear-gradient(90deg, #0ea5e9, #38bdf8)', 
+                    borderRadius: '4px',
+                    animationDelay: `${index * 0.1}s`
+                  }} 
+                />
               </div>
               <span style={{ fontSize: '12px', color: 'var(--text-dim)', width: '30px' }}>{count}</span>
             </div>

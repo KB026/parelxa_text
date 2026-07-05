@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@/lib/supabase/server';
-import { getVendorAnalytics } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,23 +11,69 @@ export default async function VendorAnalyticsPage() {
     return <div>Please log in.</div>;
   }
 
-  const analytics = await getVendorAnalytics(user.id);
+  // Get vendor's agents
+  const { data: agents } = await supabase.from('agents').select('id, name').eq('user_id', user.id);
+  const agentIds = agents?.map(a => a.id) || [];
 
-  // Simplified Real Analytics mapping based on actual data
+  let interactions: any[] = [];
+  if (agentIds.length > 0) {
+    const { data } = await supabase
+      .from('agent_interactions')
+      .select('traffic_source, visitor_location, search_keyword')
+      .in('agent_id', agentIds);
+    interactions = data || [];
+  }
+
+  // Calculate Traffic Sources
+  let platformBrowse = 0;
+  let directReferral = 0;
+  
+  // Calculate Geography
+  const geoMap: Record<string, number> = {};
+  
+  // Calculate Keywords
+  const keywordMap: Record<string, number> = {};
+
+  interactions.forEach(interaction => {
+    // Traffic
+    if (interaction.traffic_source === 'Platform Browse') platformBrowse++;
+    else if (interaction.traffic_source === 'Direct Referral') directReferral++;
+
+    // Geography
+    if (interaction.visitor_location) {
+      geoMap[interaction.visitor_location] = (geoMap[interaction.visitor_location] || 0) + 1;
+    }
+
+    // Keywords
+    if (interaction.search_keyword) {
+      keywordMap[interaction.search_keyword] = (keywordMap[interaction.search_keyword] || 0) + 1;
+    }
+  });
+
+  const totalTraffic = platformBrowse + directReferral;
   const sources = [
-    { label: 'Platform Browse', value: Math.max(1, Math.round((analytics.views / (analytics.views + analytics.clicks || 1)) * 100)), color: 'var(--cyan)' },
-    { label: 'Direct Referrals', value: Math.max(0, Math.round((analytics.clicks / (analytics.views + analytics.clicks || 1)) * 100)), color: '#3b82f6' },
+    { label: 'Platform Browse', value: totalTraffic > 0 ? Math.round((platformBrowse / totalTraffic) * 100) : 0, color: 'var(--cyan)' },
+    { label: 'Direct Referrals', value: totalTraffic > 0 ? Math.round((directReferral / totalTraffic) * 100) : 0, color: '#3b82f6' },
   ];
 
-  const keywords = analytics.topAgents.map((a: any) => ({
-    word: a.name,
-    views: analytics.views > 0 ? analytics.views + Math.floor(Math.random() * 10) : 0, // Using total views per agent + small randomness for demo effect
-    growth: '+10%'
-  }));
+  const totalGeo = Object.values(geoMap).reduce((a, b) => a + b, 0);
+  const states = Object.entries(geoMap)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => ({
+      name,
+      percentage: totalGeo > 0 ? Math.round((count / totalGeo) * 100) : 0
+    }))
+    .slice(0, 5); // top 5
+  if (states.length === 0) states.push({ name: 'Global / Unknown', percentage: 100 });
 
-  const states = [
-    { name: 'Global / Unknown', percentage: 100 },
-  ];
+  const keywords = Object.entries(keywordMap)
+    .sort((a, b) => b[1] - a[1])
+    .map(([word, views]) => ({
+      word,
+      views,
+      growth: '-'
+    }))
+    .slice(0, 10);
 
   return (
     <section>
@@ -58,7 +103,7 @@ export default async function VendorAnalyticsPage() {
 
         {/* Geographic Breakdown */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '24px', padding: '32px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px' }}>Visitor Geography (India)</h3>
+          <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px' }}>Visitor Geography</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {states.map(state => (
               <div key={state.name} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -91,9 +136,14 @@ export default async function VendorAnalyticsPage() {
               <tr key={kw.word} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 <td style={{ padding: '16px 0', fontSize: '15px' }}>{kw.word}</td>
                 <td style={{ padding: '16px 0', fontSize: '15px', fontWeight: 700 }}>{kw.views}</td>
-                <td style={{ padding: '16px 0', color: 'var(--cyan)', fontSize: '14px', fontWeight: 600 }}>{kw.growth}</td>
+                <td style={{ padding: '16px 0', color: 'var(--text-dim)', fontSize: '14px', fontWeight: 600 }}>{kw.growth}</td>
               </tr>
             ))}
+            {keywords.length === 0 && (
+              <tr>
+                <td colSpan={3} style={{ padding: '16px 0', fontSize: '14px', color: 'var(--text-dim)' }}>No keyword data available yet.</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

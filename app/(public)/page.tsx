@@ -10,6 +10,7 @@ import { RealStories } from "@/components/parlexa/RealStories";
 import { AINewsTicker } from "@/components/parlexa/AINewsTicker";
 import { BlogSection } from "@/components/parlexa/BlogSection";
 import { UniversalAISearch } from "@/components/parlexa/UniversalAISearch";
+import { FAQSection } from "@/components/parlexa/FAQSection";
 
 export const metadata: Metadata = {
   title: "The Global AI Agent Marketplace | Discover Enterprise AI Tools Worldwide | Parlexa",
@@ -262,6 +263,9 @@ export default async function PublicHomePage() {
       {/* Live AI News Ticker */}
       <AINewsTicker />
       
+      {/* FAQ Section */}
+      <FAQSection />
+
       {/* Editorial Blogs */}
       <BlogSection />
     </div>

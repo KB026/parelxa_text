@@ -1,10 +1,9 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { X } from 'lucide-react';
 
 export function ActiveFilters() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   
   const filters: { key: string, value: string, label: string }[] = [];
@@ -41,8 +40,8 @@ export function ActiveFilters() {
     } else {
       params.delete(key);
     }
-    
-    router.push(`/products?${params.toString()}`);
+    window.history.replaceState(null, '', `/products?${params.toString()}`);
+    window.dispatchEvent(new Event('filters-changed'));
   };
 
   if (filters.length === 0) return null;
@@ -66,7 +65,10 @@ export function ActiveFilters() {
         </div>
       ))}
       <button 
-        onClick={() => router.push('/products')}
+        onClick={() => {
+          window.history.replaceState(null, '', '/products');
+          window.dispatchEvent(new Event('filters-changed'));
+        }}
         style={{ background: 'none', border: 'none', color: 'var(--cyan)', fontSize: '13px', cursor: 'pointer', padding: '6px' }}
       >
         Clear all

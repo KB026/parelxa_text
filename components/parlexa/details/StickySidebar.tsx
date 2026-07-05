@@ -3,7 +3,7 @@
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
 import { useState, useEffect } from 'react';
-import { Bookmark, Share2 } from 'lucide-react';
+import { Bookmark, Share2, Check, Star } from 'lucide-react';
 import { toggleWishlist } from '@/app/actions/wishlist';
 import { SaveFolderToast } from './SaveFolderToast';
 
@@ -19,6 +19,7 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSa
   const [isSaved, setIsSaved] = useState(initialSaved);
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     setIsSaved(initialSaved);
@@ -59,10 +60,15 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSa
         });
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert('Link copied to clipboard!');
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
       }
     } catch (err) {
-      console.log('Error sharing:', err);
+      if (err instanceof Error && err.name === 'AbortError') {
+        // silently ignore share cancellation
+      } else {
+        console.error('Error sharing:', err);
+      }
     }
   };
 
@@ -72,15 +78,51 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSa
         padding: '32px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', 
         borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
       }}>
-        <div style={{ marginBottom: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <StarRating rating={stats?.averageRating || 0} size="sm" />
-            <span style={{ fontWeight: 800, fontSize: '18px' }}>{stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</span>
+        {stats && stats.totalReviews > 0 ? (
+          <div style={{ marginBottom: '24px', paddingBottom: '24px', borderBottom: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '20px' }}>
+              <div style={{ 
+                width: '64px', height: '64px', borderRadius: '50%', background: 'var(--bg-secondary)', border: '2px solid var(--cyan)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 800, color: 'var(--text-white)'
+              }}>
+                {stats.averageRating.toFixed(1)}
+              </div>
+              <div>
+                <StarRating rating={stats.averageRating} size="sm" />
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  Based on {stats.totalReviews} reviews
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {[5, 4, 3, 2, 1].map(star => {
+                const count = stats.breakdown[star] || 0;
+                const percentage = (count / stats.totalReviews) * 100;
+                return (
+                  <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-dim)', width: '12px' }}>{star}</span>
+                    <Star size={10} fill="var(--text-dim)" color="var(--text-dim)" />
+                    <div style={{ flex: 1, height: '6px', background: 'var(--bg-secondary)', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div style={{ width: `${percentage}%`, height: '100%', background: 'var(--cyan)', borderRadius: '3px' }} />
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', width: '24px', textAlign: 'right' }}>{count}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-            Based on {stats?.totalReviews || 0} reviews
+        ) : (
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <StarRating rating={0} size="sm" />
+              <span style={{ fontWeight: 800, fontSize: '18px' }}>0.0</span>
+            </div>
+            <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+              Based on 0 reviews
+            </div>
           </div>
-        </div>
+        )}
 
         <div style={{ marginBottom: '24px' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '4px' }}>Pricing</div>
@@ -134,14 +176,15 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSa
               onClick={handleShare}
               style={{ 
                 flex: 1, padding: '12px', borderRadius: '12px',
-                background: 'transparent', border: '1px solid var(--border-subtle)',
-                color: 'var(--text-white)', cursor: 'pointer',
+                background: isCopied ? 'rgba(34, 197, 94, 0.15)' : 'transparent', 
+                border: isCopied ? '1px solid #22c55e' : '1px solid var(--border-subtle)',
+                color: isCopied ? '#22c55e' : 'var(--text-white)', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.3s ease'
               }}
-              title="Share"
+              title={isCopied ? "Link copied!" : "Share"}
             >
-              <Share2 size={20} strokeWidth={2} />
+              {isCopied ? <Check size={20} strokeWidth={2} /> : <Share2 size={20} strokeWidth={2} />}
             </button>
           </div>
         </div>

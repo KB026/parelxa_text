@@ -24,52 +24,113 @@ export function SearchSystem({
 }: SearchSystemProps) {
   const searchParams = useSearchParams();
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
-
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState(searchParams.get('q') || '');
+  
   const isFirstRender = useRef(true);
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
+  // Client-side sort based on URL sort param
+  const currentSort = searchParams.get('sort') || 'relevance';
+  const displayedAgents = [...agents].sort((a, b) => {
+    if (currentSort === 'rating') return (b.rating || 0) - (a.rating || 0);
+    if (currentSort === 'newest') {
+      const bDate = (b as Agent & { created_at?: string, createdAt?: string }).createdAt || (b as Agent & { created_at?: string, createdAt?: string }).created_at || 0;
+      const aDate = (a as Agent & { created_at?: string, createdAt?: string }).createdAt || (a as Agent & { created_at?: string, createdAt?: string }).created_at || 0;
+      return new Date(bDate).getTime() - new Date(aDate).getTime();
     }
+    if (currentSort === 'reviews') return (b.reviews_count || 0) - (a.reviews_count || 0);
+    return 0; // relevance or default
+  });
 
+  const handleSearchChange = (val: string) => {
+    setQuery(val);
+    const params = new URLSearchParams(window.location.search);
+    if (val) params.set('q', val);
+    else params.delete('q');
+    window.history.replaceState(null, '', `/products?${params.toString()}`);
+    window.dispatchEvent(new Event('filters-changed'));
+  };
+
+  useEffect(() => {
     let ignore = false;
+    let timer: NodeJS.Timeout | undefined;
 
     const fetchResults = async () => {
       setLoading(true);
-      const params: SearchParams = {
-        q: searchParams.get('q') || undefined,
-        categories: searchParams.get('cats')?.split(',') || undefined,
-        pricingModels: searchParams.get('pricing')?.split(',') || undefined,
-        industries: searchParams.get('industries')?.split(',') || undefined,
-        minRating: searchParams.get('rating') ? Number(searchParams.get('rating')) : undefined,
-        isVerified: searchParams.get('verified') === 'true',
-        globalAvailability: searchParams.get('global') === 'true',
-        hasFreeTrial: searchParams.get('trial') === 'true',
-        sort: (searchParams.get('sort') as SearchParams['sort']) || 'relevance',
-        limit: 20
-      };
-
-      const result = await searchAgents(params);
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q') || '';
+      const cats = params.get('cats') || '';
+      const pricing = params.get('pricing');
+      const industries = params.get('industries');
       
-      if (!ignore) {
-        setAgents(result.agents);
-
-        setLoading(false);
+      // If we have search text or category, use the AI/keyword endpoint
+      if (q || cats) {
+        try {
+          const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&categories=${encodeURIComponent(cats)}`);
+          const data = await res.json();
+          if (!ignore) {
+            setAgents(data.agents || []);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        // Fallback to regular searchAgents for complex filters when no text/category search
+        const apiParams: SearchParams = {
+          q: undefined,
+          categories: undefined,
+          pricingModels: pricing?.split(',') || undefined,
+          industries: industries?.split(',') || undefined,
+          minRating: params.get('rating') ? Number(params.get('rating')) : undefined,
+          isVerified: params.get('verified') === 'true',
+          globalAvailability: params.get('global') === 'true',
+          hasFreeTrial: params.get('trial') === 'true',
+          sort: 'relevance',
+          limit: 20
+        };
+        const result = await searchAgents(apiParams);
+        if (!ignore) {
+          setAgents(result.agents);
+        }
       }
+      if (!ignore) setLoading(false);
     };
 
-    fetchResults();
+    const onFiltersChanged = () => {
+      // Sync query state if it was cleared by "Clear all"
+      const params = new URLSearchParams(window.location.search);
+      setQuery(params.get('q') || '');
+      
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        fetchResults();
+      }, 300);
+    };
+
+    window.addEventListener('filters-changed', onFiltersChanged);
+    window.addEventListener('popstate', onFiltersChanged);
+
+    // Initial fetch if searchParams changed natively (not via our replaceState)
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+    } else {
+      // Only fire if we didn't just fire from our own event
+      // This is a safety catch for native Next.js navigations
+      clearTimeout(timer);
+      timer = setTimeout(fetchResults, 300);
+    }
 
     return () => {
       ignore = true;
+      clearTimeout(timer);
+      window.removeEventListener('filters-changed', onFiltersChanged);
+      window.removeEventListener('popstate', onFiltersChanged);
     };
   }, [searchParams]);
 
   return (
     <div className="search-system">
-      <SearchBar />
+      <SearchBar query={query} setQuery={handleSearchChange} loading={loading} />
       
       <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
         <FilterPanel categories={categories} industries={allIndustries} />
@@ -89,9 +150,9 @@ export function SearchSystem({
               </div>
               Updating results...
             </div>
-          ) : agents.length > 0 ? (
+          ) : displayedAgents.length > 0 ? (
             <div className="agents-grid">
-              {agents.map((agent) => (
+              {displayedAgents.map((agent) => (
                 <AgentCard key={agent.id} agent={agent} />
               ))}
             </div>

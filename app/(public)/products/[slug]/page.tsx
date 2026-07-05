@@ -6,11 +6,12 @@ import { trackInteraction } from '@/lib/analytics';
 import { ReviewSystem } from '@/components/parlexa/reviews/ReviewSystem';
 import { createClient } from '@/lib/supabase/server';
 import { HeroSection } from '@/components/parlexa/details/HeroSection';
-import { MediaSection } from '@/components/parlexa/details/MediaSection';
+
 import { AboutSection } from '@/components/parlexa/details/AboutSection';
-import { PricingSection } from '@/components/parlexa/details/PricingSection';
+
 import { CompanySection } from '@/components/parlexa/details/CompanySection';
-import { StickySidebar } from '@/components/parlexa/details/StickySidebar';
+import { UseCasesSection } from '@/components/parlexa/details/UseCasesSection';
+import { StickyLeadBox } from '@/components/parlexa/details/StickyLeadBox';
 import { SimilarTools } from '@/components/parlexa/details/SimilarTools';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -20,6 +21,7 @@ import { ViewTracker } from '@/components/parlexa/details/ViewTracker';
 import { getExternalReviews } from '@/lib/api/externalReviews';
 import { ExternalReviews } from '@/components/parlexa/details/ExternalReviews';
 import { checkWishlistStatus } from '@/app/actions/wishlist';
+import { ScrollReveal } from '@/components/parlexa/ui/ScrollReveal';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const agent = await getAgentBySlug(params.slug);
@@ -114,85 +116,99 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
       
 
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '80px' }} className="details-layout-grid">
-        {/* Main Content Column */}
-        <div style={{ minWidth: 0 }}>
-          <HeroSection 
-            agent={agent} 
-            stats={stats} 
-            initialSaved={isSaved}
-            onVisitWebsite={async () => {
-              'use server';
-              const supabase = createClient();
-              const { data: { user: currentUser } } = await supabase.auth.getUser();
-              await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
-            }} 
-          />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '80px', maxWidth: '1280px', margin: '0 auto' }}>
+        {/* Main Grid Layout */}
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-12">
+          
+          {/* LEFT COLUMN: Main Content */}
+          <div className="contents lg:block lg:col-span-8">
+            
+            {/* Mobile Order 1: Hero Only */}
+            <div className="order-1 flex flex-col gap-12 lg:mb-12">
+              <HeroSection 
+                agent={agent} 
+                initialSaved={isSaved}
+                onVisitWebsite={async () => {
+                  'use server';
+                  const supabase = createClient();
+                  const { data: { user: currentUser } } = await supabase.auth.getUser();
+                  await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
+                }} 
+              />
+            </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '80px' }}>
-            <MediaSection 
-              screenshots={agent.screenshots} 
-              videoUrl={agent.videoUrl} 
-            />
+            {/* Mobile Order 3: About, Company Stats, Features, Reviews */}
+            <div className="order-3 flex flex-col gap-12">
+              <ScrollReveal>
+                <AboutSection 
+                  description={agent.description || agent.summary} 
+                  integrations={agent.integrationType}
+                />
+              </ScrollReveal>
 
-            <AboutSection 
-              description={agent.description || agent.summary} 
-              features={agent.features} 
-              useCases={agent.useCases} 
-              integrations={agent.integrationType}
-            />
+              <ScrollReveal>
+                <CompanySection 
+                  companyName={agent.companyName}
+                  foundingYear={agent.foundedYear}
+                  city={agent.city}
+                  teamSize={agent.teamSize}
+                  companyLinkedin={agent.companyLinkedin}
+                  companyBlurb={agent.companyBlurb}
+                />
+              </ScrollReveal>
 
-            <PricingSection 
-              pricing={agent.pricing}
-              pricingModel={agent.pricingModel}
-              priceRange={agent.priceRange}
-              freeTrial={agent.freeTrial}
-              globalAvailability={agent.globalAvailability}
-              usdPrice={agent.usdPrice}
-            />
+              <ScrollReveal>
+                <AboutSection 
+                  features={agent.features} 
+                />
+              </ScrollReveal>
 
-            <CompanySection 
-              companyName={agent.companyName}
-              foundingYear={agent.foundedYear}
-              city={agent.city}
-              teamSize={agent.teamSize}
-              companyLinkedin={agent.companyLinkedin}
-              companyBlurb={agent.companyBlurb}
-            />
+              <ScrollReveal>
+                <UseCasesSection useCases={agent.useCases} />
+              </ScrollReveal>
 
-            <ReviewSystem 
-              agentId={Number(agent.id)}
-              stats={stats}
-              userReview={userReview}
-              initialReviews={initialReviews}
-              isLoggedIn={!!user}
-              isVendor={isVendor}
-            />
+              <ScrollReveal>
+                <ReviewSystem 
+                  agentId={Number(agent.id)}
+                  stats={stats}
+                  userReview={userReview}
+                  initialReviews={initialReviews}
+                  isLoggedIn={!!user}
+                  isVendor={isVendor}
+                />
+              </ScrollReveal>
 
-            <ExternalReviews 
-              reviews={externalReviews} 
-              agentName={agent.name} 
-            />
+              <ScrollReveal>
+                <ExternalReviews 
+                  reviews={externalReviews} 
+                  agentName={agent.name} 
+                />
+              </ScrollReveal>
+
+              <ScrollReveal>
+                <SimilarTools tools={similarTools} />
+              </ScrollReveal>
+            </div>
           </div>
+
+          {/* RIGHT COLUMN: Sticky Sidebar (Mobile Order 2) */}
+          <div className="order-2 lg:col-span-4 relative">
+            <div className="lg:sticky lg:top-24 h-fit">
+              <StickyLeadBox 
+                agent={agent}
+                initialSaved={isSaved}
+                onVisitWebsite={async () => {
+                  'use server';
+                  const supabase = createClient();
+                  const { data: { user: currentUser } } = await supabase.auth.getUser();
+                  await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
+                }} 
+              />
+            </div>
+          </div>
+
         </div>
-
-        {/* Sidebar Column (Desktop Only) */}
-        <aside className="details-sidebar">
-          <StickySidebar 
-            agent={agent} 
-            stats={stats} 
-            initialSaved={isSaved}
-            onVisitWebsite={async () => {
-              'use server';
-              const supabase = createClient();
-              const { data: { user: currentUser } } = await supabase.auth.getUser();
-              await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
-            }} 
-          />
-        </aside>
       </div>
-
-      <SimilarTools tools={similarTools} />
 
       {/* Mobile Sticky CTA Bar */}
       <div className="mobile-cta-bar" style={{ 
@@ -212,13 +228,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
 
       <style dangerouslySetInnerHTML={{ __html: `
         @media (max-width: 1024px) {
-          .details-layout-grid {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
-          .details-sidebar {
-            display: none !important;
-          }
           .mobile-cta-bar {
             display: flex !important;
           }
