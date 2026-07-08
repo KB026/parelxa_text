@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60; // Allow up to 60s for OpenAI on Netlify/Vercel
 
 const industryToCategory: Record<string, string[]> = {
   'saas-tech': ['AI & LLMs', 'Developer Tools & Infra', 'Enterprise & Automation'],

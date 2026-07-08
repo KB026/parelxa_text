@@ -5,6 +5,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { aiSearchSchema, safeValidate } from '@/lib/validation';
 
+export const maxDuration = 60;
+
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
 
