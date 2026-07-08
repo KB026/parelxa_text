@@ -63,7 +63,7 @@ export function UniversalAISearch() {
   };
 
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', maxWidth: '800px', margin: '0 auto 40px', zIndex: 100 }}>
+    <div ref={wrapperRef} className="relative max-w-[800px] mx-auto mb-10 px-4 z-[100]">
       <form onSubmit={handleAISearch} className="relative w-full max-w-3xl mx-auto mt-10 p-2 bg-white/[0.02] backdrop-blur-3xl border border-white/[0.06] rounded-[3rem] shadow-[0_0_40px_rgba(139,92,246,0.15)] hover:shadow-[0_0_50px_rgba(139,92,246,0.25)] transition-shadow duration-300">
         <div className="flex items-center w-full h-[54px] bg-[#0A0A0C] rounded-full pl-6 pr-2 border border-white/[0.05] transition-all duration-300 focus-within:border-white/15 focus-within:bg-[#0F0F13]">
           <Sparkles className="w-5 h-5 text-gray-500 mr-3 shrink-0" />

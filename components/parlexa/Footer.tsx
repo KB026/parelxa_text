@@ -7,7 +7,7 @@ export async function Footer() {
       <DynamicBackground type="footer" />
       <div className="relative z-10">
         {/* Top Section (Link Columns) */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto px-6">
           
           {/* Column 1: Platform */}
           <div>

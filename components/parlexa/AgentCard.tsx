@@ -93,7 +93,7 @@ export function AgentCard({ agent, rank }: { agent: Agent, rank?: number }) {
       )}
 
       {/* Card Container with subtle gradient border glow on hover */}
-      <div className="relative flex flex-col p-6 rounded-2xl border border-white/[0.08] bg-[#1C1C21] group-hover:border-brand-violet/50 transition-all duration-300 w-full h-full shadow-lg group-hover:shadow-[0_15px_35px_rgba(139,92,246,0.15)]">
+      <div className="relative flex flex-col p-4 md:p-6 rounded-2xl border border-white/[0.08] bg-[#1C1C21] group-hover:border-brand-violet/50 transition-all duration-300 w-full h-full shadow-lg group-hover:shadow-[0_15px_35px_rgba(139,92,246,0.15)]">
         
         {/* Top-Right Actions */}
         <div className="absolute top-4 right-4 flex items-center gap-2 z-20">

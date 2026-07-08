@@ -75,11 +75,11 @@ export default async function PublicHomePage() {
               </span>
               <span className="text-[11px] font-semibold text-gray-300 uppercase tracking-[0.2em] select-none">Global AI Ecosystem</span>
             </div>
-            <h1 className="text-white text-5xl md:text-7xl leading-[1.05] font-medium tracking-tight mt-6 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
+            <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-[1.05] font-medium tracking-tight mt-6 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
               Enterprise AI Agents. <br className="hidden sm:block" /> 
               <span className="bg-gradient-to-r from-white to-gray-500 text-transparent bg-clip-text">Built for scale.</span>
             </h1>
-          <p className="text-gray-400 text-[20px] max-w-[670px] mt-[24px]">Discover and deploy AI agents ready for your workforce. The only marketplace you can trust.</p>
+          <p className="text-gray-400 text-base md:text-lg lg:text-xl max-w-[670px] mt-5 md:mt-6 px-2">Discover and deploy AI agents ready for your workforce. The only marketplace you can trust.</p>
           
 
           <div className="w-full relative z-30 hover:scale-[1.02] transition-transform duration-500">
@@ -88,11 +88,11 @@ export default async function PublicHomePage() {
           
           {/* The "Trusted By" Section */}
           <p className="text-xs font-semibold tracking-[0.2em] text-gray-500 uppercase mt-16 mb-6">Integrating with the world's best models</p>
-          <div className="flex items-center justify-center gap-8 md:gap-16 grayscale select-none text-gray-500">
-            <span className="text-xl md:text-2xl font-bold tracking-tighter hover:text-white transition-colors duration-300 cursor-default">OpenAI</span>
-            <span className="text-xl md:text-2xl font-serif italic tracking-tight hover:text-white transition-colors duration-300 cursor-default">Anthropic</span>
-            <span className="text-xl md:text-2xl font-black tracking-widest hover:text-white transition-colors duration-300 cursor-default">META</span>
-            <span className="text-xl md:text-2xl font-semibold tracking-tight hover:text-white transition-colors duration-300 cursor-default">Google</span>
+          <div className="flex items-center justify-center flex-wrap gap-4 sm:gap-6 md:gap-10 lg:gap-16 grayscale select-none text-gray-500">
+            <span className="text-base sm:text-lg md:text-2xl font-bold tracking-tighter hover:text-white transition-colors duration-300 cursor-default">OpenAI</span>
+            <span className="text-base sm:text-lg md:text-2xl font-serif italic tracking-tight hover:text-white transition-colors duration-300 cursor-default">Anthropic</span>
+            <span className="text-base sm:text-lg md:text-2xl font-black tracking-widest hover:text-white transition-colors duration-300 cursor-default">META</span>
+            <span className="text-base sm:text-lg md:text-2xl font-semibold tracking-tight hover:text-white transition-colors duration-300 cursor-default">Google</span>
           </div>
         </div>
         </section>
@@ -106,17 +106,17 @@ export default async function PublicHomePage() {
         <section className="bg-[#0A0A0A] py-24">
           <ScrollReveal>
             <div className="max-w-7xl mx-auto px-5 relative z-10">
-              <div className="flex justify-between items-end mb-12">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-8 md:mb-12 gap-4">
                 <div>
-                  <h2 className="text-4xl md:text-5xl font-semibold text-[#EDEDED] mb-4 tracking-tight flex items-center gap-3">
-                    <Sparkles className="w-8 h-8 text-amber-500 shrink-0" />
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-[#EDEDED] mb-3 md:mb-4 tracking-tight flex items-center gap-3">
+                    <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-amber-500 shrink-0" />
                     <span>Featured on Parlexa</span>
                   </h2>
-                  <p className="text-lg text-[#A1A1AA] leading-relaxed max-w-2xl">
+                  <p className="text-sm md:text-lg text-[#A1A1AA] leading-relaxed max-w-2xl">
                     Premium AI solutions and enterprise-ready agents selected for world-class performance.
                   </p>
                 </div>
-                <Link href="/directory" className="inline-flex items-center gap-2 bg-[#EDEDED] text-[#0A0A0A] hover:bg-white font-medium rounded-lg px-4 py-2 transition-all">
+                <Link href="/directory" className="inline-flex items-center gap-2 bg-[#EDEDED] text-[#0A0A0A] hover:bg-white font-medium rounded-lg px-4 py-2 transition-all self-start sm:self-auto shrink-0 text-sm">
                   <span>View All Featured</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -168,15 +168,15 @@ export default async function PublicHomePage() {
         <section className="bg-[#111111] py-24">
           <ScrollReveal>
             <div className="max-w-7xl mx-auto px-5">
-              <div className="flex justify-between items-end mb-12">
+              <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-8 md:mb-12 gap-4">
                 <div>
-                  <h2 className="text-3xl font-semibold text-[#EDEDED] mb-3 tracking-tight flex items-center gap-3">
-                    <Sparkles className="w-8 h-8 text-amber-500 shrink-0" />
+                  <h2 className="text-2xl sm:text-3xl font-semibold text-[#EDEDED] mb-3 tracking-tight flex items-center gap-3">
+                    <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-amber-500 shrink-0" />
                     <span>Just Added</span>
                   </h2>
-                  <p className="text-[#A1A1AA] leading-relaxed text-lg">Fresh AI tools added to the marketplace in the last 48 hours</p>
+                  <p className="text-[#A1A1AA] leading-relaxed text-sm md:text-lg">Fresh AI tools added to the marketplace in the last 48 hours</p>
                 </div>
-                <Link href="/directory" className="inline-flex items-center gap-2 bg-[#EDEDED] text-[#0A0A0A] hover:bg-white font-medium rounded-lg px-4 py-2 transition-all">
+                <Link href="/directory" className="inline-flex items-center gap-2 bg-[#EDEDED] text-[#0A0A0A] hover:bg-white font-medium rounded-lg px-4 py-2 transition-all self-start sm:self-auto shrink-0 text-sm">
                   <span>View All New</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
