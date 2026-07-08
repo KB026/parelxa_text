@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         utm_campaign: utm_campaign || null,
         device_type: device_type || null,
         created_at: new Date().toISOString(),
-      });
+      } as any);
 
     if (insertError) {
       console.error('Click tracking error:', insertError);
