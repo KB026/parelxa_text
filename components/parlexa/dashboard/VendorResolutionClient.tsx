@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, MessageSquare, ExternalLink, Clock, AlertCircle, Inbox } from 'lucide-react';
+import { Send, MessageSquare, ExternalLink, Clock, AlertCircle, Inbox, Shield } from 'lucide-react';
 import { sendVendorReply } from '@/app/dashboard/vendor/resolution/actions';
 
 export type Message = {
