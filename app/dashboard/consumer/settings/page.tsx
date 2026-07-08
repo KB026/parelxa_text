@@ -68,7 +68,7 @@ export default function ProfileSettingsPage() {
         id: user.id,
         ...profile,
         updated_at: new Date().toISOString()
-      });
+      } as any);
       alert('Profile updated successfully!');
     }
     setSaving(false);
