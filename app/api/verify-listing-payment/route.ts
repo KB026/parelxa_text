@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
         payment_id: razorpay_payment_id,
         payment_order_id: razorpay_order_id,
         payment_status: 'paid',
-      },
+      } as any,
     ]);
 
     if (insertError) {
