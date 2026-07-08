@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
         company_website: companyWebsite,
         industry: industry,
         contact_email: contactEmail || user.email,
-      })
+      } as any)
       .eq('id', user.id);
 
     if (error) {
