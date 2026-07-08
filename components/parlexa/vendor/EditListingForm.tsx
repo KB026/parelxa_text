@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { updateListing } from '@/app/dashboard/vendor/listings/actions';
+import { useRouter } from 'next/navigation';
 import { Agent } from '@/lib/types';
 import { CheckCircle2, Check, ArrowRight } from 'lucide-react';
+import { ImageUpload } from '@/components/parlexa/ui/ImageUpload';
 
 const STEPS = ['Basic Info', 'Classification', 'Pricing', 'Company', 'Review'];
 const CATEGORIES = [
@@ -21,6 +23,7 @@ const INDUSTRIES = [
 ];
 
 export function EditListingForm({ agent }: { agent: Agent }) {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     name: agent.name || '',
@@ -30,6 +33,7 @@ export function EditListingForm({ agent }: { agent: Agent }) {
     demoUrl: agent.demoUrl || '',
     videoUrl: agent.videoUrl || '',
     logoUrl: agent.logoUrl || '',
+    screenshots: agent.screenshots || [],
     category: agent.category || 'AI & LLMs',
     tags: agent.tags || [],
     industries: agent.industries || [],
@@ -49,7 +53,7 @@ export function EditListingForm({ agent }: { agent: Agent }) {
     companyLinkedin: agent.companyLinkedin || '',
   });
 
-  const [submitted, setSubmitted] = useState(false);
+
   const [error, setError] = useState('');
 
   const updateField = (field: string, value: string | string[] | boolean) => {
@@ -74,28 +78,13 @@ export function EditListingForm({ agent }: { agent: Agent }) {
 
     const result = await updateListing(agent.id, fd);
     if (result.success) {
-      setSubmitted(true);
+      router.push('/dashboard/vendor/listings');
     } else {
       setError(result.error || 'Failed to update listing');
     }
   }
 
-  if (submitted) {
-    return (
-      <div className="listing-wizard">
-        <div className="listing-form-card" style={{ textAlign: 'center', padding: '60px' }}>
-          <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-5" />
-          <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>Changes Submitted</h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>
-            Your updates for <strong>{form.name}</strong> have been saved and sent for re-moderation.
-          </p>
-          <Link href="/dashboard/vendor/listings" className="listing-btn-next" style={{ textDecoration: 'none' }}>
-            Back to Dashboard
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // Remove submitted state render block since we redirect now
 
   return (
     <div className="listing-wizard">
@@ -135,11 +124,26 @@ export function EditListingForm({ agent }: { agent: Agent }) {
                 <label className="listing-label">Website *</label>
                 <input className="listing-input" value={form.website} onChange={e => updateField('website', e.target.value)} />
               </div>
-              <div className="listing-field">
-                <label className="listing-label">Logo URL</label>
-                <input className="listing-input" value={form.logoUrl} onChange={e => updateField('logoUrl', e.target.value)} />
-              </div>
+              <ImageUpload
+                bucket="agent-logos"
+                folder="logos"
+                label="Logo Upload"
+                helperText="square, min 200x200"
+                value={form.logoUrl}
+                onChange={(url) => updateField('logoUrl', url as string)}
+              />
             </div>
+            
+            <ImageUpload
+              bucket="agent-screenshots"
+              folder="screenshots"
+              multiple={true}
+              maxFiles={6}
+              label="Product Screenshots"
+              helperText="Upload screenshots of your product (dashboard, key features, etc.) — up to 6 images"
+              value={form.screenshots}
+              onChange={(urls) => updateField('screenshots', urls as string[])}
+            />
           </>
         )}
 

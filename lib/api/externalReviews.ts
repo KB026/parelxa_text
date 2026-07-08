@@ -29,49 +29,17 @@ function mapToExternalReview(item: any): ExternalReview {
 export async function getExternalReviews(agentId: number, agentName: string): Promise<ExternalReview[]> {
   const supabase = createClient();
 
-  // 1. Check cache
-  const { data: cached } = await supabase
+  const { data: reviews } = await supabase
     .from('external_reviews')
     .select('*')
     .eq('agent_id', agentId)
-    .order('last_fetched_at', { ascending: false });
+    .order('rating', { ascending: false });
 
-  const now = new Date();
-  const cacheLimit = 24 * 60 * 60 * 1000; // 24 hours
-
-  if (cached && cached.length > 0) {
-    const lastFetch = new Date(cached[0].last_fetched_at || '');
-    if (now.getTime() - lastFetch.getTime() < cacheLimit) {
-      return cached.map(mapToExternalReview);
-    }
+  if (reviews && reviews.length > 0) {
+    return reviews.map(mapToExternalReview);
   }
 
-  // 2. Fetch fresh data if needed
-  const freshResults = await searchReviews(agentName);
-  
-  if (freshResults.length > 0) {
-    // Clear old cache for this agent
-    await supabase.from('external_reviews').delete().eq('agent_id', agentId);
-    
-    // Insert new results
-    const toInsert = freshResults.map(r => ({
-      agent_id: agentId,
-      source: r.source,
-      rating: r.rating,
-      reviews_count: r.ratingCount,
-      snippet: r.snippet,
-      source_url: r.link,
-      last_fetched_at: now.toISOString()
-    }));
-
-    const { data: inserted } = await supabase
-      .from('external_reviews')
-      .insert(toInsert)
-      .select();
-    
-    return inserted ? inserted.map(mapToExternalReview) : [];
-  }
-
-  return cached ? cached.map(mapToExternalReview) : [];
+  return [];
 }
+
 

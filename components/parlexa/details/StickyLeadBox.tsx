@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Bookmark, Share2, GitCompare, Check, ShieldCheck, Link as LinkIcon, Users } from 'lucide-react';
 import { Agent } from '@/lib/types';
 import { toggleWishlist } from '@/app/actions/wishlist';
 import { useCompare } from '@/context/CompareContext';
 import { SaveFolderToast } from './SaveFolderToast';
+import { VisitWebsiteButton } from './VisitWebsiteButton';
 
 interface StickyLeadBoxProps {
   agent: Agent;
@@ -25,8 +26,22 @@ export function StickyLeadBox({ agent, initialSaved = false, onVisitWebsite }: S
     setIsSaved(initialSaved);
   }, [initialSaved]);
 
+  const isTrackingLeadRef = useRef(false);
+
   const handleSave = async () => {
     setIsSaving(true);
+    
+    // Background Lead Capture Tracking
+    if (!isSaved && !isTrackingLeadRef.current) {
+      isTrackingLeadRef.current = true;
+      setTimeout(() => { isTrackingLeadRef.current = false; }, 2000);
+      
+      fetch('/api/agent-interactions/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent_id: agent.id, action_type: 'lead_capture' })
+      }).catch(console.error);
+    }
     try {
       const result = await toggleWishlist(Number(agent.id));
       if (result.error) {
@@ -77,47 +92,43 @@ export function StickyLeadBox({ agent, initialSaved = false, onVisitWebsite }: S
       </div>
 
       {/* Primary CTA */}
-      <a 
-        href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={() => onVisitWebsite?.()}
-        className="block w-full py-4 px-6 bg-white text-black text-center font-bold text-lg rounded-xl transition-all duration-300 hover:scale-[1.02] hover:bg-gray-100 no-underline mb-4"
-      >
-        Visit Website
-      </a>
+      <VisitWebsiteButton
+        agent={agent}
+        onClick={onVisitWebsite}
+        className="hidden lg:flex w-full py-4 px-6 bg-white text-black items-center justify-center font-bold text-lg rounded-xl transition-all duration-300 hover:scale-[1.02] hover:bg-gray-100 no-underline mb-4"
+      />
 
       {/* Secondary Actions */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-3 md:gap-4 mb-6">
         <button 
           onClick={handleSave}
           disabled={isSaving}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 border ${
+          className={`flex-1 flex items-center justify-center gap-2 h-12 px-2 md:px-4 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 border ${
             isSaved ? 'bg-white/10 border-white/20 text-white' : 'bg-white/[0.02] border-white/[0.06] text-gray-300 hover:bg-white/[0.05]'
           }`}
         >
-          <Bookmark className="w-4 h-4" fill={isSaved ? 'currentColor' : 'none'} />
-          {isSaved ? 'Saved' : 'Save'}
+          <Bookmark className="w-4 h-4 shrink-0" fill={isSaved ? 'currentColor' : 'none'} />
+          <span className="truncate">{isSaved ? 'Saved' : 'Save'}</span>
         </button>
         
         <button 
           onClick={() => toggleCompare(agent.id)}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 border ${
+          className={`flex-1 flex items-center justify-center gap-2 h-12 px-2 md:px-4 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 border ${
             isInCompare ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400' : 'bg-white/[0.02] border-white/[0.06] text-gray-300 hover:bg-white/[0.05]'
           }`}
         >
-          <GitCompare className="w-4 h-4" />
-          Compare
+          <GitCompare className="w-4 h-4 shrink-0" />
+          <span className="truncate">Compare</span>
         </button>
 
         <button 
           onClick={handleShare}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 border ${
+          className={`flex-1 flex items-center justify-center gap-2 h-12 px-2 md:px-4 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 border ${
             isCopied ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/[0.02] border-white/[0.06] text-gray-300 hover:bg-white/[0.05]'
           }`}
         >
-          {isCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-          Share
+          {isCopied ? <Check className="w-4 h-4 shrink-0" /> : <Share2 className="w-4 h-4 shrink-0" />}
+          <span className="truncate">Share</span>
         </button>
       </div>
 

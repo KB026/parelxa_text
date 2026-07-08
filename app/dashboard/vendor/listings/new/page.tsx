@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles, FileText, Tags, CreditCard, Building2, Eye, Check, ArrowLeft } from 'lucide-react';
+import { ImageUpload } from '@/components/parlexa/ui/ImageUpload';
 const STORAGE_KEY = 'parlexa_listing_draft';
 const STEPS = ['Basic Info', 'Classification', 'Pricing', 'Company', 'Review'];
 
@@ -30,6 +31,7 @@ interface FormData {
   demo_url: string;
   video_url: string;
   logo_url: string;
+  screenshots: string[];
   // Step 2
   category: string;
   tags: string[];
@@ -56,7 +58,7 @@ interface FormData {
 }
 
 const defaultForm: FormData = {
-  name: '', one_liner: '', summary: '', website: '', demo_url: '', video_url: '', logo_url: '',
+  name: '', one_liner: '', summary: '', website: '', demo_url: '', video_url: '', logo_url: '', screenshots: [],
   category: 'AI & LLMs', tags: [], industries: [], use_cases: '', raw_industry: '',
   pricing_model: '', pricing: '', price_range: '', free_trial: '', has_india_pricing: false, inr_price: '',
   company_name: '', founded_year: '', team_size: '', city: '', founders: '', company_linkedin: '', company_gstin: '',
@@ -254,11 +256,26 @@ export default function NewListingPage() {
                 <label className="listing-label">Product Video <span className="optional">(optional)</span></label>
                 <input className="listing-input" type="url" placeholder="YouTube or Loom link" value={form.video_url} onChange={e => updateField('video_url', e.target.value)} />
               </div>
-              <div className="listing-field">
-                <label className="listing-label">Logo URL <span className="optional">(square, min 200—200)</span></label>
-                <input className="listing-input" type="url" placeholder="https://example.com/logo.png" value={form.logo_url} onChange={e => updateField('logo_url', e.target.value)} />
-              </div>
+              <ImageUpload
+                bucket="agent-logos"
+                folder="logos"
+                label="Logo Upload"
+                helperText="square, min 200x200"
+                value={form.logo_url}
+                onChange={(url) => updateField('logo_url', url as string)}
+              />
             </div>
+
+            <ImageUpload
+              bucket="agent-screenshots"
+              folder="screenshots"
+              multiple={true}
+              maxFiles={6}
+              label="Product Screenshots"
+              helperText="Upload screenshots of your product (dashboard, key features, etc.) — up to 6 images"
+              value={form.screenshots}
+              onChange={(urls) => updateField('screenshots', urls as string[])}
+            />
           </>
         )}
 

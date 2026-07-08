@@ -47,20 +47,25 @@ export default function AIFinderPage() {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const getProgress = () => {
+    if (step === 'results') return 100;
+    if (step === 'size') return selected.size ? 90 : 66;
+    if (step === 'problem') return selected.problem ? 66 : 33;
+    if (step === 'industry') return selected.industry ? 33 : 10;
+    return 10;
+  };
+
   const handleIndustry = (id: string) => {
-    console.log('✅ Industry selected:', id);
     setSelected({ ...selected, industry: id });
-    setStep('problem');
+    setTimeout(() => setStep('problem'), 400);
   };
 
   const handleProblem = (id: string) => {
-    console.log('✅ Problem selected:', id);
     setSelected({ ...selected, problem: id });
-    setStep('size');
+    setTimeout(() => setStep('size'), 400);
   };
 
   const handleSize = async (id: string) => {
-    console.log('✅ Size selected:', id);
     setSelected({ ...selected, size: id });
     setLoading(true);
 
@@ -95,106 +100,150 @@ export default function AIFinderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-28 pb-16">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-[#0A0A0A] pt-32 pb-24 font-sans">
+      <div className="max-w-4xl mx-auto px-5">
 
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">Find Your Perfect AI Tool</h1>
-          <p className="text-gray-400">Answer 3 questions. Get matched to the best tools for your needs.</p>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-[#EDEDED] mb-4">Find Your Perfect AI Tool</h1>
+          <p className="text-lg text-[#A1A1AA]">Answer 3 questions. Get matched to the best tools for your needs.</p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="w-full bg-[#131418] h-2.5 rounded-full mb-8 overflow-hidden border border-white/5 shadow-inner">
+          <div 
+            className="h-full bg-gradient-to-r from-brand-blue to-brand-fuchsia transition-all duration-700 ease-out relative overflow-hidden"
+            style={{ width: `${getProgress()}%` }}
+          >
+          </div>
         </div>
 
         {/* STEP 1: INDUSTRY */}
         {step === 'industry' && (
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-white mb-6">What industry are you in?</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {industries.map(ind => (
-                <button
-                  key={ind.id}
-                  onClick={() => handleIndustry(ind.id)}
-                  className="p-4 rounded-lg border border-gray-700 hover:border-blue-500 hover:bg-blue-500/10 transition text-left"
-                >
-                  <div className="text-2xl mb-2">{ind.emoji}</div>
-                  <div className="font-semibold text-sm text-white">{ind.label}</div>
-                </button>
-              ))}
+          <div className="bg-[#131418] border border-white/5 rounded-3xl p-8 md:p-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+            <h2 className="text-2xl font-semibold text-[#EDEDED] tracking-tight mb-8">What industry are you in?</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {industries.map(ind => {
+                const isSelected = selected.industry === ind.id;
+                return (
+                  <button
+                    key={ind.id}
+                    onClick={() => handleIndustry(ind.id)}
+                    className={`p-5 rounded-2xl border transition-all duration-300 text-left group shadow-sm ${
+                      isSelected 
+                        ? 'border-brand-emerald bg-brand-emerald/10 shadow-[0_0_20px_rgba(18,184,134,0.3)] ring-2 ring-brand-emerald/50' 
+                        : 'border-white/[0.08] bg-[#1C1C21] hover:border-brand-emerald hover:bg-brand-emerald/5 hover:shadow-[0_0_20px_rgba(18,184,134,0.15)]'
+                    }`}
+                  >
+                    <div className="text-3xl mb-3 drop-shadow-md">{ind.emoji}</div>
+                    <div className="font-semibold text-sm text-[#EDEDED] group-hover:text-white transition-colors">{ind.label}</div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
 
         {/* STEP 2: PROBLEM */}
         {step === 'problem' && (
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
-            <button onClick={() => setStep('industry')} className="text-blue-400 hover:text-blue-300 mb-4 text-sm">
+          <div className="bg-[#131418] border border-white/5 rounded-3xl p-8 md:p-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+            <button 
+              onClick={() => setStep('industry')} 
+              className="text-brand-violet hover:text-brand-violet-light transition-colors font-medium mb-6 text-sm flex items-center gap-1"
+            >
               ← Back
             </button>
-            <h2 className="text-2xl font-bold text-white mb-6">What&apos;s your biggest challenge?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {problems.map(prob => (
-                <button
-                  key={prob.id}
-                  onClick={() => handleProblem(prob.id)}
-                  className="p-4 rounded-lg border border-gray-700 hover:border-blue-500 hover:bg-blue-500/10 transition text-left"
-                >
-                  <div className="text-2xl mb-2">{prob.emoji}</div>
-                  <div className="font-semibold text-sm text-white">{prob.label}</div>
-                </button>
-              ))}
+            <h2 className="text-2xl font-semibold text-[#EDEDED] tracking-tight mb-8">What&apos;s your biggest challenge?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {problems.map(prob => {
+                const isSelected = selected.problem === prob.id;
+                return (
+                  <button
+                    key={prob.id}
+                    onClick={() => handleProblem(prob.id)}
+                    className={`p-5 rounded-2xl border transition-all duration-300 text-left group shadow-sm ${
+                      isSelected 
+                        ? 'border-brand-violet bg-brand-violet/10 shadow-[0_0_20px_rgba(139,92,246,0.3)] ring-2 ring-brand-violet/50' 
+                        : 'border-white/[0.08] bg-[#1C1C21] hover:border-brand-violet hover:bg-brand-violet/5 hover:shadow-[0_0_20px_rgba(139,92,246,0.15)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="text-3xl drop-shadow-md">{prob.emoji}</div>
+                      <div className="font-semibold text-[15px] text-[#EDEDED] group-hover:text-white transition-colors">{prob.label}</div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
 
         {/* STEP 3: SIZE */}
         {step === 'size' && (
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
-            <button onClick={() => setStep('problem')} className="text-blue-400 hover:text-blue-300 mb-4 text-sm">
+          <div className="bg-[#131418] border border-white/5 rounded-3xl p-8 md:p-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+            <button 
+              onClick={() => setStep('problem')} 
+              className="text-brand-violet hover:text-brand-violet-light transition-colors font-medium mb-6 text-sm flex items-center gap-1"
+            >
               ← Back
             </button>
-            <h2 className="text-2xl font-bold text-white mb-6">How big is your team?</h2>
-            <div className="space-y-3">
-              {sizes.map(size => (
-                <button
-                  key={size.id}
-                  onClick={() => handleSize(size.id)}
-                  disabled={loading}
-                  className="w-full p-4 rounded-lg border border-gray-700 hover:border-blue-500 hover:bg-blue-500/10 disabled:opacity-50 transition text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{size.emoji}</span>
-                    <div className="font-semibold text-white">{size.label}</div>
-                  </div>
-                </button>
-              ))}
+            <h2 className="text-2xl font-semibold text-[#EDEDED] tracking-tight mb-8">How big is your team?</h2>
+            <div className="space-y-4">
+              {sizes.map(size => {
+                const isSelected = selected.size === size.id;
+                return (
+                  <button
+                    key={size.id}
+                    onClick={() => handleSize(size.id)}
+                    disabled={loading}
+                    className={`w-full p-5 rounded-2xl border disabled:opacity-80 transition-all duration-300 text-left group shadow-sm ${
+                      isSelected 
+                        ? 'border-brand-violet bg-brand-violet/10 shadow-[0_0_20px_rgba(139,92,246,0.3)] ring-2 ring-brand-violet/50' 
+                        : 'border-white/[0.08] bg-[#1C1C21] hover:border-brand-violet hover:bg-brand-violet/5 hover:shadow-[0_0_20px_rgba(139,92,246,0.15)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-3xl drop-shadow-md">{size.emoji}</span>
+                      <div className="font-semibold text-[15px] text-[#EDEDED] group-hover:text-white transition-colors">{size.label}</div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-            {loading && <p className="text-center text-blue-400 mt-6">Finding best matches...</p>}
+            {loading && <p className="text-center text-brand-violet font-medium mt-8 animate-pulse">Running Match Engine...</p>}
           </div>
         )}
 
         {/* RESULTS */}
         {step === 'results' && (
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold text-white">Your Best Matches</h2>
-              <button onClick={reset} className="text-blue-400 hover:text-blue-300 text-sm">
+          <div className="bg-[#131418] border border-white/5 rounded-3xl p-8 md:p-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+            <div className="flex flex-col md:flex-row justify-between md:items-center mb-10 gap-4">
+              <h2 className="text-2xl md:text-3xl font-semibold text-[#EDEDED] tracking-tight">Your Top Matches</h2>
+              <button onClick={reset} className="text-brand-violet hover:text-brand-violet-light transition-colors font-medium text-sm border border-brand-violet/30 px-4 py-2 rounded-lg hover:bg-brand-violet/10">
                 Start Over
               </button>
             </div>
 
             {results.length === 0 ? (
-              <p className="text-gray-400 text-center">No tools found. Try different selections.</p>
+              <p className="text-[#A1A1AA] text-center py-12 text-lg">No tools found matching your exact criteria. Try adjusting your selections.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {results.slice(0, 5).map((agent, idx) => (
-                  <div key={agent.id} className="p-6 rounded-lg border border-gray-700 bg-gray-800/30 hover:border-blue-500 transition">
-                    {idx === 0 && <div className="text-xs bg-blue-600 text-white px-2 py-1 rounded mb-2 w-fit">Best Match</div>}
-                    <h3 className="font-bold text-white text-lg mb-2">{agent.name}</h3>
-                    <p className="text-sm text-gray-400 mb-3">{agent.summary}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-blue-400 font-bold">{agent.match_score}% match</span>
-                      <Link href={`/products/${agent.slug}`}>
-                        <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm font-semibold">
-                          View
-                        </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {results.slice(0, 4).map((agent, idx) => (
+                  <div key={agent.id} className="relative flex flex-col p-6 rounded-2xl border border-white/[0.08] bg-[#1C1C21] hover:border-brand-violet/50 transition-all duration-300 group shadow-lg">
+                    {idx === 0 && (
+                      <div className="absolute -top-3 -left-2 z-10">
+                        <div className="bg-gradient-to-r from-brand-blue to-brand-fuchsia text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-md shadow-[0_0_15px_rgba(139,92,246,0.4)]">
+                          Best Match
+                        </div>
+                      </div>
+                    )}
+                    
+                    <h3 className="font-bold text-white text-xl mb-2 mt-2 group-hover:text-brand-violet transition-colors">{agent.name}</h3>
+                    <p className="text-sm text-[#A1A1AA] mb-6 flex-1 line-clamp-3 leading-relaxed">{agent.summary}</p>
+                    
+                    <div className="flex justify-between items-center pt-4 border-t border-white/[0.05]">
+                      <span className="text-brand-violet font-bold text-lg">{agent.match_score}% Match</span>
+                      <Link href={`/products/${agent.slug}`} className="inline-flex items-center justify-center font-bold text-[#0A0A0A] rounded-lg px-5 py-2.5 transition-all duration-300 shadow-sm hover:brightness-110 bg-brand-violet text-white">
+                        View Details
                       </Link>
                     </div>
                   </div>

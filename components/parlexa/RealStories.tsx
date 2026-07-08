@@ -3,9 +3,9 @@
 import React from 'react';
 
 const themes = {
-  emerald: { main: '#10b981', bg: 'rgba(16, 185, 129, 0.1)', shadow: '0 0 40px rgba(16, 185, 129, 0.15)', badgeBg: 'rgba(16, 185, 129, 0.15)' },
-  blue: { main: '#38bdf8', bg: 'rgba(56, 189, 248, 0.1)', shadow: '0 0 40px rgba(56, 189, 248, 0.15)', badgeBg: 'rgba(56, 189, 248, 0.15)' },
-  amber: { main: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)', shadow: '0 0 40px rgba(245, 158, 11, 0.15)', badgeBg: 'rgba(245, 158, 11, 0.15)' }
+  emerald: { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+  blue: { text: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20' },
+  amber: { text: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' }
 };
 
 const stories = [
@@ -15,15 +15,9 @@ const stories = [
     category: 'D2C - FUNDRAISING',
     avatarStr: 'RK',
     name: 'Riya K.',
-    role: 'D2C Skincare Founder • Pre-Series A',
-    headline: 'The founder who needed to raise, but didn\'t know where to start',
-    steps: [
-      <React.Fragment key="1">Riya needs to raise ₹2Cr but doesn&apos;t know if she needs a pitch deck AI or investor database. <strong>She lands on Parlexa and searches &quot;fundraising&quot;.</strong></React.Fragment>,
-      <React.Fragment key="2">Parlexa surfaces a curated set of AI tools — pitch deck generators, investor CRMs, and valuation assistants — each tagged by funding stage.</React.Fragment>,
-      <React.Fragment key="3">She picks a <strong>pitch deck AI</strong> built for early-stage consumer brands, connects her metrics, and gets an investor-ready narrative in under an hour.</React.Fragment>,
-      <React.Fragment key="4">She walks into investor meetings with a polished deck and the confidence she was missing before.</React.Fragment>
-    ],
-    outcome: 'Riya closes her seed round 6 weeks later. Parlexa helped her find the right tool for the right problem — fast.'
+    role: 'D2C Skincare Founder',
+    challenge: 'Struggling to raise ₹2Cr without a clear narrative or access to a warm investor network.',
+    solution: 'Instantly found an AI pitch deck generator and investor CRM, building a data-backed, investor-ready narrative in under an hour.'
   },
   {
     themeColor: 'blue',
@@ -31,15 +25,9 @@ const stories = [
     category: 'B2B - LEAD GENERATION',
     avatarStr: 'AS',
     name: 'Arjun S.',
-    role: 'Head of Sales, B2B SaaS - 40-person team',
-    headline: 'The sales team with a pipeline problem they couldn\'t diagnose',
-    steps: [
-      <React.Fragment key="1">Arjun&apos;s team spends hours on cold outreach with poor conversion. <strong>He opens Parlexa and browses the &quot;lead generation&quot; category.</strong></React.Fragment>,
-      <React.Fragment key="2">He explores three tools — a prospecting engine, a LinkedIn automator, and a lead scoring platform — comparing them side by side with Parlexa&apos;s comparison view.</React.Fragment>,
-      <React.Fragment key="3">He selects the <strong>AI prospecting tool</strong> after reading reviews from similar B2B SaaS companies. Pilots it with his team in week one.</React.Fragment>,
-      <React.Fragment key="4">The tool surfaces high-intent accounts his team had been missing entirely. Outreach volume drops, but <strong>qualified meetings double.</strong></React.Fragment>
-    ],
-    outcome: 'Pipeline quality improves within 30 days. The team stops chasing cold leads and starts closing warm ones.'
+    role: 'Head of Sales',
+    challenge: 'Sales pipeline was drying up while the team wasted hours on manual cold outreach with poor conversion rates.',
+    solution: 'Used the side-by-side comparison view to evaluate and deploy a high-intent AI prospecting engine within a single week.'
   },
   {
     themeColor: 'amber',
@@ -47,95 +35,67 @@ const stories = [
     category: 'LOGISTICS - OPERATIONS',
     avatarStr: 'PM',
     name: 'Priya M.',
-    role: 'VP Operations, Logistics Co - 3 warehouses',
-    headline: 'The ops director scaling fast with no AI roadmap in place',
-    steps: [
-      <React.Fragment key="1">Priya&apos;s company is expanding to two new cities. Manual routing won&apos;t scale. <strong>She opens Parlexa and searches &quot;logistics AI&quot;.</strong></React.Fragment>,
-      <React.Fragment key="2">Parlexa surfaces tools for route optimisation, demand forecasting, warehouse automation, and fleet management — filterable by company size and deployment complexity.</React.Fragment>,
-      <React.Fragment key="3">She reads <strong>verified reviews</strong> from ops teams at similar-sized companies. Two tools rise to the top based on real deployment experiences.</React.Fragment>,
-      <React.Fragment key="4">She shortlists a <strong>route optimisation AI</strong> and a <strong>demand forecasting platform</strong>, pilots both, and rolls out the winner across all three warehouses.</React.Fragment>
-    ],
-    outcome: 'Delivery efficiency improves 22% in Q1. The expansion launches on schedule — no AI consultant needed.'
+    role: 'VP Operations',
+    challenge: 'Rapidly expanding into two new cities where manual route planning and fleet management could no longer scale.',
+    solution: 'Filtered tools by deployment complexity to find a route optimization AI backed by verified reviews from similar-sized logistics operations.'
   }
 ];
 
 export function RealStories() {
   return (
-    <section style={{ maxWidth: '1440px', margin: '80px auto', padding: '0 40px' }}>
-      <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-        <div style={{ 
-          display: 'inline-flex', padding: '6px 16px', background: 'rgba(56, 189, 248, 0.1)', 
-          border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: '20px', color: 'var(--cyan)', 
-          fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '24px'
-        }}>
-          <span>✦</span> <span style={{ marginLeft: '6px' }}>Real Stories</span>
+    <section className="max-w-7xl mx-auto py-24 px-5 md:px-10">
+      <div className="text-center mb-16">
+        <div className="inline-flex items-center px-4 py-1.5 bg-brand-violet-bg border border-brand-violet-border rounded-full text-brand-violet text-[10px] md:text-xs font-medium tracking-widest uppercase mb-6">
+          <span className="mr-2">✦</span> Real Stories
         </div>
         
-        <h2 style={{ fontSize: 'clamp(36px, 5vw, 48px)', fontWeight: 800, color: '#fff', marginBottom: '16px', fontFamily: '"Space Grotesk", sans-serif' }}>
+        <h2 className="text-4xl md:text-5xl font-semibold text-[#EDEDED] mb-4 tracking-tight">
           How Businesses Win with Parlexa
         </h2>
-        <p style={{ fontSize: '18px', color: 'var(--text-muted)' }}>
+        <p className="text-lg text-[#A1A1AA] leading-relaxed max-w-2xl mx-auto">
           From founders raising funds to logistics teams scaling operations — see Parlexa in action
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stories.map((story, i) => {
           const t = themes[story.themeColor as keyof typeof themes];
           return (
-            <div key={i} style={{ 
-              background: '#0f172a', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)',
-              borderTop: `3px solid ${t.main}`, position: 'relative', overflow: 'hidden',
-              display: 'flex', flexDirection: 'column', boxShadow: t.shadow
-            }}>
-              {/* Top ambient glow */}
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '120px', background: `linear-gradient(to bottom, ${t.bg}, transparent)`, pointerEvents: 'none' }} />
+            <div key={i} className="flex flex-col bg-white/[0.02] border border-white/[0.08] rounded-xl p-6 hover:bg-white/[0.04] transition-colors duration-300">
               
-              <div style={{ padding: '32px 32px 24px', flex: 1, position: 'relative', zIndex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                  <span style={{ background: t.main, color: '#000', fontSize: '11px', fontWeight: 800, padding: '4px 8px', borderRadius: '4px' }}>{story.caseId}</span>
-                  <span style={{ color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em' }}>{story.category}</span>
+              <div className="flex items-center gap-3 mb-6">
+                <span className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase rounded-md ${t.bg} ${t.text} ${t.border} border`}>{story.caseId}</span>
+                <span className="text-[#71717A] text-[10px] tracking-widest uppercase">{story.category}</span>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg border-2 border-white/[0.08] ${t.bg} ${t.text}`}>
+                  {story.avatarStr}
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: t.main, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: '18px', fontWeight: 800, flexShrink: 0 }}>
-                    {story.avatarStr}
-                  </div>
-                  <div>
-                    <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: 700, margin: 0 }}>{story.name}</h4>
-                    <p style={{ color: 'var(--text-dim)', fontSize: '12px', margin: '4px 0 0' }}>{story.role}</p>
-                  </div>
-                </div>
-
-                <h3 style={{ fontSize: '22px', fontWeight: 700, color: '#fff', marginBottom: '32px', lineHeight: 1.4 }}>
-                  {story.headline}
-                </h3>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {story.steps.map((step, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                      <div style={{ 
-                        width: '24px', height: '24px', borderRadius: '50%', background: t.badgeBg, color: t.main, 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0 
-                      }}>
-                        {idx + 1}
-                      </div>
-                      <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.6, margin: 0 }}>
-                        {step}
-                      </p>
-                    </div>
-                  ))}
+                <div>
+                  <h4 className="text-[#EDEDED] text-base font-semibold tracking-tight">{story.name}</h4>
+                  <p className="text-[#A1A1AA] text-sm mt-0.5 leading-relaxed">{story.role}</p>
                 </div>
               </div>
 
-              <div style={{ background: t.badgeBg, padding: '24px 32px', position: 'relative', zIndex: 1 }}>
-                <h5 style={{ color: t.main, fontSize: '11px', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>✦</span> OUTCOME
-                </h5>
-                <p style={{ color: t.main, fontSize: '15px', fontWeight: 500, margin: 0, lineHeight: 1.6 }}>
-                  {story.outcome}
-                </p>
+              <div className="border-t border-white/[0.08] my-4"></div>
+
+              <div className="flex-1 flex flex-col">
+                <div className="mb-4">
+                  <span className="text-[#71717A] text-[10px] font-bold tracking-widest uppercase mb-2 block">The Challenge</span>
+                  <p className="text-[#A1A1AA] text-sm leading-relaxed m-0">
+                    {story.challenge}
+                  </p>
+                </div>
+
+                <div className="mt-4">
+                  <span className="text-[#71717A] text-[10px] font-bold tracking-widest uppercase mb-2 block">Parlexa Solution</span>
+                  <p className="text-[#EDEDED] font-medium leading-relaxed m-0">
+                    {story.solution}
+                  </p>
+                </div>
               </div>
+              
             </div>
           );
         })}

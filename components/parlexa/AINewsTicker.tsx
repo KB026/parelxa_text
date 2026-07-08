@@ -53,13 +53,7 @@ export async function AINewsTicker() {
   const tickerItems = [...news, ...news, ...news];
 
   return (
-    <section style={{ 
-      borderTop: '1px solid var(--border-subtle)', 
-      borderBottom: 'none', 
-      background: 'rgba(255,255,255,0.02)', 
-      overflow: 'hidden',
-      padding: '24px 0'
-    }}>
+    <section className="bg-[#111111] border-y border-white/[0.08] py-3 overflow-hidden">
       <div className="category-ticker-container">
         {/* We use a much slower animation duration (90s) since text phrases are longer than single word categories */}
         <div className="category-ticker-track" style={{ animationDuration: '90s' }}>
@@ -69,22 +63,11 @@ export async function AINewsTicker() {
               href={item.link} 
               target="_blank" 
               rel="noopener noreferrer"
-              style={{ 
-                color: 'var(--text-dim)', 
-                fontSize: '15px', 
-                fontWeight: 500, 
-                textDecoration: 'none', 
-                transition: 'color 0.2s',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}
+              className="inline-flex items-center gap-3 text-[#A1A1AA] text-sm font-medium tracking-wide hover:text-[#EDEDED] transition-colors"
             >
-              <span style={{ color: 'var(--cyan)', fontSize: '18px' }}>•</span>
-              <span style={{ color: '#fff' }}>{item.title}</span>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                — {item.source}
-              </span>
+              <span className="bg-white/10 text-white px-2 py-0.5 rounded text-[10px] font-bold">NEW</span>
+              <span className="text-[#EDEDED]">{item.title}</span>
+              <span className="text-[10px] uppercase tracking-widest text-[#71717A]">— {item.source}</span>
             </a>
           ))}
         </div>

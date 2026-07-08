@@ -132,14 +132,30 @@ export function SearchSystem({
     <div className="search-system">
       <SearchBar query={query} setQuery={handleSearchChange} loading={loading} />
       
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full pb-4 border-b border-white/[0.08] mb-8 gap-4">
+        <div className="flex items-baseline gap-4">
+          <h2 className="text-xl font-medium text-white">Filters</h2>
+          <button 
+            onClick={() => {
+              window.history.replaceState(null, '', '/products');
+              window.dispatchEvent(new Event('filters-changed'));
+            }}
+            className="text-xs font-medium text-gray-500 hover:text-gray-300 transition-colors underline-offset-4 hover:underline"
+          >
+            Clear all
+          </button>
+        </div>
+        
+        <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
+          <span className="text-sm font-medium text-white">Results</span>
+          <SortSelector />
+        </div>
+      </div>
+
       <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
         <FilterPanel categories={categories} industries={allIndustries} />
         
         <div style={{ flexGrow: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>Results</h2>
-            <SortSelector />
-          </div>
 
           <ActiveFilters />
 

@@ -95,20 +95,20 @@ export function NavbarClient({ user }: NavbarClientProps) {
           {user.role === 'admin' && (
             <Link href="/admin" className="text-[10px] font-semibold px-2 py-0.5 bg-amber-500 text-black rounded-full no-underline uppercase tracking-wider">Admin</Link>
           )}
-          <div className="flex items-center gap-2 cursor-pointer relative">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
-              {user.initial}
-            </div>
-            <Link href={user.role === 'admin' ? '/admin' : user.role === 'vendor' ? '/dashboard/vendor' : '/dashboard/consumer'} className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors hidden md:block">Dashboard</Link>
-            <form action="/api/auth/signout" method="POST" className="m-0 hidden md:block">
-              <Button type="submit" variant="ghost" className="text-red-500 hover:text-red-400 hover:bg-red-500/10 h-auto p-1 text-sm font-medium">Sign Out</Button>
+          <div className="flex items-center gap-2 pointer-events-auto">
+            <Link href={user.role === 'admin' ? '/admin' : user.role === 'vendor' ? '/dashboard/vendor' : '/dashboard/consumer'} className="flex items-center gap-2.5 p-1 pr-4 rounded-full hover:bg-white/[0.04] border border-transparent hover:border-white/[0.08] transition-all duration-300">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.15] text-gray-300 text-[13px] font-medium shadow-sm">{user.initial}</div>
+              <span className="text-sm font-medium text-gray-300 hidden md:block">Dashboard</span>
+            </Link>
+            <form action="/api/auth/signout" method="POST" className="m-0">
+              <button type="submit" className="text-[13px] font-medium text-gray-500 hover:text-red-400 transition-colors ml-2 px-2 hidden md:block">Sign Out</button>
             </form>
           </div>
         </div>
       ) : (
         <Button
           onClick={() => setAuthOpen(true)}
-          className="flex items-center gap-2 whitespace-nowrap shrink-0 bg-blue-700 hover:bg-blue-600 text-white rounded-lg px-4 py-2 font-semibold transition-all hover:-translate-y-px"
+          className="flex items-center gap-2 whitespace-nowrap shrink-0 bg-brand-emerald hover:bg-brand-emerald-dark text-white rounded-lg px-4 py-2 font-semibold transition-all hover:-translate-y-px"
         >
           <span>Sign In</span>
           <span className="text-base">→</span>

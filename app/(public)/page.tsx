@@ -11,7 +11,10 @@ import { AINewsTicker } from "@/components/parlexa/AINewsTicker";
 import { BlogSection } from "@/components/parlexa/BlogSection";
 import { UniversalAISearch } from "@/components/parlexa/UniversalAISearch";
 import { FAQSection } from "@/components/parlexa/FAQSection";
-
+import { DynamicBackground } from "@/components/parlexa/DynamicBackground";
+import { ScrollReveal } from "@/components/parlexa/ScrollReveal";
+import HowItWorks from "@/components/parlexa/HowItWorks";
+import { TrendingSection } from "@/components/parlexa/TrendingSection";
 export const metadata: Metadata = {
   title: "The Global AI Agent Marketplace | Discover Enterprise AI Tools Worldwide | Parlexa",
   description: "The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.",
@@ -54,107 +57,86 @@ export default async function PublicHomePage() {
   const uniqueNewArrivals = (newArrivals || []).filter(a => !trendingIds.has(a.id));
 
   return (
-    <div className="home-container" style={{ background: 'var(--bg-main)', minHeight: '100vh' }}>
-      {/* Hero Section */}
-      <section className="hero" style={{ 
-        padding: '160px 20px 140px', 
-        textAlign: 'center', 
-        background: 'radial-gradient(ellipse at top, rgba(14, 165, 233, 0.1), transparent 70%)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <div style={{ 
-            display: 'inline-flex', 
-            padding: '6px 16px', 
-            background: 'rgba(14, 165, 233, 0.1)', 
-            border: '1px solid rgba(14, 165, 233, 0.2)', 
-            borderRadius: '20px', 
-            color: 'var(--cyan)', 
-            fontSize: '13px', 
-            fontWeight: 600, 
-            marginBottom: '24px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-          }}>
-            Global AI Ecosystem
+    <div className="home-container bg-[#0A0A0A] min-h-screen">
+      {/* Hero Section Container */}
+      <div className="w-full pb-32 bg-gradient-to-b from-[#09090B] to-[#12121a]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}>
+        <section className="relative overflow-hidden w-full min-h-[90vh] pt-[120px] pb-20 flex flex-col items-center text-center">
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-brand-blue/20 rounded-full blur-[120px] mix-blend-screen animate-pulse duration-10000"></div>
+            <div className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] bg-brand-fuchsia/15 rounded-full blur-[150px] mix-blend-screen"></div>
           </div>
-          <h1 style={{ 
-            fontSize: 'clamp(40px, 8vw, 72px)', 
-            fontWeight: 800, 
-            lineHeight: 1.1, 
-            marginBottom: '24px',
-            background: 'linear-gradient(to bottom right, #fff, #94a3b8)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
-            Discover AI Agents & Tools <br /> for Enterprises Worldwide
-          </h1>
-          <p style={{ fontSize: '20px', color: 'var(--text-dim)', maxWidth: '600px', margin: '0 auto 60px', lineHeight: 1.6 }}>
-            The ultimate marketplace of AI agents built to scale businesses globally.
-          </p>
+          <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center text-[11.5vw] md:text-[12.5vw] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/[0.08] to-white/[0.01] select-none pointer-events-none z-0">MARKETPLACE</div>
+          <div className="relative z-20 flex flex-col items-center text-center max-w-4xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards mt-6">
+            
+            <div className="relative z-10 inline-flex items-center gap-2.5 px-4 py-1.5 mt-8 mb-6 rounded-full border border-white/[0.12] bg-white/[0.02] backdrop-blur-md shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-violet opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-violet"></span>
+              </span>
+              <span className="text-[11px] font-semibold text-gray-300 uppercase tracking-[0.2em] select-none">Global AI Ecosystem</span>
+            </div>
+            <h1 className="text-white text-5xl md:text-7xl leading-[1.05] font-medium tracking-tight mt-6 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
+              Enterprise AI Agents. <br className="hidden sm:block" /> 
+              <span className="bg-gradient-to-r from-white to-gray-500 text-transparent bg-clip-text">Built for scale.</span>
+            </h1>
+          <p className="text-gray-400 text-[20px] max-w-[670px] mt-[24px]">Discover and deploy AI agents ready for your workforce. The only marketplace you can trust.</p>
           
-          <UniversalAISearch />
+
+          <div className="w-full relative z-30 hover:scale-[1.02] transition-transform duration-500">
+            <UniversalAISearch />
+          </div>
           
-          <div style={{ maxWidth: '600px', margin: '40px auto 0', display: 'flex', gap: '24px', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '14px', alignItems: 'center' }}>
-             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><Flame className="w-4 h-4 text-orange-500 shrink-0" /> <strong>Trending:</strong> <Link href="/products?cats=AI+%26+LLMs" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>AI Agents</Link>, <Link href="/products?cats=Marketing+%26+Sales" style={{ color: 'var(--text-dim)', textDecoration: 'none' }}>Marketing Bots</Link></span>
+          {/* The "Trusted By" Section */}
+          <p className="text-xs font-semibold tracking-[0.2em] text-gray-500 uppercase mt-16 mb-6">Integrating with the world's best models</p>
+          <div className="flex items-center justify-center gap-8 md:gap-16 grayscale select-none text-gray-500">
+            <span className="text-xl md:text-2xl font-bold tracking-tighter hover:text-white transition-colors duration-300 cursor-default">OpenAI</span>
+            <span className="text-xl md:text-2xl font-serif italic tracking-tight hover:text-white transition-colors duration-300 cursor-default">Anthropic</span>
+            <span className="text-xl md:text-2xl font-black tracking-widest hover:text-white transition-colors duration-300 cursor-default">META</span>
+            <span className="text-xl md:text-2xl font-semibold tracking-tight hover:text-white transition-colors duration-300 cursor-default">Google</span>
           </div>
         </div>
-      </section>
+        </section>
+      </div>
+
+      {/* How It Works */}
+      <HowItWorks />
 
       {/* Featured Tools */}
       {featuredAgents.length > 0 && (
-        <section style={{ 
-          position: 'relative', overflow: 'hidden', padding: '100px 0'
-        }}>
-          {/* Subtle Glow Background */}
-          <div style={{ 
-            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            width: '800px', height: '800px', background: 'radial-gradient(circle, rgba(251, 146, 60, 0.05) 0%, transparent 70%)',
-            pointerEvents: 'none', zIndex: 0
-          }} />
-          
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 20px', position: 'relative', zIndex: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px' }}>
-              <div>
-                <h2 style={{ fontSize: 'clamp(32px, 5vw, 44px)', fontWeight: 800, marginBottom: '12px', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Sparkles className="w-8 h-8 text-orange-400 shrink-0" />
-                  <span style={{ background: 'linear-gradient(135deg, #fff 0%, #fb923c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Featured on Parlexa</span>
-                </h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '18px', maxWidth: '600px' }}>
-                  Premium AI solutions and enterprise-ready agents selected for world-class performance.
-                </p>
+        <section className="bg-[#0A0A0A] py-24">
+          <ScrollReveal>
+            <div className="max-w-7xl mx-auto px-5 relative z-10">
+              <div className="flex justify-between items-end mb-12">
+                <div>
+                  <h2 className="text-4xl md:text-5xl font-semibold text-[#EDEDED] mb-4 tracking-tight flex items-center gap-3">
+                    <Sparkles className="w-8 h-8 text-amber-500 shrink-0" />
+                    <span>Featured on Parlexa</span>
+                  </h2>
+                  <p className="text-lg text-[#A1A1AA] leading-relaxed max-w-2xl">
+                    Premium AI solutions and enterprise-ready agents selected for world-class performance.
+                  </p>
+                </div>
+                <Link href="/directory" className="inline-flex items-center gap-2 bg-[#EDEDED] text-[#0A0A0A] hover:bg-white font-medium rounded-lg px-4 py-2 transition-all">
+                  <span>View All Featured</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
-              <Link href="/products" style={{ 
-                color: '#fb923c', fontWeight: 700, fontSize: '15px', textDecoration: 'none',
-                display: 'inline-flex', alignItems: 'center', gap: '6px',
-                padding: '10px 20px', background: 'rgba(255, 145, 60, 0.1)', borderRadius: '12px', border: '1px solid rgba(255, 145, 60, 0.2)'
-              }}>
-                <span>View Marketplace</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {featuredAgents.slice(0, 12).map(agent => (
+                  <AgentCard key={agent.id} agent={agent} />
+                ))}
+              </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
-              {featuredAgents.slice(0, 3).map(agent => (
-                <AgentCard key={agent.id} agent={agent} />
-              ))}
-            </div>
-          </div>
+          </ScrollReveal>
         </section>
       )}
 
       {/* Category Ticker */}
-      <section style={{ 
-        borderTop: '1px solid var(--border-subtle)', 
-        borderBottom: '1px solid var(--border-subtle)', 
-        background: 'rgba(255,255,255,0.02)', 
-        overflow: 'hidden',
-        padding: '20px 0'
-      }}>
+      <section className="bg-[#111111] border-y border-white/[0.08] py-5 overflow-hidden">
         <div className="category-ticker-container">
           <div className="category-ticker-track">
             {categories.concat(categories).concat(categories).map((cat, i) => (
-              <Link key={i} href={`/products?cats=${cat.name}`} style={{ color: 'var(--text-dim)', fontSize: '14px', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}>
+              <Link key={i} href={`/directory?category=${encodeURIComponent(cat.name)}`} className="text-[#A1A1AA] hover:text-[#EDEDED] text-sm font-medium transition-colors mx-6">
                 {cat.name}
               </Link>
             ))}
@@ -164,99 +146,48 @@ export default async function PublicHomePage() {
 
       {/* Trending Tools */}
       {trendingAgents.length > 0 && (
-        <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '80px 20px' }}>
-          <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: '#fb923c', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Flame className="w-8 h-8 text-orange-500 shrink-0" />
-              <span>Trending Now</span>
-            </h2>
-            <p style={{ color: 'var(--text-dim)' }}>Most visited and popular AI solutions this week</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
-            {trendingAgents.map(agent => (
-              <AgentCard key={agent.id} agent={agent} />
-            ))}
-          </div>
-        </section>
+        <TrendingSection trendingAgents={trendingAgents} />
       )}
 
       {/* Real Stories Use Cases */}
-      <RealStories />
+      <section className="bg-[#111111]">
+        <ScrollReveal>
+          <RealStories />
+        </ScrollReveal>
+      </section>
 
       {/* Finder CTA */}
-      <section className="home-cta-section" style={{ maxWidth: '1280px', margin: '40px auto' }}>
-        <div className="home-cta-box" style={{ 
-          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))', 
-          backdropFilter: 'blur(20px)',
-          textAlign: 'center', 
-          border: '1px solid rgba(56, 189, 248, 0.2)',
-          boxShadow: '0 30px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(56, 189, 248, 0.05)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          {/* Animated Background Glow */}
-          <div style={{
-            position: 'absolute', top: '-10%', left: '-10%',
-            width: '120%', height: '120%',
-            background: 'radial-gradient(circle at 70% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 60%)',
-            pointerEvents: 'none', zIndex: 0
-          }} />
-          
-          <div style={{ position: 'relative', zIndex: 1, maxWidth: '700px', margin: '0 auto' }}>
-            <div style={{ 
-              width: '120px', height: '120px', margin: '0 auto 32px',
-              borderRadius: '30px', background: 'rgba(56, 189, 248, 0.1)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              boxShadow: '0 0 30px rgba(56, 189, 248, 0.2)',
-              animation: 'float 6s ease-in-out infinite'
-            }}>
-              <img 
-                src="/images/ai_matches.png" 
-                alt="AI Magic" 
-                style={{ width: '80px', height: '80px', objectFit: 'contain', filter: 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.5))' }}
-              />
-            </div>
-            
-            <h2 className="home-cta-title" style={{ 
-              fontWeight: 800, marginBottom: '20px', letterSpacing: '-0.03em',
-              background: 'linear-gradient(135deg, #fff 0%, var(--cyan) 100%)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-            }}>
-              Can&apos;t find the right tool?
-            </h2>
-            <p style={{ fontSize: '18px', color: 'var(--text-muted)', maxWidth: '520px', margin: '0 auto 40px', lineHeight: 1.6 }}>
-              Our AI discovery assistant analyzes your requirements to surface the optimal software stack for your business.
-            </p>
-            
-            <AIFinderCTA />
-          </div>
-          
-          <style dangerouslySetInnerHTML={{ __html: `
-            @keyframes float {
-              0% { transform: translateY(0px) rotate(0deg); }
-              50% { transform: translateY(-15px) rotate(3deg); }
-              100% { transform: translateY(0px) rotate(0deg); }
-            }
-          `}} />
-        </div>
+      <section className="bg-[#0A0A0A]">
+        <ScrollReveal>
+          <AIFinderCTA />
+        </ScrollReveal>
       </section>
 
       {/* New Arrivals */}
       {uniqueNewArrivals.length > 0 && (
-        <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '80px 20px' }}>
-          <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: 'var(--cyan)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Sparkles className="w-8 h-8 text-sky-400 shrink-0" />
-              <span>Just Added</span>
-            </h2>
-            <p style={{ color: 'var(--text-dim)' }}>Fresh AI tools added to the marketplace in the last 48 hours</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
-            {uniqueNewArrivals.map(agent => (
-              <AgentCard key={agent.id} agent={agent} />
-            ))}
-          </div>
+        <section className="bg-[#111111] py-24">
+          <ScrollReveal>
+            <div className="max-w-7xl mx-auto px-5">
+              <div className="flex justify-between items-end mb-12">
+                <div>
+                  <h2 className="text-3xl font-semibold text-[#EDEDED] mb-3 tracking-tight flex items-center gap-3">
+                    <Sparkles className="w-8 h-8 text-amber-500 shrink-0" />
+                    <span>Just Added</span>
+                  </h2>
+                  <p className="text-[#A1A1AA] leading-relaxed text-lg">Fresh AI tools added to the marketplace in the last 48 hours</p>
+                </div>
+                <Link href="/directory" className="inline-flex items-center gap-2 bg-[#EDEDED] text-[#0A0A0A] hover:bg-white font-medium rounded-lg px-4 py-2 transition-all">
+                  <span>View All New</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {uniqueNewArrivals.slice(0, 12).map(agent => (
+                  <AgentCard key={agent.id} agent={agent} />
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
         </section>
       )}
 
@@ -264,10 +195,18 @@ export default async function PublicHomePage() {
       <AINewsTicker />
       
       {/* FAQ Section */}
-      <FAQSection />
+      <section className="bg-[#0A0A0A]">
+        <ScrollReveal>
+          <FAQSection />
+        </ScrollReveal>
+      </section>
 
       {/* Editorial Blogs */}
-      <BlogSection />
+      <section className="bg-[#111111]">
+        <ScrollReveal>
+          <BlogSection />
+        </ScrollReveal>
+      </section>
     </div>
   );
 }

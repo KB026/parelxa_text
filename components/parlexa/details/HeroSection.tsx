@@ -83,7 +83,7 @@ export function HeroSection({
     agent.screenshots.forEach(src => mediaItems.push({ type: 'image', url: src }));
   }
 
-  const activeMedia = mediaItems[activeMediaIndex] || (agent.logoUrl ? { type: 'image', url: agent.logoUrl } : null);
+  const activeMedia = mediaItems[activeMediaIndex] || null;
 
   return (
     <section style={{ position: 'relative', marginBottom: '64px', paddingTop: '24px' }}>
@@ -109,14 +109,30 @@ export function HeroSection({
         
         {/* HEADER AREA */}
         <div className="animate-fade-up">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <h1 style={{ fontSize: '48px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{agent.name}</h1>
-            {agent.isVerified && (
-              <span className="badge-tooltip" style={{ flexShrink: 0 }}>
-                <span className="verified-badge" />
-                <span className="tooltip-text">Verified by Parlexa</span>
-              </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+            {agent.logoUrl ? (
+              <img 
+                src={agent.logoUrl} 
+                alt={`${agent.name} logo`} 
+                className="w-12 h-12 rounded-xl border border-white/10 shadow-sm object-cover bg-white shrink-0"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-xl border border-white/10 shadow-sm bg-white/5 flex items-center justify-center text-lg font-bold text-white/50 shrink-0">
+                {agent.name.substring(0, 2).toUpperCase()}
+              </div>
             )}
+            <div className="flex items-center gap-4">
+              <h1 style={{ fontSize: '48px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{agent.name}</h1>
+              {agent.isVerified && (
+                <span className="badge-tooltip" style={{ flexShrink: 0 }}>
+                  <span className="verified-badge" />
+                  <span className="tooltip-text">Verified by Parlexa</span>
+                </span>
+              )}
+            </div>
           </div>
           
           <p style={{ fontSize: '20px', color: 'var(--text-muted)', margin: '0 0 24px', lineHeight: 1.5 }}>

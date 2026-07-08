@@ -27,7 +27,7 @@ export default async function EditListingPage({ params }: { params: { id: string
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
   const isAdmin = profile?.role === 'admin';
   if (agent.user_id !== user.id && !isAdmin) {
-    redirect('/vendor/listings');
+    redirect('/dashboard/vendor/listings');
   }
 
   return (

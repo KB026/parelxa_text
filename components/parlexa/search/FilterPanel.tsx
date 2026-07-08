@@ -90,15 +90,6 @@ export function FilterPanel({ categories, industries }: FilterPanelProps) {
     <>
       {/* Desktop Sidebar */}
       <aside className="filter-sidebar" style={{ width: '280px', flexShrink: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 700 }}>Filters</h3>
-          <button 
-            onClick={clearAll}
-            style={{ fontSize: '12px', color: 'var(--text-dim)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
-          >
-            Clear all
-          </button>
-        </div>
 
         <FilterSection title="Category">
           {categories.map(cat => (

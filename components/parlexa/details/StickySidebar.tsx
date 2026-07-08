@@ -2,10 +2,11 @@
 
 import { Agent, ReviewStats } from '@/lib/types';
 import { StarRating } from '../reviews/ReviewStats';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Bookmark, Share2, Check, Star } from 'lucide-react';
 import { toggleWishlist } from '@/app/actions/wishlist';
 import { SaveFolderToast } from './SaveFolderToast';
+import { VisitWebsiteButton } from './VisitWebsiteButton';
 
 interface StickySidebarProps {
   agent: Agent;
@@ -25,8 +26,22 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSa
     setIsSaved(initialSaved);
   }, [initialSaved]);
 
+  const isTrackingLeadRef = useRef(false);
+
   const handleSave = async () => {
     setIsSaving(true);
+    
+    // Background Lead Capture Tracking
+    if (!isSaved && !isTrackingLeadRef.current) {
+      isTrackingLeadRef.current = true;
+      setTimeout(() => { isTrackingLeadRef.current = false; }, 2000);
+      
+      fetch('/api/agent-interactions/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent_id: agent.id, action_type: 'lead_capture' })
+      }).catch(console.error);
+    }
     try {
       const result = await toggleWishlist(Number(agent.id));
       if (result.error) {
@@ -131,20 +146,16 @@ export function StickySidebar({ agent, stats, onVisitWebsite, onShare, initialSa
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-          <a 
-            href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => onVisitWebsite?.()}
+          <VisitWebsiteButton 
+            agent={agent}
+            onClick={onVisitWebsite}
             className="btn-get-started"
             style={{ 
               padding: '16px', fontSize: '16px', width: '100%', display: 'inline-flex', 
               justifyContent: 'center', alignItems: 'center', textDecoration: 'none', 
               boxSizing: 'border-box' 
             }}
-          >
-            Visit Website
-          </a>
+          />
           
           <div style={{ display: 'flex', gap: '12px' }}>
             {/* Bookmark Button */}

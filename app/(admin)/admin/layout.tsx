@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Clock, ListOrdered, DollarSign, Key, Users, Shield, CheckCircle, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, Clock, ListOrdered, DollarSign, Key, Users, Shield, CheckCircle, ClipboardCheck, FileText, Settings, MessageSquare } from 'lucide-react';
 import { Navbar } from "@/components/parlexa/Navbar";
 import { Footer } from "@/components/parlexa/Footer";
 import { createClient } from "@/lib/supabase/server";
@@ -36,7 +36,9 @@ export default async function AdminLayout({
     { href: '/admin/claims', label: 'Listing Claims', icon: <Key size={18} /> },
     { href: '/admin/users', label: 'User Management', icon: <Users size={18} /> },
     { href: '/admin/moderation/reviews', label: 'Review Moderation', icon: <Shield size={18} /> },
-    { href: '/admin/verifications', label: 'Verification Queue', icon: <CheckCircle size={18} />, accent: '#60a5fa' },
+    { href: '/admin/verifications', label: 'Vendor Verifications', icon: <CheckCircle size={18} />, accent: '#60a5fa' },
+    { href: '/admin/approval-queue', label: 'Agent Approvals', icon: <ClipboardCheck size={18} />, accent: '#a78bfa' },
+    { href: '/admin/resolution-center', label: 'Resolution Center', icon: <MessageSquare size={18} />, accent: '#38bdf8' },
     { href: '/admin/promotions', label: 'Promotions & Revenue', icon: <DollarSign size={18} />, accent: '#fb923c' },
     { href: '/admin/reports', label: 'Reports & Analytics', icon: <FileText size={18} /> },
     { href: '/admin/settings', label: 'Site Settings', icon: <Settings size={18} /> },

@@ -7,6 +7,7 @@ import Script from 'next/script';
 import { redirect } from 'next/navigation';
 import { Calendar, Star } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
+import { deleteTool } from './actions';
 
 interface Listing {
   id: number;
@@ -36,18 +37,13 @@ export default function VendorListings() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { redirect('/login'); return; }
 
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    const isAdmin = profile?.role === 'admin';
-    
-    let query = supabase
+    const query = supabase
       .from('agents')
-      .select('id, name, one_liner, logo_url, category, approval_status, rating, is_verified, slug, rejection_reason, subscription_id, subscription_status, listing_expires_at, company_name, user_id')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('id', { ascending: false });
 
-    if (!isAdmin) {
-      query = query.eq('user_id', user.id);
-    }
-
-    const { data } = await query.order('id', { ascending: false });
+    const { data } = await query;
     setListings(data || []);
   }, []);
 
@@ -57,9 +53,8 @@ export default function VendorListings() {
     if (!confirm('Are you sure you want to delete this listing? This cannot be undone.')) return;
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/listings/${id}`, { method: 'DELETE' });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const res = await deleteTool(id);
+      if (!res.success) throw new Error(res.error || 'Failed to delete');
       setListings(prev => prev.filter(l => l.id !== id));
     } catch (err) {
       alert('Delete failed: ' + (err as Error).message);
@@ -223,50 +218,23 @@ export default function VendorListings() {
                           }} />
                           <span style={{ 
                             fontSize: '12px', fontWeight: 600, 
-                            color: isLive ? (listing.subscription_id ? '#10b981' : '#f59e0b') : isPending ? '#f59e0b' : '#ef4444' 
+                            color: isLive ? '#10b981' : isPending ? '#f59e0b' : '#ef4444' 
                           }}>
-                            {isLive ? (listing.subscription_id ? 'Live on Marketplace' : 'Approved (Action Required)') : isPending ? 'Under Review' : 'Action Required'}
+                            {isLive ? 'Approved' : isPending ? 'Pending' : 'Action Required'}
                           </span>
                         </div>
-                        {listing.subscription_id && (
-                          <>
-                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--text-dim)' }} />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, color: listing.subscription_status === 'cancelled' ? '#f59e0b' : '#10b981' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> Valid Until: {listing.listing_expires_at ? new Date(listing.listing_expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Processing...'}</div>
-                              {listing.subscription_status === 'cancelled' && <span style={{ marginLeft: '4px', color: '#ef4444' }}>(Auto-renew Off)</span>}
-                            </div>
-                          </>
-                        )}
                       </div>
                     </div>
                   </div>
                   
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    {isLive && listing.subscription_id && (
+                    {isLive && (
                       <Link 
                         href={`/products/${listing.slug || listing.id}`}
                         style={{ padding: '10px 18px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', color: 'var(--text-white)', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}
                       >
                         Preview
                       </Link>
-                    )}
-                    {isLive && !listing.subscription_id && (
-                      <button
-                        onClick={() => handlePay(listing.id, listing.company_name || listing.name)}
-                        disabled={payingId === listing.id}
-                        style={{ padding: '10px 18px', borderRadius: '10px', background: 'var(--cyan)', color: 'var(--bg)', fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: 'none', opacity: payingId === listing.id ? 0.7 : 1 }}
-                      >
-                        {payingId === listing.id ? 'Processing...' : 'Pay ₹2,359 to Publish'}
-                      </button>
-                    )}
-                    {listing.subscription_id && listing.subscription_status !== 'cancelled' && (
-                      <button
-                        onClick={() => handleCancel(listing.id)}
-                        disabled={cancellingId === listing.id}
-                        style={{ padding: '10px 18px', borderRadius: '10px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', fontSize: '13px', fontWeight: 600, cursor: 'pointer', opacity: cancellingId === listing.id ? 0.6 : 1 }}
-                      >
-                        {cancellingId === listing.id ? 'Cancelling...' : 'Cancel Sub'}
-                      </button>
                     )}
                     <Link 
                       href={`/dashboard/vendor/listings/${listing.id}/edit`}
@@ -309,7 +277,7 @@ export default function VendorListings() {
                   <div style={{ display: 'flex', gap: '40px' }}>
                     <div>
                       <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '4px' }}>Views (30d)</div>
-                      <div style={{ fontWeight: 600 }}>1,240</div>
+                      <div style={{ fontWeight: 600 }}>0</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '4px' }}>Rating</div>
@@ -317,14 +285,7 @@ export default function VendorListings() {
                     </div>
                   </div>
                   
-                  {!listing.is_verified && isLive && (
-                    <Link 
-                      href={`/dashboard/vendor/listings/${listing.id}/verify`}
-                      style={{ color: 'var(--cyan)', fontSize: '13px', fontWeight: 700, textDecoration: 'none' }}
-                    >
-                      Get Verified Badge →
-                    </Link>
-                  )}
+
                   {listing.is_verified && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '13px', fontWeight: 700 }}>
                       <span className="verified-badge" /> 

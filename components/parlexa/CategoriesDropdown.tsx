@@ -38,28 +38,39 @@ export function CategoriesDropdown() {
       
       {isOpen && (
         <div 
-          className="categories-dropdown" 
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: '0',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: '12px',
-            padding: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: '220px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-            zIndex: 1000,
-            marginTop: '8px'
-          }}
+          className="absolute top-full mt-6 -left-4 w-72 bg-[#09090B]/95 backdrop-blur-3xl border border-white/[0.08] rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(139,92,246,0.15)] z-[100] overflow-hidden flex flex-col p-2 animate-in fade-in slide-in-from-top-4 duration-200"
         >
-          <Link href="/products?cats=AI+%26+LLMs" className="dropdown-item" onClick={() => setIsOpen(false)}><Bot className="w-4 h-4 inline mr-2 text-muted-foreground" /> AI &amp; LLMs</Link>
-          <Link href="/products?cats=Customer+Experience" className="dropdown-item" onClick={() => setIsOpen(false)}><MessageSquare className="w-4 h-4 inline mr-2 text-muted-foreground" /> Customer Experience</Link>
-          <Link href="/products?cats=Marketing+%26+Sales" className="dropdown-item" onClick={() => setIsOpen(false)}><Megaphone className="w-4 h-4 inline mr-2 text-muted-foreground" /> Marketing &amp; Sales</Link>
-          <Link href="/products?cats=Enterprise+%26+Automation" className="dropdown-item" onClick={() => setIsOpen(false)}><Settings className="w-4 h-4 inline mr-2 text-muted-foreground" /> Enterprise &amp; Automation</Link>
-          <Link href="/products" className="dropdown-item" onClick={() => setIsOpen(false)} style={{justifyContent: 'center', color: 'var(--cyan)'}}>View All Categories <ArrowRight className="w-4 h-4 inline ml-1" /></Link>
+          <Link href="/products?cats=AI+%26+LLMs" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group" onClick={() => setIsOpen(false)}>
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 group-hover:bg-brand-violet/20 group-hover:border-brand-violet/30 text-gray-400 group-hover:text-brand-violet transition-all duration-300">
+              <Bot className="w-4 h-4" />
+            </div>
+            AI &amp; LLMs
+          </Link>
+          <Link href="/products?cats=Customer+Experience" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group" onClick={() => setIsOpen(false)}>
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 group-hover:bg-brand-violet/20 group-hover:border-brand-violet/30 text-gray-400 group-hover:text-brand-violet transition-all duration-300">
+              <MessageSquare className="w-4 h-4" />
+            </div>
+            Customer Experience
+          </Link>
+          <Link href="/products?cats=Marketing+%26+Sales" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group" onClick={() => setIsOpen(false)}>
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 group-hover:bg-brand-violet/20 group-hover:border-brand-violet/30 text-gray-400 group-hover:text-brand-violet transition-all duration-300">
+              <Megaphone className="w-4 h-4" />
+            </div>
+            Marketing &amp; Sales
+          </Link>
+          <Link href="/products?cats=Enterprise+%26+Automation" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group" onClick={() => setIsOpen(false)}>
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 group-hover:bg-brand-violet/20 group-hover:border-brand-violet/30 text-gray-400 group-hover:text-brand-violet transition-all duration-300">
+              <Settings className="w-4 h-4" />
+            </div>
+            Enterprise &amp; Automation
+          </Link>
+          
+          <div className="h-px bg-white/[0.05] w-full my-1"></div>
+          
+          <Link href="/products" className="flex items-center justify-between px-4 py-3 text-sm font-medium text-brand-violet hover:text-white hover:bg-brand-violet/10 rounded-xl transition-all duration-200 group" onClick={() => setIsOpen(false)}>
+            View All Categories 
+            <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 group-hover:opacity-100 transition-all duration-300" />
+          </Link>
         </div>
       )}
     </div>

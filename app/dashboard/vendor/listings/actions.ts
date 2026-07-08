@@ -30,6 +30,7 @@ export async function submitNewListing(formData: FormData) {
   // Parse JSON arrays
   let tags: string[] = [];
   let industries: string[] = [];
+  let screenshots: string[] = [];
   try {
     const tagsRaw = formData.get('tags') as string;
     if (tagsRaw) tags = JSON.parse(tagsRaw);
@@ -37,6 +38,10 @@ export async function submitNewListing(formData: FormData) {
   try {
     const indRaw = formData.get('industries') as string;
     if (indRaw) industries = JSON.parse(indRaw);
+  } catch { /* ignore */ }
+  try {
+    const screensRaw = formData.get('screenshots') as string;
+    if (screensRaw) screenshots = JSON.parse(screensRaw);
   } catch { /* ignore */ }
 
   // Pricing (Step 3)
@@ -69,6 +74,7 @@ export async function submitNewListing(formData: FormData) {
       use_cases,
       tags: tags.length > 0 ? tags : null,
       industries: industries.length > 0 ? industries : null,
+      screenshots: screenshots.length > 0 ? screenshots : null,
       pricing_model: pricing_model || null,
       pricing: pricing || null,
       price_range: price_range || null,
@@ -88,7 +94,7 @@ export async function submitNewListing(formData: FormData) {
 
   if (error) {
     console.error('Error inserting listing', error);
-    redirect('/vendor/listings/new?error=Submission Failed');
+    redirect('/dashboard/vendor/listings/new?error=Submission Failed');
   }
 
   // Trigger Email
@@ -100,8 +106,8 @@ export async function submitNewListing(formData: FormData) {
     console.error('Email trigger failed:', e);
   }
 
-  revalidatePath('/vendor/listings');
-  redirect('/vendor/listings?success=true');
+  revalidatePath('/dashboard/vendor/listings');
+  redirect('/dashboard/vendor/listings?success=true');
 }
 
 export async function updateListing(agentId: number, formData: FormData) {
@@ -154,14 +160,17 @@ export async function updateListing(agentId: number, formData: FormData) {
   // JSON arrays
   let tags: string[] = [];
   let industries: string[] = [];
+  let screenshots: string[] = [];
   try {
     const tagsRaw = formData.get('tags') as string;
     if (tagsRaw) tags = JSON.parse(tagsRaw);
     const indRaw = formData.get('industries') as string;
     if (indRaw) industries = JSON.parse(indRaw);
+    const screensRaw = formData.get('screenshots') as string;
+    if (screensRaw) screenshots = JSON.parse(screensRaw);
   } catch { /* ignore */ }
 
-  const updateData: Record<string, string | string[] | boolean | number | null> = {
+  const updateData = {
     name,
     one_liner: one_liner || null,
     summary,
@@ -174,6 +183,7 @@ export async function updateListing(agentId: number, formData: FormData) {
     use_cases,
     tags: tags.length > 0 ? tags : null,
     industries: industries.length > 0 ? industries : null,
+    screenshots: screenshots.length > 0 ? screenshots : null,
     pricing_model: pricing_model || null,
     pricing: pricing || null,
     price_range: price_range || null,
@@ -215,8 +225,50 @@ export async function updateListing(agentId: number, formData: FormData) {
     return { success: false, error: 'Database update failed' };
   }
 
-  revalidatePath('/vendor/listings');
+  revalidatePath('/dashboard');
+  revalidatePath('/admin/approval-queue');
+  revalidatePath('/dashboard/vendor/listings');
   revalidatePath(`/products/${agentId}`);
+  
+  return { success: true };
+}
+
+export async function deleteTool(agentId: number) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  // Security Check: Verify Ownership
+  const { data: existing, error: fetchError } = await supabase
+    .from('agents')
+    .select('user_id')
+    .eq('id', agentId)
+    .single();
+
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const isAdmin = profile?.role === 'admin';
+
+  if (fetchError || !existing || (existing.user_id !== user.id && !isAdmin)) {
+    return { success: false, error: 'Unauthorized or Listing Not Found' };
+  }
+
+  // Delete Action
+  const { error } = await supabase
+    .from('agents')
+    .delete()
+    .eq('id', agentId);
+
+  if (error) {
+    console.error('Delete Listing Error:', error);
+    return { success: false, error: 'Database deletion failed' };
+  }
+
+  revalidatePath('/dashboard');
+  revalidatePath('/admin/approval-queue');
+  revalidatePath('/dashboard/vendor/listings');
   
   return { success: true };
 }

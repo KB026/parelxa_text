@@ -60,11 +60,11 @@ export default async function ProductsPage({
 
   return (
     <div className="agents-page" style={{ maxWidth: '1280px', margin: '0 auto', padding: '100px 40px 80px' }}>
-      <header style={{ marginBottom: '48px' }}>
-        <h1 className="page-title" style={{ fontSize: '48px', fontWeight: 800, marginBottom: '16px' }}>
+      <header className="mb-12">
+        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-white mb-4">
           {category ? `${category} AI Tools Worldwide` : 'Explore AI Agents'}
         </h1>
-        <p className="page-subtitle" style={{ fontSize: '18px', color: 'var(--text-muted)' }}>
+        <p className="text-lg text-gray-400 max-w-2xl mb-10">
           {category 
             ? `Top-rated ${category} solutions specifically curated for global enterprises.` 
             : 'The ultimate directory of AI agents built to scale businesses globally.'}

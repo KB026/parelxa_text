@@ -17,7 +17,7 @@ export default async function VendorDashboard() {
   // 1. Fetch vendor's listings
   const { data: vendorListings } = await supabase
     .from('agents')
-    .select('id, name, approval_status')
+    .select('*')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
@@ -32,29 +32,31 @@ export default async function VendorDashboard() {
   const clicksPerAgent: Record<number, number> = {};
 
   if (agentIds.length > 0) {
-    // Fetch all clicks for the vendor's agents
-    const { data: allClicks } = await supabase
+    // Fetch all interactions (clicks and leads) for the vendor's agents
+    const { data: interactions } = await supabase
       .from('agent_interactions')
-      .select('agent_id, created_at')
-      .eq('action_type', 'cta_click')
+      .select('agent_id, created_at, action_type')
+      .in('action_type', ['cta_click', 'lead_capture'])
       .in('agent_id', agentIds);
 
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-    if (allClicks) {
-      totalClicks = allClicks.length;
-      allClicks.forEach(click => {
-        clicksPerAgent[click.agent_id] = (clicksPerAgent[click.agent_id] || 0) + 1;
-        
-        if (!click.created_at) return;
-        
-        const clickDate = new Date(click.created_at);
-        if (clickDate >= thirtyDaysAgo) {
-          leadsThisMonth++;
-        } else if (clickDate >= sixtyDaysAgo && clickDate < thirtyDaysAgo) {
-          leadsLastMonth++;
+    if (interactions) {
+      interactions.forEach(interaction => {
+        if (interaction.action_type === 'cta_click') {
+          totalClicks++;
+          clicksPerAgent[interaction.agent_id] = (clicksPerAgent[interaction.agent_id] || 0) + 1;
+        } else if (interaction.action_type === 'lead_capture') {
+          if (!interaction.created_at) return;
+          
+          const date = new Date(interaction.created_at);
+          if (date >= thirtyDaysAgo) {
+            leadsThisMonth++;
+          } else if (date >= sixtyDaysAgo && date < thirtyDaysAgo) {
+            leadsLastMonth++;
+          }
         }
       });
     }
@@ -143,8 +145,8 @@ export default async function VendorDashboard() {
                         listing.approval_status === 'rejected' ? 'bg-red-500/20 text-red-400' :
                         'bg-yellow-500/20 text-yellow-400'
                       }`}>
-                        {listing.approval_status === 'approved' ? 'Live' : 
-                         listing.approval_status === 'rejected' ? 'Rejected' : 'Pending Review'}
+                        {listing.approval_status === 'approved' ? 'Approved' : 
+                         listing.approval_status === 'rejected' ? 'Rejected' : 'Pending'}
                       </span>
                     </div>
                   </div>

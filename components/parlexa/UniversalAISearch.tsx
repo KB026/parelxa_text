@@ -64,36 +64,32 @@ export function UniversalAISearch() {
 
   return (
     <div ref={wrapperRef} style={{ position: 'relative', maxWidth: '800px', margin: '0 auto 40px', zIndex: 100 }}>
-      <form onSubmit={handleAISearch} style={{ position: 'relative' }}>
-        <input 
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask me anything... (e.g. 'can I automate my customer service?')"
-          style={{ 
-            width: '100%', padding: '24px 32px', paddingLeft: '70px', paddingRight: '160px',
-            background: 'rgba(255, 255, 255, 0.03)', border: '2px solid rgba(14, 165, 233, 0.2)',
-            borderRadius: '24px', color: 'white', fontSize: '18px', outline: 'none',
-            backdropFilter: 'blur(20px)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-            transition: 'all 0.3s'
-          }}
-          className="ai-search-input"
-        />
-        <span style={{ position: 'absolute', left: '28px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>
-          <Wand2 className="w-7 h-7 text-sky-400" />
-        </span>
-        <button 
-          type="submit"
-          disabled={isSearching}
-          style={{ 
-            position: 'absolute', right: '12px', top: '12px', bottom: '12px',
-            background: 'var(--cyan)', color: 'black', border: 'none', 
-            borderRadius: '16px', padding: '0 24px', fontWeight: 800, fontSize: '14px',
-            cursor: 'pointer', transition: 'all 0.2s'
-          }}
-        >
-          {isSearching ? 'Thinking...' : 'AI Search'}
-        </button>
+      <form onSubmit={handleAISearch} className="relative w-full max-w-3xl mx-auto mt-10 p-2 bg-white/[0.02] backdrop-blur-3xl border border-white/[0.06] rounded-[3rem] shadow-[0_0_40px_rgba(139,92,246,0.15)] hover:shadow-[0_0_50px_rgba(139,92,246,0.25)] transition-shadow duration-300">
+        <div className="flex items-center w-full h-[54px] bg-[#0A0A0C] rounded-full pl-6 pr-2 border border-white/[0.05] transition-all duration-300 focus-within:border-white/15 focus-within:bg-[#0F0F13]">
+          <Sparkles className="w-5 h-5 text-gray-500 mr-3 shrink-0" />
+          <input 
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Ask anything... (e.g. 'sales agent')"
+            className="flex-1 min-w-0 bg-transparent border-none outline-none text-gray-200 placeholder-gray-500 text-[15px] truncate mr-4"
+            disabled={isSearching}
+          />
+          
+          <div className="hidden sm:flex items-center gap-1.5 mr-4 select-none shrink-0">
+            <kbd className="flex items-center justify-center min-w-[28px] h-7 bg-white/[0.05] border border-white/[0.1] rounded-[6px] text-[11px] text-gray-400 font-sans font-medium">Ctrl</kbd>
+            <span className="text-gray-600 text-xs">+</span>
+            <kbd className="flex items-center justify-center min-w-[28px] h-7 bg-white/[0.05] border border-white/[0.1] rounded-[6px] text-[11px] text-gray-400 font-sans font-medium">K</kbd>
+          </div>
+
+          <button 
+            type="submit"
+            disabled={isSearching}
+            className="bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] hover:border-white/[0.2] text-gray-300 hover:text-white text-[14px] font-medium px-6 py-2 rounded-full transition-all duration-300 shrink-0"
+          >
+            {isSearching ? 'Thinking...' : 'AI Search'}
+          </button>
+        </div>
       </form>
 
       {showResults && (isSearching || result) && (

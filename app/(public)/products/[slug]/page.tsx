@@ -15,13 +15,14 @@ import { StickyLeadBox } from '@/components/parlexa/details/StickyLeadBox';
 import { SimilarTools } from '@/components/parlexa/details/SimilarTools';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Star } from 'lucide-react';
+import { Star, Bookmark, ArrowLeftRight, Share2 } from 'lucide-react';
 
 import { ViewTracker } from '@/components/parlexa/details/ViewTracker';
 import { getExternalReviews } from '@/lib/api/externalReviews';
 import { ExternalReviews } from '@/components/parlexa/details/ExternalReviews';
 import { checkWishlistStatus } from '@/app/actions/wishlist';
 import { ScrollReveal } from '@/components/parlexa/ui/ScrollReveal';
+import { VisitWebsiteButton } from '@/components/parlexa/details/VisitWebsiteButton';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const agent = await getAgentBySlug(params.slug);
@@ -95,7 +96,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
   const isSaved = user ? await checkWishlistStatus(Number(agent.id)) : false;
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '100px 40px 80px' }}>
+    <div className="pb-28 md:pb-12 px-5 md:px-8" style={{ maxWidth: '1280px', margin: '0 auto', paddingTop: '100px' }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -118,20 +119,16 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '80px', maxWidth: '1280px', margin: '0 auto' }}>
         {/* Main Grid Layout */}
-        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
           
           {/* LEFT COLUMN: Main Content */}
-          <div className="contents lg:block lg:col-span-8">
+          <div className="md:col-span-8">
             
             {/* Mobile Order 1: Hero Only */}
-            <div className="order-1 flex flex-col gap-12 lg:mb-12">
+            <div className="flex flex-col gap-12 md:mb-12">
               <HeroSection 
                 agent={agent} 
               />
-            </div>
-
-            {/* Mobile Order 3: About, Company Stats, Features, Reviews */}
-            <div className="order-3 flex flex-col gap-12">
               <ScrollReveal>
                 <AboutSection 
                   description={agent.description || agent.summary} 
@@ -185,8 +182,8 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
           </div>
 
           {/* RIGHT COLUMN: Sticky Sidebar (Mobile Order 2) */}
-          <div className="order-2 lg:col-span-4 relative">
-            <div className="lg:sticky lg:top-24 h-fit">
+          <div className="md:col-span-4 relative">
+            <div className="md:sticky md:top-24 h-fit">
               <StickyLeadBox 
                 agent={agent}
                 initialSaved={isSaved}
@@ -204,28 +201,41 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
       </div>
 
       {/* Mobile Sticky CTA Bar */}
-      <div className="mobile-cta-bar" style={{ 
-        position: 'fixed', bottom: 0, left: 0, right: 0, background: 'var(--bg-card)', 
-        borderTop: '1px solid var(--border-subtle)', padding: '16px 24px', 
-        display: 'none', zIndex: 100, gap: '12px'
-      }}>
-        <div style={{ flexGrow: 1 }}>
-          <div style={{ fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Star className="w-5 h-5 text-amber-500 fill-current" />
-            <span>{stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</span>
+      <div className="flex lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#09090B] border-t border-white/10 p-4 flex-row items-center justify-between gap-4">
+        
+        {/* Left Column (Info & Actions) */}
+        <div className="flex-1 flex flex-col gap-2 min-w-0">
+          
+          {/* Top Row (Secondary Actions & Rating) */}
+          <div className="flex items-center gap-4 text-gray-400">
+            <div className="flex items-center gap-1 text-white font-bold text-sm">
+              <Star size={18} className="text-amber-500 fill-current" />
+              <span>{stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</span>
+            </div>
+            
+            <button className="hover:text-white transition-colors" title="Save">
+              <Bookmark size={18} />
+            </button>
+            <button className="hover:text-white transition-colors" title="Compare">
+              <ArrowLeftRight size={18} />
+            </button>
+            <button className="hover:text-white transition-colors" title="Share">
+              <Share2 size={18} />
+            </button>
           </div>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{agent.pricing}</div>
+          
+          {/* Bottom Row (Pricing) */}
+          <div className="text-xs text-gray-500 truncate">
+            {agent.pricing}
+          </div>
         </div>
-        <a href={agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : '#'} target="_blank" rel="noopener noreferrer" className="btn-get-started" style={{ padding: '12px 24px', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Visit Website</a>
-      </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @media (max-width: 1024px) {
-          .mobile-cta-bar {
-            display: flex !important;
-          }
-        }
-      `}} />
+        {/* Right Column (Primary CTA) */}
+        <VisitWebsiteButton 
+          agent={agent}
+          className="w-auto px-6 h-11 bg-[#2563eb] text-white font-semibold rounded-lg shrink-0 flex items-center justify-center no-underline hover:bg-[#1d4ed8] transition-colors"
+        />
+      </div>
     </div>
   );
 }

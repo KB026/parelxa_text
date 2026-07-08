@@ -9,6 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        brand: {
+          violet: '#8B5CF6',
+          'violet-dark': '#7C3AED',
+          'violet-light': '#A78BFA',
+          'violet-bg': 'rgba(139,92,246,0.10)',
+          'violet-border': 'rgba(139,92,246,0.35)',
+          blue: '#2563EB',
+          fuchsia: '#D946EF',
+        },
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: "var(--card)",

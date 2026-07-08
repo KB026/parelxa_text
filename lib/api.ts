@@ -386,59 +386,92 @@ export async function getUserReview(agentId: number, userId: string): Promise<Re
   };
 }
 
-export async function getFeaturedAgents(category?: string, type: 'featured_category' | 'featured_home' = 'featured_home'): Promise<Agent[]> {
+export async function getFeaturedAgents(limit: number = 8): Promise<Agent[]> {
   const supabase = createClient() as any;
-  let query = supabase
-    .from('promotions')
-    .select(`
-      agent_id,
-      agent:agents(*)
-    `)
-    .eq('status', 'active')
-    .eq('type', type)
-    .gt('end_date', new Date().toISOString());
+  const { data, error } = await supabase
+    .from('agents')
+    .select('*')
+    .eq('is_featured', true)
+    .eq('approval_status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(limit);
 
-  if (category) query = query.eq('category', category);
-
-  const { data, error } = await query.limit(10);
   if (error || !data) return [];
 
-  const agents: Agent[] = (data as unknown as (PromotionDB & { agent: AgentDB })[])
-    .filter(p => p.agent && p.agent.approval_status === 'approved' && p.agent.is_verified)
-    .filter(p => (p.agent.rating || 0) >= 3.5 || (p.agent.reviews_count || 0) === 0)
-    .map(p => {
-      const agent = p.agent;
-      return {
-        id: agent.id,
-        name: agent.name,
-        oneLiner: agent.one_liner,
-        logoUrl: agent.logo_url,
-        category: agent.category,
-        subCategory: agent.sub_category || '',
-        pricing: agent.pricing,
-        rating: agent.rating,
-        reviews_count: agent.reviews_count,
-        isVerified: agent.is_verified || false,
-        isFeatured: true,
-        promotionId: p.id,
-        slug: agent.slug || ''
-      } as Agent;
-    });
+  return data.map((agent: AgentDB) => ({
+    id: agent.id,
+    name: agent.name,
+    oneLiner: agent.one_liner,
+    logoUrl: agent.logo_url,
+    category: agent.category,
+    subCategory: agent.sub_category || '',
+    summary: agent.summary,
+    useCases: agent.use_cases || '',
+    features: agent.features,
+    pricing: agent.pricing,
+    pricingModel: agent.pricing_model,
+    priceRange: agent.price_range,
+    freeTrial: agent.free_trial,
+    globalAvailability: agent.global_availability,
+    usdPrice: agent.usd_price,
+    rating: agent.rating,
+    reviews: agent.reviews,
+    reviews_count: agent.reviews_count,
+    isVerified: agent.is_verified || false,
+    demoUrl: agent.demo_url,
+    videoUrl: agent.video_url,
+    screenshots: agent.screenshots,
+    tags: agent.tags,
+    userId: agent.user_id,
+    slug: agent.slug || '',
+    isFeatured: true
+  } as Agent));
+}
 
-  // Increment impressions
-  if (agents.length > 0 && data) {
-    const promotionData = data as unknown as PromotionDB[];
-    try {
-      await supabase.rpc('increment_impressions', { promotion_ids: promotionData.map(p => p.id) });
-    } catch {
-      // Fallback if RPC doesn't exist yet
-      await Promise.all(promotionData.map(p => 
-        supabase.from('promotions').update({ impressions: (p.impressions || 0) + 1 }).eq('id', p.id)
-      )).catch(() => {});
-    }
-  }
+export async function getPaginatedAgents(page: number = 1, limit: number = 24): Promise<{ agents: Agent[], total: number }> {
+  const supabase = createClient() as any;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
 
-  return agents;
+  const { data, count, error } = await supabase
+    .from('agents')
+    .select('*', { count: 'exact' })
+    .eq('approval_status', 'approved')
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  if (error || !data) return { agents: [], total: 0 };
+
+  const agents = data.map((agent: AgentDB) => ({
+    id: agent.id,
+    name: agent.name,
+    oneLiner: agent.one_liner,
+    logoUrl: agent.logo_url,
+    category: agent.category,
+    subCategory: agent.sub_category || '',
+    summary: agent.summary,
+    useCases: agent.use_cases || '',
+    features: agent.features,
+    pricing: agent.pricing,
+    pricingModel: agent.pricing_model,
+    priceRange: agent.price_range,
+    freeTrial: agent.free_trial,
+    globalAvailability: agent.global_availability,
+    usdPrice: agent.usd_price,
+    rating: agent.rating,
+    reviews: agent.reviews,
+    reviews_count: agent.reviews_count,
+    isVerified: agent.is_verified || false,
+    demoUrl: agent.demo_url,
+    videoUrl: agent.video_url,
+    screenshots: agent.screenshots,
+    tags: agent.tags,
+    userId: agent.user_id,
+    slug: agent.slug || '',
+    isFeatured: agent.is_featured || false
+  } as Agent));
+
+  return { agents, total: count || 0 };
 }
 
 export async function trackClick(promotionId: string) {
@@ -524,11 +557,10 @@ export async function searchAgents(params: SearchParams): Promise<{ agents: Agen
 
   // If this is the FIRST page and not filtering by featuredOnly, inject featured listings
   if (offset === 0 && !params.featuredOnly) {
-    const featured = await getFeaturedAgents(params.categories?.[0], params.categories ? 'featured_category' : 'featured_home');
-    const featuredLimited = featured.slice(0, 3);
-    const featuredIds = new Set(featuredLimited.map((a: any) => a.id));
+    const featured = await getFeaturedAgents(3);
+    const featuredIds = new Set(featured.map((a: any) => a.id));
     // Filter out featured agents from main list to avoid duplication
-    agents = [...featuredLimited, ...agents.filter((a: any) => !featuredIds.has(a.id))];
+    agents = [...featured, ...agents.filter((a: any) => !featuredIds.has(a.id))];
   }
 
   return { agents, count: count || 0 };
