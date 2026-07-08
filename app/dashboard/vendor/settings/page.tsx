@@ -64,7 +64,7 @@ export default function VendorSettingsPage() {
         id: user.id,
         ...profile,
         updated_at: new Date().toISOString()
-      });
+      } as any);
       alert('Settings updated successfully!');
     }
     setSaving(false);
