@@ -17,9 +17,11 @@ export default function DashboardRouter() {
       return;
     }
 
-    if (role === 'vendor') {
+    if (role === 'admin') {
+      router.push('/admin' + currentQueryString);
+    } else if (role === 'vendor') {
       router.push('/dashboard/vendor' + currentQueryString);
-    } else if (role === 'consumer' || role === 'admin') {
+    } else if (role === 'consumer') {
       router.push('/dashboard/consumer' + currentQueryString);
     }
   }, [role, loading, router]);
