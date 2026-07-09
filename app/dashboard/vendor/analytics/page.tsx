@@ -12,7 +12,7 @@ export default async function VendorAnalyticsPage() {
   }
 
   // Get vendor's agents
-  const { data: agents } = await supabase.from('agents').select('id, name').eq('user_id', user.id);
+  const { data: agents } = await supabase.from('agents').select('id, name').eq('user_id', user.id).eq('is_deleted', false);
   const agentIds = agents?.map(a => a.id) || [];
 
   let interactions: any[] = [];

@@ -32,7 +32,10 @@ export async function trackInteraction(agentId: number, type: 'view' | 'click' |
         visitor_location: visitorLocation,
         search_keyword: searchKeyword || null,
       });
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.digest === 'DYNAMIC_SERVER_USAGE' || err?.message?.includes('Dynamic server usage')) {
+      throw err;
+    }
     console.error(`Error tracking ${normalizedType}:`, err);
   }
 }
@@ -41,7 +44,10 @@ export async function refreshTrendingScores() {
   try {
     const supabase = createClient();
     await supabase.rpc('calculate_weekly_trending_scores');
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.digest === 'DYNAMIC_SERVER_USAGE' || err?.message?.includes('Dynamic server usage')) {
+      throw err;
+    }
     console.error('Error refreshing trending scores:', err);
   }
 }

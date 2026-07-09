@@ -255,10 +255,13 @@ export async function deleteTool(agentId: number) {
     return { success: false, error: 'Unauthorized or Listing Not Found' };
   }
 
-  // Delete Action
+  // Soft Delete Action
   const { error } = await supabase
     .from('agents')
-    .delete()
+    .update({
+      is_deleted: true,
+      deleted_at: new Date().toISOString()
+    })
     .eq('id', agentId);
 
   if (error) {

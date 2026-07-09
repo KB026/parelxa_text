@@ -38,7 +38,7 @@ export function CategoriesDropdown() {
       
       {isOpen && (
         <div 
-          className="absolute top-full mt-6 -left-4 w-72 bg-[#09090B]/95 backdrop-blur-3xl border border-white/[0.08] rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(139,92,246,0.15)] z-[100] overflow-hidden flex flex-col p-2 animate-in fade-in slide-in-from-top-4 duration-200"
+          className="absolute top-full mt-4 -left-4 w-72 bg-[#09090B]/95 backdrop-blur-3xl border border-white/[0.10] rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(139,92,246,0.12)] z-[100] overflow-hidden flex flex-col p-2 animate-in fade-in slide-in-from-top-4 duration-200"
         >
           <Link href="/products?cats=AI+%26+LLMs" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group" onClick={() => setIsOpen(false)}>
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 group-hover:bg-brand-violet/20 group-hover:border-brand-violet/30 text-gray-400 group-hover:text-brand-violet transition-all duration-300">

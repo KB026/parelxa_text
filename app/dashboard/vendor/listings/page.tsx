@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import { Calendar, Star } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { deleteTool } from './actions';
+import { Toast } from '@/components/parlexa/ui/Toast';
 
 interface Listing {
   id: number;
@@ -31,6 +32,7 @@ export default function VendorListings() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [cancellingId, setCancellingId] = useState<number | null>(null);
   const [payingId, setPayingId] = useState<number | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const fetchListings = useCallback(async () => {
     const supabase = createClient() as any;
@@ -41,6 +43,7 @@ export default function VendorListings() {
       .from('agents')
       .select('*')
       .eq('user_id', user.id)
+      .eq('is_deleted', false)
       .order('id', { ascending: false });
 
     const { data } = await query;
@@ -56,8 +59,9 @@ export default function VendorListings() {
       const res = await deleteTool(id);
       if (!res.success) throw new Error(res.error || 'Failed to delete');
       setListings(prev => prev.filter(l => l.id !== id));
+      setToast({ message: 'Tool deleted successfully', type: 'success' });
     } catch (err) {
-      alert('Delete failed: ' + (err as Error).message);
+      setToast({ message: 'Delete failed: ' + (err as Error).message, type: 'error' });
     } finally {
       setDeletingId(null);
     }
@@ -298,6 +302,13 @@ export default function VendorListings() {
           })
         )}
       </div>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </section>
   );
 }

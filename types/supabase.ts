@@ -68,6 +68,7 @@ export type Database = {
           contact_name: string | null
           contact_phone: string | null
           created_at: string | null
+          deleted_at: string | null
           demo_url: string | null
           description: string | null
           discovered_date: string | null
@@ -81,6 +82,7 @@ export type Database = {
           industries: string[] | null
           inr_price: string | null
           is_featured: boolean | null
+          is_deleted: boolean | null
           is_maker_claimed: boolean | null
           is_pinned_trending: boolean | null
           is_verified: boolean | null
@@ -135,6 +137,7 @@ export type Database = {
           contact_name?: string | null
           contact_phone?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           demo_url?: string | null
           description?: string | null
           discovered_date?: string | null
@@ -148,6 +151,7 @@ export type Database = {
           industries?: string[] | null
           inr_price?: string | null
           is_featured?: boolean | null
+          is_deleted?: boolean | null
           is_maker_claimed?: boolean | null
           is_pinned_trending?: boolean | null
           is_verified?: boolean | null
@@ -202,6 +206,7 @@ export type Database = {
           contact_name?: string | null
           contact_phone?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           demo_url?: string | null
           description?: string | null
           discovered_date?: string | null
@@ -215,6 +220,7 @@ export type Database = {
           industries?: string[] | null
           inr_price?: string | null
           is_featured?: boolean | null
+          is_deleted?: boolean | null
           is_maker_claimed?: boolean | null
           is_pinned_trending?: boolean | null
           is_verified?: boolean | null

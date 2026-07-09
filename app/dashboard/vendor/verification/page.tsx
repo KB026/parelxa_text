@@ -18,6 +18,7 @@ export default function VerificationStatusPage() {
         .from('agents')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_deleted', false)
         .order('id', { ascending: false })
         .limit(1)
         .single();

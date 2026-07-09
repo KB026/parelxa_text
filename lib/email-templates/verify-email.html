@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #09090B; color: #fff; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; background: #09090B; }
+    .header { text-align: center; margin-bottom: 30px; }
+    .logo { font-size: 32px; font-weight: bold; background: linear-gradient(135deg, #06B6D4, #3B82F6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .content { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 30px; margin: 20px 0; }
+    .button { display: inline-block; background: linear-gradient(135deg, #2563eb, #38bdf8); color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; margin: 20px 0; font-weight: 600; }
+    .footer { text-align: center; color: #999; font-size: 12px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+    h2 { color: #fff; margin-top: 0; }
+    p { line-height: 1.6; color: rgba(255,255,255,0.8); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">PARLEXA</div>
+    </div>
+    <div class="content">
+      <h2>Verify Your Email</h2>
+      <p>Welcome to Parlexa! Click the button below to verify your email address and activate your account.</p>
+      <center><a href="{{VERIFICATION_LINK}}" class="button">Verify Email</a></center>
+      <p style="color: rgba(255,255,255,0.6); font-size: 12px;">Or copy this link: <code style="background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px;">{{VERIFICATION_LINK}}</code></p>
+    </div>
+    <div class="footer">
+      <p>This link expires in 24 hours.</p>
+      <p>&copy; 2026 Parlexa. All rights reserved. | <a href="https://parlexa.in/privacy-policy" style="color: #38bdf8; text-decoration: none;">Privacy Policy</a></p>
+    </div>
+  </div>
+</body>
+</html>

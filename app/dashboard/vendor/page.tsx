@@ -19,6 +19,7 @@ export default async function VendorDashboard() {
     .from('agents')
     .select('*')
     .eq('user_id', user.id)
+    .eq('is_deleted', false)
     .order('created_at', { ascending: false });
 
   const agentIds = vendorListings?.map(a => a.id) || [];

@@ -22,7 +22,8 @@ export default function VendorReviewsPage() {
       const { data: agents } = await supabase
         .from('agents')
         .select('id, name')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('is_deleted', false);
 
       if (!agents || agents.length === 0) {
         setLoading(false);

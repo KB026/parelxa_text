@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { sendVendorMessageEmail } from '@/lib/resend';
 
 export async function sendMessageToVendor(agentId: number, content: string) {
   const supabase = createClient();
@@ -23,7 +24,7 @@ export async function sendMessageToVendor(agentId: number, content: string) {
   // Find the vendor's user_id for this agent
   const { data: agentData, error: agentError } = await supabase
     .from('agents')
-    .select('user_id')
+    .select('user_id, name')
     .eq('id', agentId)
     .single();
 
@@ -50,6 +51,20 @@ export async function sendMessageToVendor(agentId: number, content: string) {
   if (insertError) {
     console.error('Error sending message:', insertError);
     return { success: false, error: 'Failed to send message' };
+  }
+
+  try {
+    const { data: vendor } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', vendorId)
+      .single();
+
+    if (vendor?.email) {
+      await sendVendorMessageEmail(vendor.email, agentData.name || 'Your Tool', content.trim());
+    }
+  } catch (err) {
+    console.error('Failed to send vendor message email:', err);
   }
 
   revalidatePath('/admin/resolution-center');

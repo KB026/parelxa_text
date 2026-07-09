@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { sendToolApprovedEmail, sendToolRejectedEmail } from '@/lib/resend';
 
 export async function approveAgent(agentId: number) {
   const supabase = createClient();
@@ -31,6 +32,28 @@ export async function approveAgent(agentId: number) {
   if (error) {
     console.error('approveAgent error:', error);
     return { success: false, error: 'Failed to approve agent' };
+  }
+
+  try {
+    const { data: agent } = await supabase
+      .from('agents')
+      .select('*')
+      .eq('id', agentId)
+      .single();
+
+    if (agent?.user_id) {
+      const { data: vendor } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', agent.user_id)
+        .single();
+
+      if (vendor?.email) {
+        await sendToolApprovedEmail(vendor.email, agent.name || 'Your Tool', agent.slug || '');
+      }
+    }
+  } catch (err) {
+    console.error('Failed to send approval email:', err);
   }
 
   revalidatePath('/admin/approval-queue');
@@ -74,6 +97,28 @@ export async function rejectAgent(agentId: number, notes?: string) {
   if (error) {
     console.error('rejectAgent error:', error);
     return { success: false, error: 'Failed to reject agent' };
+  }
+
+  try {
+    const { data: agent } = await supabase
+      .from('agents')
+      .select('*')
+      .eq('id', agentId)
+      .single();
+
+    if (agent?.user_id) {
+      const { data: vendor } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', agent.user_id)
+        .single();
+
+      if (vendor?.email) {
+        await sendToolRejectedEmail(vendor.email, vendor.full_name || 'Vendor', agent.name || 'Your Tool', notes || 'No specific feedback provided.');
+      }
+    }
+  } catch (err) {
+    console.error('Failed to send rejection email:', err);
   }
 
   revalidatePath('/admin/approval-queue');

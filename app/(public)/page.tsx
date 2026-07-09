@@ -48,7 +48,10 @@ export default async function PublicHomePage() {
     categories = c;
     trendingAgents = t as unknown as Agent[];
     newArrivals = n as unknown as Agent[];
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.digest === 'DYNAMIC_SERVER_USAGE' || err?.message?.includes('Dynamic server usage')) {
+      throw err;
+    }
     console.error('Homepage: DB fetch failed:', err);
   }
 

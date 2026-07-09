@@ -37,7 +37,7 @@ export default function HowItWorks() {
             This SVG creates a winding "S" curve down the center of the steps.
             It is hidden on mobile (hidden md:block) because curved SVG alignment breaks on small screens.
           */}
-          <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[400px] hidden md:block z-0 pointer-events-none">
+          <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[400px] z-0 pointer-events-none">
             <svg
               viewBox="0 0 400 800"
               fill="none"
@@ -73,51 +73,51 @@ export default function HowItWorks() {
           <div className="relative z-10 flex flex-col gap-24 md:gap-40">
             
             {/* Step 01 - Left Aligned */}
-            <div className="flex flex-col md:flex-row items-center md:justify-start w-full">
-              <div className="md:w-1/2 md:pr-16 text-center md:text-right">
-                <div className="w-16 h-16 rounded-full bg-[#111111] border border-white/[0.08] flex items-center justify-center mx-auto md:ml-auto md:mr-0 mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
-                  <span className="text-brand-violet font-mono text-xl">01</span>
+            <div className="flex flex-row items-center justify-start w-full">
+              <div className="w-1/2 pr-6 md:pr-16 text-right">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#111111] border border-white/[0.08] flex items-center justify-center ml-auto mr-0 mb-4 md:mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                  <span className="text-brand-violet font-mono text-lg md:text-xl">01</span>
                 </div>
-                <h3 className="text-[#EDEDED] text-2xl font-semibold tracking-tight mb-3">
+                <h3 className="text-[#EDEDED] text-base md:text-2xl font-semibold tracking-tight mb-2 md:mb-3">
                   Search or describe your need
                 </h3>
-                <p className="text-[#A1A1AA] leading-relaxed">
+                <p className="text-[#A1A1AA] text-sm md:text-base leading-relaxed">
                   Use the AI Finder or browse by category — sales, support, voice, content, and more.
                 </p>
               </div>
-              <div className="hidden md:block w-1/2"></div>
+              <div className="block w-1/2"></div>
             </div>
 
             {/* Step 02 - Right Aligned (The curve points here) */}
-            <div className="flex flex-col md:flex-row-reverse items-center md:justify-start w-full mt-8 md:mt-0">
-              <div className="md:w-1/2 md:pl-16 text-center md:text-left">
-                <div className="w-16 h-16 rounded-full bg-[#111111] border border-white/[0.08] flex items-center justify-center mx-auto md:mr-auto md:ml-0 mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
-                  <span className="text-brand-violet font-mono text-xl">02</span>
+            <div className="flex flex-row-reverse items-center justify-start w-full">
+              <div className="w-1/2 pl-6 md:pl-16 text-left">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#111111] border border-white/[0.08] flex items-center justify-center mr-auto ml-0 mb-4 md:mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                  <span className="text-brand-violet font-mono text-lg md:text-xl">02</span>
                 </div>
-                <h3 className="text-[#EDEDED] text-2xl font-semibold tracking-tight mb-3">
+                <h3 className="text-[#EDEDED] text-base md:text-2xl font-semibold tracking-tight mb-2 md:mb-3">
                   Compare shortlisted tools
                 </h3>
-                <p className="text-[#A1A1AA] leading-relaxed">
+                <p className="text-[#A1A1AA] text-sm md:text-base leading-relaxed">
                   Review pricing, features, and real vendor details side by side on one page.
                 </p>
               </div>
-              <div className="hidden md:block w-1/2"></div>
+              <div className="block w-1/2"></div>
             </div>
 
             {/* Step 03 - Left Aligned (The curve points back here) */}
-            <div className="flex flex-col md:flex-row items-center md:justify-start w-full mt-8 md:mt-0">
-              <div className="md:w-1/2 md:pr-16 text-center md:text-right">
-                <div className="w-16 h-16 rounded-full bg-[#111111] border border-white/[0.08] flex items-center justify-center mx-auto md:ml-auto md:mr-0 mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
-                  <span className="text-brand-violet font-mono text-xl">03</span>
+            <div className="flex flex-row items-center justify-start w-full">
+              <div className="w-1/2 pr-6 md:pr-16 text-right">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-[#111111] border border-white/[0.08] flex items-center justify-center ml-auto mr-0 mb-4 md:mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                  <span className="text-brand-violet font-mono text-lg md:text-xl">03</span>
                 </div>
-                <h3 className="text-[#EDEDED] text-2xl font-semibold tracking-tight mb-3">
+                <h3 className="text-[#EDEDED] text-base md:text-2xl font-semibold tracking-tight mb-2 md:mb-3">
                   Request a demo
                 </h3>
-                <p className="text-[#A1A1AA] leading-relaxed">
+                <p className="text-[#A1A1AA] text-sm md:text-base leading-relaxed">
                   One click sends your details straight to the vendor — no forms to hunt for.
                 </p>
               </div>
-              <div className="hidden md:block w-1/2"></div>
+              <div className="block w-1/2"></div>
             </div>
 
           </div>

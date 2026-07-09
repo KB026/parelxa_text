@@ -130,8 +130,8 @@ export default function AIFinderPage() {
                     onClick={() => handleIndustry(ind.id)}
                     className={`p-5 rounded-2xl border transition-all duration-300 text-left group shadow-sm ${
                       isSelected 
-                        ? 'border-brand-emerald bg-brand-emerald/10 shadow-[0_0_20px_rgba(18,184,134,0.3)] ring-2 ring-brand-emerald/50' 
-                        : 'border-white/[0.08] bg-[#1C1C21] hover:border-brand-emerald hover:bg-brand-emerald/5 hover:shadow-[0_0_20px_rgba(18,184,134,0.15)]'
+                        ? 'border-brand-violet bg-brand-violet/10 shadow-[0_0_20px_rgba(18,184,134,0.3)] ring-2 ring-brand-violet/50' 
+                        : 'border-white/[0.08] bg-[#1C1C21] hover:border-brand-violet hover:bg-brand-violet/5 hover:shadow-[0_0_20px_rgba(18,184,134,0.15)]'
                     }`}
                   >
                     <div className="text-3xl mb-3 drop-shadow-md">{ind.emoji}</div>
