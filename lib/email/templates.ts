@@ -40,6 +40,15 @@ const baseLayout = (content: string, unsubscribeLink?: string) => `
 `;
 
 export const templates = {
+  // 0. Signup Verification
+  signupVerification: (name: string, verifyUrl: string) => baseLayout(`
+    <h1>Verify Your Email Address</h1>
+    <p>Hi ${name},</p>
+    <p>Welcome to Parlexa! Please click the button below to verify your email address and activate your account.</p>
+    <a href="${verifyUrl}" class="button">Verify Email</a>
+    <p style="margin-top: 24px; font-size: 14px; color: #64748b;">If you didn't create this account, you can safely ignore this email.</p>
+  `),
+
   // 1. Welcome email (consumer)
   welcomeConsumer: (name: string) => baseLayout(`
     <h1>Welcome to the Parlexa Ecosystem, ${name}!</h1>

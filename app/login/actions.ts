@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
-import { sendWelcomeEmail, sendPasswordResetEmail } from '@/lib/email/actions';
+import { sendWelcomeEmail, sendPasswordResetEmail, sendSignupVerificationEmail } from '@/lib/email/actions';
 
 export async function signInWithGoogle() {
   try {
@@ -74,36 +74,39 @@ export async function signup(formData: FormData) {
   const last_name = formData.get('last_name') as string;
   const phone = formData.get('phone') as string;
 
-  if (password !== passwordConfirm) {
-    return redirect('/login?mode=register&message=Passwords do not match');
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    return redirect(`/login?mode=register&message=Server misconfiguration`);
   }
 
-  const supabaseAdmin = createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabaseAdmin = createSupabaseClient(supabaseUrl, serviceRoleKey);
 
-  const { data: adminData, error: adminError } = await supabaseAdmin.auth.admin.createUser({
+  const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'signup',
     email,
     password,
-    email_confirm: true,
-    user_metadata: {
-      role,
-      first_name,
-      last_name,
-      phone,
-      full_name: `${first_name} ${last_name}`.trim(),
+    options: {
+      data: {
+        role,
+        first_name,
+        last_name,
+        phone,
+        full_name: `${first_name} ${last_name}`.trim(),
+      }
     }
   });
 
-  if (adminError) {
-    return redirect(`/login?mode=register&message=Could not create user: ${adminError.message}`);
+  if (linkError) {
+    return redirect(`/login?mode=register&message=Could not authenticate user: ${linkError.message}`);
   }
-  
-  const user = adminData.user;
 
-  // Fallback: Manually insert into profiles table just in case the Postgres trigger failed
+  const user = linkData.user;
+  const verifyUrl = linkData.properties?.action_link;
+
   if (user) {
+    // Ensure profile exists just in case trigger fails
     await supabaseAdmin.from('profiles').upsert({
       id: user.id,
       email: email,
@@ -115,29 +118,17 @@ export async function signup(formData: FormData) {
     }, { onConflict: 'id' });
   }
 
-  // Now log the user in to set their local cookies
-  const supabase = createClient();
-  await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  // Trigger Welcome Email
-  try {
-    await sendWelcomeEmail(email, `${first_name} ${last_name}`.trim(), role as 'user' | 'vendor');
-  } catch (e) {
-    console.error('Failed to send welcome email:', e);
+  // Send the manual verification email using Resend
+  if (verifyUrl) {
+    try {
+      await sendSignupVerificationEmail(email, `${first_name} ${last_name}`.trim(), verifyUrl);
+    } catch (e) {
+      console.error('Failed to send verification email:', e);
+    }
   }
 
   revalidatePath('/', 'layout');
-  
-  if (role === 'vendor') {
-    redirect('/dashboard/vendor/listings');
-  } else if (role === 'admin') {
-    redirect('/admin');
-  } else {
-    redirect('/dashboard');
-  }
+  redirect('/login?message=Verification Email Sent, Kindly verify to login.');
 }
 
 export async function registerUserAjax(data: { email: string; password: string; role: string; first_name: string; last_name: string; phone?: string }) {
@@ -152,27 +143,31 @@ export async function registerUserAjax(data: { email: string; password: string; 
 
     const supabaseAdmin = createSupabaseClient(supabaseUrl, serviceRoleKey);
 
-    const { data: adminData, error: adminError } = await supabaseAdmin.auth.admin.createUser({
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'signup',
       email: data.email,
       password: data.password,
-      email_confirm: true,
-      user_metadata: {
-        role: data.role,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        phone: data.phone || '',
-        full_name: `${data.first_name} ${data.last_name}`.trim(),
+      options: {
+        data: {
+          role: data.role,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: data.phone || '',
+          full_name: `${data.first_name} ${data.last_name}`.trim(),
+        }
       }
     });
 
-    if (adminError) {
-      console.error('createUser error:', adminError);
-      return { error: adminError.message };
+    if (linkError) {
+      console.error('generateLink error:', linkError);
+      return { error: linkError.message };
     }
 
-    const user = adminData?.user;
+    const user = linkData.user;
+    const verifyUrl = linkData.properties?.action_link;
 
     if (user) {
+      // Ensure profile exists just in case trigger fails
       const { error: profileError } = await supabaseAdmin.from('profiles').upsert({
         id: user.id,
         email: data.email,
@@ -185,30 +180,21 @@ export async function registerUserAjax(data: { email: string; password: string; 
 
       if (profileError) {
         console.error('profiles upsert error:', profileError);
-        // We do not return error here to avoid blocking login, but we log it.
       }
     }
 
-    // Set cookies
-    const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
-
-    if (signInError) {
-      console.error('signInWithPassword error:', signInError);
-      return { error: signInError.message };
+    // Send the manual verification email using Resend
+    if (verifyUrl) {
+      try {
+        await sendSignupVerificationEmail(data.email, `${data.first_name} ${data.last_name}`.trim(), verifyUrl);
+      } catch (e) {
+        console.error('Failed to send verification email:', e);
+      }
+    } else {
+      console.error('generateLink did not return an action_link');
     }
 
-    try {
-      await sendWelcomeEmail(data.email, `${data.first_name} ${data.last_name}`.trim(), data.role as 'user' | 'vendor');
-    } catch (e) {
-      console.error('Failed to send welcome email:', e);
-    }
-
-    revalidatePath('/', 'layout');
-    return { success: true, role: data.role };
+    return { success: true };
   } catch (err: any) {
     console.error('Unexpected error in registerUserAjax:', err);
     return { error: err.message || 'An unexpected error occurred.' };

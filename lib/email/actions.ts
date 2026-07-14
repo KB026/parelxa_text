@@ -2,6 +2,11 @@ import { sendEmail } from './resend';
 import { templates } from './templates';
 import { generateUnsubscribeToken } from '@/lib/signed-tokens';
 
+export async function sendSignupVerificationEmail(email: string, name: string, verifyUrl: string) {
+  const html = templates.signupVerification(name, verifyUrl);
+  return sendEmail({ to: email, subject: 'Verify your Parlexa account', html, from: 'Parlexa <noreply@parlexa.in>' });
+}
+
 export async function sendWelcomeEmail(email: string, name: string, role: 'user' | 'vendor') {
   const html = role === 'vendor' 
     ? templates.welcomeLister(name) 

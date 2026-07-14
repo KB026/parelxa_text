@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Search, Briefcase, X } from 'lucide-react';
+import { Search, Briefcase, X, Eye, EyeOff } from 'lucide-react';
 import { registerUserAjax } from '@/app/login/actions';
 
 type AuthView = 'signin' | 'register' | 'forgot';
@@ -30,8 +30,11 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
   const [role, setRole] = useState<'user' | 'vendor'>('user');
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -44,6 +47,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     setPasswordConfirm('');
     setFirstName('');
     setLastName('');
+    setPhone('');
     setError('');
     setSuccess('');
     setLoading(false);
@@ -151,6 +155,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         role,
         first_name: firstName,
         last_name: lastName,
+        phone,
       });
 
       if (res?.error) {
@@ -163,14 +168,8 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         return;
       }
 
-      // Success, immediately redirect
-      if (res?.role === 'vendor') {
-        window.location.assign('/dashboard/vendor/listings');
-      } else if (res?.role === 'admin') {
-        window.location.assign('/admin');
-      } else {
-        window.location.assign('/dashboard');
-      }
+      setSuccess('Verification email sent! Check your inbox to complete registration.');
+      setLoading(false);
     } catch {
       setError('An unexpected error occurred. Please try again.');
       setLoading(false);
@@ -305,7 +304,12 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-slate-300">Password</label>
-                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                  <div className="relative">
+                    <input className="w-full bg-[#111c2e] border border-white/10 rounded-lg p-3 pr-10 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type={showPassword ? 'text' : 'password'} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white bg-transparent border-none cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <label className="flex items-center gap-2 cursor-pointer text-slate-300">
@@ -362,13 +366,29 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
                   <label className="text-[13px] font-semibold text-slate-300">Email</label>
                   <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
+                
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-slate-300">Phone Number (Optional)</label>
+                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="tel" placeholder="+1 (555) 000-0000" value={phone} onChange={e => setPhone(e.target.value)} />
+                </div>
+
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-slate-300">Password</label>
-                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="password" placeholder="Min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+                  <div className="relative">
+                    <input className="w-full bg-[#111c2e] border border-white/10 rounded-lg p-3 pr-10 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type={showPassword ? 'text' : 'password'} placeholder="Min 6 characters" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white bg-transparent border-none cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-slate-300">Confirm Password</label>
-                  <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="password" placeholder="••••••••" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required />
+                  <div className="relative">
+                    <input className="w-full bg-[#111c2e] border border-white/10 rounded-lg p-3 pr-10 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type={showPasswordConfirm ? 'text' : 'password'} placeholder="Must match password" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required minLength={6} />
+                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white bg-transparent border-none cursor-pointer" onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}>
+                      {showPasswordConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
                 <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 text-sm font-semibold mt-2">
                   {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-transparent rounded-full animate-spin" /> : 'Create Account'}
