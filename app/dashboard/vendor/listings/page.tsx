@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Script from 'next/script';
 import { redirect } from 'next/navigation';
-import { Calendar, Star } from 'lucide-react';
+import { Calendar, Star, Shield } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { deleteTool } from './actions';
 import { Toast } from '@/components/parlexa/ui/Toast';
@@ -173,26 +173,37 @@ export default function VendorListings() {
   }
 
   return (
-    <section>
+    <section className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 8px' }}>My Listings</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Manage your AI tool presence and submission status.</p>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 mb-2 tracking-tight">
+            My Listings
+          </h1>
+          <p className="text-slate-400 text-lg font-medium">Manage your AI tool presence and submission status.</p>
         </div>
         <Link 
           href="/dashboard/vendor/listings/new?fresh=true" 
-          className="btn-get-started" 
-          style={{ padding: '12px 24px', textDecoration: 'none', fontSize: '14px' }}
+          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
         >
-          + Add New Tool
+          <span className="text-xl leading-none mb-0.5">+</span> Add New Tool
         </Link>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div className="flex flex-col gap-6">
         {listings.length === 0 ? (
-          <div style={{ padding: '80px 40px', textAlign: 'center', background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border-subtle)' }}>
-            <p style={{ color: 'var(--text-dim)' }}>You haven&apos;t submitted any tools yet.</p>
+          <div className="bg-[#0b1120]/80 backdrop-blur-xl border border-slate-800 border-dashed rounded-3xl p-16 text-center shadow-lg">
+            <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
+              <span className="text-4xl">🤖</span>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">You haven't submitted any tools yet</h3>
+            <p className="text-slate-400 max-w-md mx-auto mb-8">Publish your first AI tool to our directory and start reaching enterprise clients today.</p>
+            <Link 
+              href="/dashboard/vendor/listings/new?fresh=true" 
+              className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl font-semibold transition-all inline-block"
+            >
+              Get Started
+            </Link>
           </div>
         ) : (
           listings.map(listing => {
@@ -201,55 +212,60 @@ export default function VendorListings() {
             const isRejected = listing.approval_status === 'rejected';
             
             return (
-              <div key={listing.id} style={{ 
-                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', 
-                borderRadius: '24px', padding: '32px'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-                  <div style={{ display: 'flex', gap: '20px', alignItems: 'center', minWidth: 0, flex: 1 }}>
-                    <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--bg-secondary)', overflow: 'hidden', flexShrink: 0 }}>
-                      {listing.logo_url ? <img src={listing.logo_url} alt={`${listing.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🤖</div>}
+              <div key={listing.id} className="bg-[#0b1120]/80 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 md:p-8 shadow-lg relative overflow-hidden group hover:border-slate-700 transition-all duration-500">
+                
+                {/* Subtle gradient strip on left based on status */}
+                <div className={`absolute left-0 top-0 bottom-0 w-1 opacity-50 ${isLive ? 'bg-emerald-500' : isRejected ? 'bg-rose-500' : 'bg-amber-500'}`}></div>
+
+                <div className="flex flex-col xl:flex-row justify-between items-start gap-6 mb-6">
+                  <div className="flex gap-5 items-center min-w-0 flex-1 w-full">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden shrink-0 flex items-center justify-center shadow-inner">
+                      {listing.logo_url ? (
+                        <img src={listing.logo_url} alt={`${listing.name} logo`} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-3xl md:text-4xl">🤖</span>
+                      )}
                     </div>
-                    <div style={{ flex: 1, minWidth: 0, paddingRight: '20px' }}>
-                      <h3 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{listing.name}</h3>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <span style={{ fontSize: '13px', color: 'var(--text-dim)' }}>{listing.category}</span>
-                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--text-dim)' }} />
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <div style={{ 
-                            width: '8px', height: '8px', borderRadius: '50%', 
-                            background: isLive ? '#10b981' : isPending ? '#f59e0b' : '#ef4444' 
-                          }} />
-                          <span style={{ 
-                            fontSize: '12px', fontWeight: 600, 
-                            color: isLive ? '#10b981' : isPending ? '#f59e0b' : '#ef4444' 
-                          }}>
-                            {isLive ? 'Approved' : isPending ? 'Pending' : 'Action Required'}
-                          </span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-1.5 truncate group-hover:text-blue-400 transition-colors">
+                        {listing.name}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="text-sm font-medium text-slate-400 bg-slate-900/50 px-3 py-1 rounded-lg border border-slate-800/50">
+                          {listing.category}
+                        </span>
+                        
+                        <div className={`flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-bold ${
+                          isLive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
+                          isPending ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 
+                          'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                        }`}>
+                          <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : isPending ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]' : 'bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.8)]'}`} />
+                          {isLive ? 'Approved' : isPending ? 'Pending' : 'Action Required'}
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <div className="flex flex-wrap gap-3 items-center w-full xl:w-auto xl:justify-end border-t border-slate-800/50 xl:border-0 pt-4 xl:pt-0">
                     {isLive && (
                       <Link 
                         href={`/products/${listing.slug || listing.id}`}
-                        style={{ padding: '10px 18px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', color: 'var(--text-white)', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}
+                        className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold transition-all flex-1 text-center xl:flex-none"
                       >
                         Preview
                       </Link>
                     )}
                     <Link 
                       href={`/dashboard/vendor/listings/${listing.id}/edit`}
-                      style={{ padding: '10px 18px', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'var(--text-white)', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}
+                      className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-sm font-semibold transition-all flex-1 text-center xl:flex-none"
                     >
                       Edit
                     </Link>
                     <button
                       onClick={() => handleDelete(listing.id)}
                       disabled={deletingId === listing.id}
-                      style={{ padding: '10px 18px', borderRadius: '10px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', fontSize: '13px', fontWeight: 600, cursor: 'pointer', opacity: deletingId === listing.id ? 0.6 : 1 }}
+                      className="px-4 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 text-sm font-semibold transition-all disabled:opacity-50 flex-1 xl:flex-none"
                     >
                       {deletingId === listing.id ? 'Deleting...' : 'Delete'}
                     </button>
@@ -257,42 +273,43 @@ export default function VendorListings() {
                 </div>
 
                 {isRejected && (
-                  <div style={{ 
-                    padding: '16px 20px', background: 'rgba(239, 68, 68, 0.05)', 
-                    border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '12px',
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'
-                  }}>
+                  <div className="p-4 md:p-5 bg-rose-500/5 border border-rose-500/20 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shadow-inner">
                     <div>
-                      <span style={{ fontWeight: 700, color: '#ef4444', marginRight: '8px' }}>Rejected:</span>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
+                      <span className="font-bold text-rose-400 mr-2 flex items-center gap-2 mb-1 sm:mb-0">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        Rejected:
+                      </span>
+                      <span className="text-slate-300 text-sm block sm:inline mt-1 sm:mt-0 ml-0 sm:ml-1">
                         {listing.rejection_reason || 'Does not meet our community guidelines for AI clarity.'}
                       </span>
                     </div>
                     <Link 
                        href={`/dashboard/vendor/listings/${listing.id}/edit?resubmit=true`}
-                       style={{ color: '#ef4444', fontSize: '13px', fontWeight: 800, textDecoration: 'underline' }}
+                       className="text-rose-400 hover:text-rose-300 text-sm font-bold underline underline-offset-4 decoration-rose-500/50 hover:decoration-rose-400 whitespace-nowrap transition-colors"
                     >
                       Modify & Resubmit
                     </Link>
                   </div>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ display: 'flex', gap: '40px' }}>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-5 border-t border-slate-800/60">
+                  <div className="flex gap-8 md:gap-12 w-full sm:w-auto border-b border-slate-800/50 sm:border-0 pb-4 sm:pb-0">
                     <div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '4px' }}>Views (30d)</div>
-                      <div style={{ fontWeight: 600 }}>0</div>
+                      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Views (30d)</div>
+                      <div className="text-lg font-bold text-white">0</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '4px' }}>Rating</div>
-                      <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Star size={14} /> {listing.rating || 'N/A'}</div>
+                      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Rating</div>
+                      <div className="text-lg font-bold text-white flex items-center gap-1.5">
+                        <Star size={16} className={listing.rating ? "text-amber-400 fill-amber-400" : "text-slate-600"} /> 
+                        {listing.rating || <span className="text-slate-500">N/A</span>}
+                      </div>
                     </div>
                   </div>
                   
-
                   {listing.is_verified && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '13px', fontWeight: 700 }}>
-                      <span className="verified-badge" /> 
+                    <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                      <Shield size={16} /> 
                       Verified Tool
                     </div>
                   )}

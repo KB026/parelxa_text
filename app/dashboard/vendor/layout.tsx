@@ -25,10 +25,10 @@ export default async function VendorLayout({
   return (
     <>
       <Navbar />
-      <div style={{ paddingTop: '80px', minHeight: '90vh', background: 'var(--bg-primary)' }}>
-        <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', gap: '60px', padding: '80px 40px 100px' }}>
+      <div className="pt-24 min-h-[90vh] bg-[#020617] text-slate-200">
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row gap-8 px-6 pb-24">
           <VendorSidebar />
-          <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
+          <main className="flex-1 min-w-0">{children}</main>
         </div>
       </div>
       <Footer />

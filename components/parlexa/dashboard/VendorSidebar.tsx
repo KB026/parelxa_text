@@ -20,81 +20,44 @@ export function VendorSidebar() {
   ];
 
   return (
-    <aside style={{ width: '260px', flexShrink: 0 }}>
-      <div style={{ position: 'sticky', top: '100px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <h2 style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.05em' }}>
+    <aside className="w-full md:w-64 shrink-0">
+      <div className="sticky top-32 flex flex-col gap-2">
+        <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-4">
           Vendor Dashboard
         </h2>
         
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href === '/vendor/listings' && pathname.startsWith('/vendor/listings'));
+          const isActive = pathname === item.href || (item.href === '/dashboard/vendor/listings' && pathname.startsWith('/dashboard/vendor/listings'));
           return (
             <Link 
               key={item.href}
               href={item.href}
-              style={{ 
-                display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '12px 16px', borderRadius: '12px',
-                background: isActive ? 'rgba(255,255,255,0.05)' : 'transparent',
-                border: '1px solid',
-                borderColor: isActive ? 'var(--border-subtle)' : 'transparent',
-                color: isActive ? 'var(--text-white)' : 'var(--text-muted)',
-                fontWeight: isActive ? 600 : 500,
-                textDecoration: 'none',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onMouseOver={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                  e.currentTarget.style.color = 'var(--text-white)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'var(--text-muted)';
-                }
-              }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
+                isActive 
+                  ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(37,99,235,0.1)]' 
+                  : 'text-slate-400 hover:text-slate-100 hover:bg-white/5 border border-transparent'
+              }`}
             >
-              <span style={{ fontSize: '18px' }}>{item.icon}</span>
-              {item.label}
+              <span className={`${isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'} transition-colors`}>
+                {item.icon}
+              </span>
+              <span className="font-medium text-sm">{item.label}</span>
             </Link>
           );
         })}
 
-        <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {/* HIDDEN: Sales & Orders - re-enable when order flow is ready */}
-          {false && (
-            <Link 
-              href="/dashboard/vendor/orders"
-              style={{ 
-                display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '12px 16px', borderRadius: '12px',
-                color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
-              }}
-            >
-              <span>📦</span> Sales & Orders
-            </Link>
-          )}
+        <div className="mt-6 pt-6 border-t border-slate-800/50 flex flex-col gap-1">
           <Link 
             href="/dashboard/consumer/saved-tools"
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '12px 16px', borderRadius: '12px',
-              color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
-            }}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all text-sm font-medium group"
           >
-            <span>🔖</span> Saved Tools
+            <span className="text-slate-600 group-hover:text-slate-400 transition-colors">🔖</span> Saved Tools
           </Link>
           <Link 
             href="/dashboard/consumer/reviews"
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '12px 16px', borderRadius: '12px',
-              color: 'var(--text-dim)', fontSize: '14px', textDecoration: 'none'
-            }}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all text-sm font-medium group"
           >
-            <span>⭐</span> My Reviews
+            <span className="text-slate-600 group-hover:text-slate-400 transition-colors">⭐</span> My Reviews
           </Link>
         </div>
       </div>

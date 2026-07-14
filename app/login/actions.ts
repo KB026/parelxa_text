@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
 import { sendWelcomeEmail, sendPasswordResetEmail } from '@/lib/email/actions';
 
@@ -77,25 +78,49 @@ export async function signup(formData: FormData) {
     return redirect('/login?mode=register&message=Passwords do not match');
   }
 
-  const supabase = createClient();
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
-  const { error } = await supabase.auth.signUp({
+  const { data: adminData, error: adminError } = await supabaseAdmin.auth.admin.createUser({
     email,
     password,
-    options: {
-      data: {
-        role,
-        first_name,
-        last_name,
-        phone,
-        full_name: `${first_name} ${last_name}`.trim(),
-      }
+    email_confirm: true,
+    user_metadata: {
+      role,
+      first_name,
+      last_name,
+      phone,
+      full_name: `${first_name} ${last_name}`.trim(),
     }
   });
 
-  if (error) {
-    return redirect(`/login?mode=register&message=Could not authenticate user: ${error.message}`);
+  if (adminError) {
+    return redirect(`/login?mode=register&message=Could not create user: ${adminError.message}`);
   }
+  
+  const user = adminData.user;
+
+  // Fallback: Manually insert into profiles table just in case the Postgres trigger failed
+  if (user) {
+    await supabaseAdmin.from('profiles').upsert({
+      id: user.id,
+      email: email,
+      first_name: first_name,
+      last_name: last_name,
+      role: role,
+      is_admin: false,
+      phone: phone
+    }, { onConflict: 'id' });
+  }
+
+  // Now log the user in to set their local cookies
+  const supabase = createClient();
+  await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
   // Trigger Welcome Email
   try {
@@ -105,7 +130,89 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/login?message=Verification Email Sent, Kindly verify to login.');
+  
+  if (role === 'vendor') {
+    redirect('/dashboard/vendor/listings');
+  } else if (role === 'admin') {
+    redirect('/admin');
+  } else {
+    redirect('/dashboard');
+  }
+}
+
+export async function registerUserAjax(data: { email: string; password: string; role: string; first_name: string; last_name: string; phone?: string }) {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error('Missing Supabase Environment Variables for Admin Client');
+      return { error: 'Server configuration error: Missing API keys.' };
+    }
+
+    const supabaseAdmin = createSupabaseClient(supabaseUrl, serviceRoleKey);
+
+    const { data: adminData, error: adminError } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: {
+        role: data.role,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phone: data.phone || '',
+        full_name: `${data.first_name} ${data.last_name}`.trim(),
+      }
+    });
+
+    if (adminError) {
+      console.error('createUser error:', adminError);
+      return { error: adminError.message };
+    }
+
+    const user = adminData?.user;
+
+    if (user) {
+      const { error: profileError } = await supabaseAdmin.from('profiles').upsert({
+        id: user.id,
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        role: data.role,
+        is_admin: false,
+        phone: data.phone || ''
+      }, { onConflict: 'id' });
+
+      if (profileError) {
+        console.error('profiles upsert error:', profileError);
+        // We do not return error here to avoid blocking login, but we log it.
+      }
+    }
+
+    // Set cookies
+    const supabase = createClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (signInError) {
+      console.error('signInWithPassword error:', signInError);
+      return { error: signInError.message };
+    }
+
+    try {
+      await sendWelcomeEmail(data.email, `${data.first_name} ${data.last_name}`.trim(), data.role as 'user' | 'vendor');
+    } catch (e) {
+      console.error('Failed to send welcome email:', e);
+    }
+
+    revalidatePath('/', 'layout');
+    return { success: true, role: data.role };
+  } catch (err: any) {
+    console.error('Unexpected error in registerUserAjax:', err);
+    return { error: err.message || 'An unexpected error occurred.' };
+  }
 }
 
 export async function signOut() {

@@ -37,6 +37,26 @@ export async function POST(request: NextRequest) {
     const openai = new OpenAI({ apiKey });
     const supabase = createClient();
 
+    // 0. Check the Edge Cache first
+    const queryHash = `${industry}|${problem}|${size}`.toLowerCase().trim();
+    
+    const { data: cachedData } = await supabase
+      .from('ai_search_cache' as any)
+      .select('response_json, created_at')
+      .eq('query_hash', queryHash)
+      .eq('route', 'ai-finder-match')
+      .single();
+      
+    const cached = cachedData as any;
+
+    if (cached) {
+      // Check if cache is still valid (e.g. 7 days)
+      const isExpired = new Date().getTime() - new Date(cached.created_at).getTime() > 7 * 24 * 60 * 60 * 1000;
+      if (!isExpired) {
+        return NextResponse.json({ results: cached.response_json.results, fromCache: true });
+      }
+    }
+
     // Get relevant agents from Supabase filtered by industry categories
     const relevantCategories = industryToCategory[industry] || [];
 
@@ -124,6 +144,15 @@ Return ONLY a valid JSON array. No other text. Format:
         };
       })
       .filter(Boolean);
+
+    // Save to cache asynchronously
+    supabase.from('ai_search_cache' as any).upsert({
+      query_hash: queryHash,
+      route: 'ai-finder-match',
+      response_json: { results: enrichedResults }
+    }, { onConflict: 'query_hash, route' }).then(({ error: cacheErr }) => {
+      if (cacheErr) console.error('Failed to save to AI cache:', cacheErr);
+    });
 
     return NextResponse.json({ results: enrichedResults });
 

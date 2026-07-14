@@ -5,8 +5,8 @@ import { createPortal } from 'react-dom';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Search, Briefcase } from 'lucide-react';
-
+import { Search, Briefcase, X } from 'lucide-react';
+import { registerUserAjax } from '@/app/login/actions';
 
 type AuthView = 'signin' | 'register' | 'forgot';
 
@@ -145,31 +145,32 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { error: authError } = await supabase.auth.signUp({
+      const res = await registerUserAjax({
         email,
         password,
-        options: {
-          data: {
-            role,
-            first_name: firstName,
-            last_name: lastName,
-          },
-        },
+        role,
+        first_name: firstName,
+        last_name: lastName,
       });
 
-      if (authError) {
-        if (authError.message.includes('already registered')) {
+      if (res?.error) {
+        if (res.error.includes('already registered')) {
           setError('An account with this email already exists. Try signing in instead.');
         } else {
-          setError(authError.message);
+          setError(res.error);
         }
         setLoading(false);
         return;
       }
 
-      setSuccess('Verification email sent! Check your inbox to complete registration.');
-      setLoading(false);
+      // Success, immediately redirect
+      if (res?.role === 'vendor') {
+        window.location.assign('/dashboard/vendor/listings');
+      } else if (res?.role === 'admin') {
+        window.location.assign('/admin');
+      } else {
+        window.location.assign('/dashboard');
+      }
     } catch {
       setError('An unexpected error occurred. Please try again.');
       setLoading(false);
@@ -234,7 +235,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
   return createPortal(
     <div className="fixed inset-0 z-[2000] bg-black/70 backdrop-blur-md flex items-center justify-center p-5" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="bg-[#0d1524] border border-white/10 rounded-2xl p-8 max-w-[480px] w-full max-h-[90vh] overflow-y-auto relative shadow-[0_16px_48px_rgba(0,0,0,0.5)]">
-        <button className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 border-none text-slate-400 text-xl cursor-pointer flex items-center justify-center transition-colors hover:bg-white/10 hover:text-white" onClick={onClose} aria-label="Close">Ã—</button>
+        <button className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 border-none text-slate-400 text-xl cursor-pointer flex items-center justify-center transition-colors hover:bg-white/10 hover:text-white" onClick={onClose} aria-label="Close"><X size={18} /></button>
 
         {/* Logo */}
         <div className="text-center mb-6">

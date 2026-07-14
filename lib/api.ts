@@ -18,8 +18,8 @@ export async function getAgents(category?: string): Promise<Agent[]> {
     .from('agents')
     .select('*')
     .eq('approval_status', 'approved')
-    // Filter out expired listings, but keep legacy free listings (created before May 2026)
-    .or(`listing_expires_at.gt.${new Date().toISOString()},and(listing_expires_at.is.null,created_at.lt.2026-05-01T00:00:00Z)`);
+    // Filter out expired listings, but keep listings without an explicit expiration date
+    .or(`listing_expires_at.gt.${new Date().toISOString()},listing_expires_at.is.null`);
   if (category && category !== 'All') query = query.eq('category', category);
   const { data, error } = await query;
   if (error || !data) {
@@ -133,8 +133,11 @@ export async function getAgentBySlug(slug: string): Promise<Agent | null> {
     error = fallbackRes.error;
   }
 
-  if (error || !agent) {
+  if (error) {
     console.error('Error fetching agent by slug or ID fallback:', error);
+  }
+  
+  if (!agent) {
     return null;
   }
 
@@ -185,7 +188,7 @@ export async function getSimilarAgents(category: string, currentId: number, limi
     .select('*')
     .eq('category', category)
     .eq('approval_status', 'approved')
-    .or(`listing_expires_at.gt.${new Date().toISOString()},and(listing_expires_at.is.null,created_at.lt.2026-05-01T00:00:00Z)`)
+    .or(`listing_expires_at.gt.${new Date().toISOString()},listing_expires_at.is.null`)
     .neq('id', currentId)
     .limit(limit);
 
@@ -493,7 +496,7 @@ export async function searchAgents(params: SearchParams): Promise<{ agents: Agen
     .from('agents')
     .select('*', { count: 'exact' })
     .eq('approval_status', 'approved')
-    .or(`listing_expires_at.gt.${new Date().toISOString()},and(listing_expires_at.is.null,created_at.lt.2026-05-01T00:00:00Z)`);
+    .or(`listing_expires_at.gt.${new Date().toISOString()},listing_expires_at.is.null`);
 
   // ... (rest of search logic remains same, but we inject featured at top)
   if (params.q) {

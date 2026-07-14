@@ -65,6 +65,32 @@ export async function POST(req: NextRequest) {
     }
 
     const { query } = validation.data;
+    const queryHash = query.toLowerCase().trim();
+
+    // 0. Check the Edge Cache first
+    const { data: cachedData } = await supabase
+      .from('ai_search_cache' as any)
+      .select('response_json, created_at')
+      .eq('query_hash', queryHash)
+      .eq('route', 'ai-search')
+      .single();
+    
+    const cached = cachedData as any;
+
+    if (cached) {
+      // Check if cache is still valid (e.g. 7 days)
+      const isExpired = new Date().getTime() - new Date(cached.created_at).getTime() > 7 * 24 * 60 * 60 * 1000;
+      if (!isExpired) {
+        // Log the cached AI search
+        await supabase.from('search_queries').insert({
+          query,
+          is_ai_powered: true,
+          recommendation_count: cached.response_json.recommendations?.length || 0
+        });
+        
+        return NextResponse.json({ ...cached.response_json, fromCache: true });
+      }
+    }
 
     // 1. Fetch ALL relevant tools to provide full context to the AI
     // Limit the context window to keep cost and latency under control.
@@ -147,12 +173,23 @@ Return ONLY valid JSON, no markdown fences:
         recommendation_count: recommendedAgents.length
       });
 
-      return NextResponse.json({
+      const responsePayload = {
         explanation: data.ai_explanation,
         exactMatchFound: data.exact_match_found || false,
         recommendations: recommendedAgents.length > 0 ? recommendedAgents : agents?.slice(0, 3) || [],
         isAIPowered: true
+      };
+
+      // Save to cache asynchronously so we don't block the response
+      supabase.from('ai_search_cache' as any).upsert({
+        query_hash: queryHash,
+        route: 'ai-search',
+        response_json: responsePayload
+      }, { onConflict: 'query_hash, route' }).then(({ error: cacheErr }) => {
+        if (cacheErr) console.error('Failed to save to AI cache:', cacheErr);
       });
+
+      return NextResponse.json(responsePayload);
     } catch (aiErr) {
       console.error('CRITICAL: AI Reasoning failed:', aiErr);
       

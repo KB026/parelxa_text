@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BarChart3, Users, Eye, Bookmark, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart3, Users, Eye, Bookmark, TrendingUp, TrendingDown, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
@@ -78,90 +78,147 @@ export default async function VendorDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 pt-28 pb-16">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="mb-10">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 mb-3 tracking-tight">
+          Vendor Dashboard
+        </h1>
+        <p className="text-slate-400 text-lg font-medium">Manage your tools and track leads in real-time.</p>
+      </div>
 
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-2">Vendor Dashboard</h1>
-          <p className="text-gray-400">Manage your tools and track leads</p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
-            <BarChart3 className="w-6 h-6 text-blue-400 mb-2" />
-            <div className="text-2xl font-bold text-white">{listedToolsCount}</div>
-            <div className="text-sm text-gray-400">Listed Tools</div>
-          </div>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
-            <Eye className="w-6 h-6 text-green-400 mb-2" />
-            <div className="text-2xl font-bold text-white">{totalClicks}</div>
-            <div className="text-sm text-gray-400">Total Clicks</div>
-          </div>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 flex flex-col justify-between">
-            <div>
-              <Users className="w-6 h-6 text-purple-400 mb-2" />
-              <div className="text-2xl font-bold text-white">{leadsThisMonth}</div>
-              <div className="text-sm text-gray-400">Leads (30d)</div>
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="bg-[#0b1120]/80 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-blue-500/30 transition-all duration-500 shadow-lg hover:shadow-blue-500/10">
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-4 border border-blue-500/20 text-blue-400 group-hover:scale-110 transition-transform duration-500">
+              <BarChart3 className="w-6 h-6" />
             </div>
-            <div className="mt-3 text-sm font-medium flex items-center">
-              {growthPercentage > 0 ? (
-                <span className="text-green-500 flex items-center gap-1"><TrendingUp size={16} /> {growthPercentage}%</span>
-              ) : growthPercentage < 0 ? (
-                <span className="text-red-500 flex items-center gap-1"><TrendingDown size={16} /> {Math.abs(growthPercentage)}%</span>
-              ) : (
-                <span className="text-gray-500">No change</span>
-              )}
-            </div>
-          </div>
-          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
-            <Bookmark className="w-6 h-6 text-sky-400 mb-2" />
-            <div className="text-2xl font-bold text-white">{savedToolsCount}</div>
-            <div className="text-sm text-gray-400">Saved Tools</div>
+            <div className="text-3xl font-bold text-white mb-1">{listedToolsCount}</div>
+            <div className="text-sm font-medium text-slate-400">Listed Tools</div>
           </div>
         </div>
 
-        {/* My Listings */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">My Listings</h2>
+        <div className="bg-[#0b1120]/80 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-500 shadow-lg hover:shadow-emerald-500/10">
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-500"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform duration-500">
+              <Eye className="w-6 h-6" />
+            </div>
+            <div className="text-3xl font-bold text-white mb-1">{totalClicks}</div>
+            <div className="text-sm font-medium text-slate-400">Total Clicks</div>
+          </div>
+        </div>
+
+        <div className="bg-[#0b1120]/80 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-purple-500/30 transition-all duration-500 shadow-lg hover:shadow-purple-500/10 flex flex-col justify-between">
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all duration-500"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-4 border border-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform duration-500">
+              <Users className="w-6 h-6" />
+            </div>
+            <div className="text-3xl font-bold text-white mb-1">{leadsThisMonth}</div>
+            <div className="text-sm font-medium text-slate-400">Leads (30d)</div>
+          </div>
+          <div className="mt-4 text-sm font-semibold flex items-center relative z-10">
+            {growthPercentage > 0 ? (
+              <span className="text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-lg flex items-center gap-1.5"><TrendingUp size={14} /> +{growthPercentage}%</span>
+            ) : growthPercentage < 0 ? (
+              <span className="text-rose-400 bg-rose-400/10 px-2 py-1 rounded-lg flex items-center gap-1.5"><TrendingDown size={14} /> {growthPercentage}%</span>
+            ) : (
+              <span className="text-slate-500 bg-slate-800/50 px-2 py-1 rounded-lg">No change</span>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-[#0b1120]/80 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-sky-500/30 transition-all duration-500 shadow-lg hover:shadow-sky-500/10">
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-sky-500/10 rounded-full blur-3xl group-hover:bg-sky-500/20 transition-all duration-500"></div>
+          <div className="relative z-10">
+            <div className="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center mb-4 border border-sky-500/20 text-sky-400 group-hover:scale-110 transition-transform duration-500">
+              <Bookmark className="w-6 h-6" />
+            </div>
+            <div className="text-3xl font-bold text-white mb-1">{savedToolsCount}</div>
+            <div className="text-sm font-medium text-slate-400">Saved Tools</div>
+          </div>
+        </div>
+      </div>
+
+      {/* My Listings */}
+      <div className="bg-[#0b1120]/60 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-50"></div>
+        
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-1">My Listings</h2>
+            <p className="text-slate-400 text-sm">Manage and track performance of your AI tools</p>
+          </div>
+          <Link href="/dashboard/vendor/listings/new">
+            <button className="px-5 py-2.5 bg-white text-slate-900 hover:bg-slate-200 rounded-xl font-bold transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_25px_rgba(255,255,255,0.25)] flex items-center gap-2">
+              <span className="text-lg leading-none">+</span> Add Tool
+            </button>
+          </Link>
+        </div>
+
+        {listedToolsCount === 0 ? (
+          <div className="text-center py-16 px-4 bg-slate-900/40 rounded-2xl border border-slate-800 border-dashed">
+            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-8 h-8 text-slate-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2">No tools listed yet</h3>
+            <p className="text-slate-400 mb-6 max-w-sm mx-auto">Publish your first AI tool to our directory and start reaching enterprise clients today.</p>
             <Link href="/dashboard/vendor/listings/new">
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white">
-                + Add Tool
+              <button className="px-5 py-2.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 hover:text-blue-300 border border-blue-500/30 rounded-xl font-semibold transition-all">
+                Publish a Tool
               </button>
             </Link>
           </div>
-
-          {listedToolsCount === 0 ? (
-            <p className="text-gray-400 text-center py-8">Your listed tools will appear here</p>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {vendorListings?.map(listing => (
-                <div key={listing.id} className="flex items-center justify-between p-4 bg-gray-900/50 border border-gray-700 rounded-lg hover:border-gray-600 transition-colors">
-                  <div>
-                    <div className="font-semibold text-white text-lg">{listing.name}</div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                        listing.approval_status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                        listing.approval_status === 'rejected' ? 'bg-red-500/20 text-red-400' :
-                        'bg-yellow-500/20 text-yellow-400'
+        ) : (
+          <div className="flex flex-col gap-4">
+            {vendorListings?.map(listing => (
+              <Link href={`/dashboard/vendor/listings/${listing.id}/edit`} key={listing.id} className="block group">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-slate-900/40 border border-slate-800 rounded-2xl hover:border-slate-600 hover:bg-slate-800/60 transition-all duration-300">
+                  <div className="mb-4 sm:mb-0">
+                    <div className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors mb-2">{listing.name}</div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 ${
+                        listing.approval_status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                        listing.approval_status === 'rejected' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
+                        'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                       }`}>
-                        {listing.approval_status === 'approved' ? 'Approved' : 
-                         listing.approval_status === 'rejected' ? 'Rejected' : 'Pending'}
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          listing.approval_status === 'approved' ? 'bg-emerald-400' :
+                          listing.approval_status === 'rejected' ? 'bg-rose-400' :
+                          'bg-amber-400'
+                        }`}></span>
+                        {listing.approval_status === 'approved' ? 'Active' : 
+                         listing.approval_status === 'rejected' ? 'Action Required' : 'In Review'}
                       </span>
+                      {listing.category && (
+                        <span className="text-xs font-medium px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                          {listing.category}
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-sm text-gray-400">Total Clicks</div>
-                    <div className="font-bold text-white text-lg">{clicksPerAgent[listing.id] || 0}</div>
+                  <div className="flex items-center gap-6 sm:gap-8">
+                    <div className="text-right">
+                      <div className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Clicks</div>
+                      <div className="font-bold text-white text-xl">{clicksPerAgent[listing.id] || 0}</div>
+                    </div>
+                    <div className="text-right hidden sm:block">
+                      <div className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Status</div>
+                      <div className="font-semibold text-slate-300 text-sm">Published</div>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
+
     </div>
   );
 }

@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     .from('agents')
     .select('*')
     .eq('approval_status', 'approved')
-    .or(`listing_expires_at.gt.${new Date().toISOString()},and(listing_expires_at.is.null,created_at.lt.2026-05-01T00:00:00Z)`);
+    .or(`listing_expires_at.gt.${new Date().toISOString()},listing_expires_at.is.null`);
 
   if (categories.length > 0) {
     dbQuery = dbQuery.in('category', categories);

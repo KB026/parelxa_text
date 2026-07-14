@@ -27,25 +27,27 @@ export async function GET(request: Request) {
       try {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('created_at, role')
+          .select('role, welcome_email_sent')
           .eq('id', data.user.id)
           .single();
 
         if (profile) {
-          const createdAt = new Date(profile.created_at || '').getTime();
-          const now = new Date().getTime();
-          
-          // If created in the last 15 seconds, it's a brand new Google SSO signup
-          if (now - createdAt < 15000) { 
+          // If they haven't received a welcome email yet, they are a new user
+          if (!profile.welcome_email_sent) { 
             
             // Override the default trigger role if they selected a specific role during signup
             if (roleParam && roleParam !== profile.role && (roleParam === 'user' || roleParam === 'vendor')) {
               await supabase
                 .from('profiles')
-                .update({ role: roleParam })
+                .update({ role: roleParam, welcome_email_sent: true })
                 .eq('id', data.user.id);
               
               role = roleParam;
+            } else {
+              await supabase
+                .from('profiles')
+                .update({ welcome_email_sent: true })
+                .eq('id', data.user.id);
             }
 
             if (email) {
