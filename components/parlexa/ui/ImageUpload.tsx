@@ -48,16 +48,44 @@ export function ImageUpload({ bucket, folder, multiple = false, maxFiles = 6, va
         const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
         const filePath = `${folder}/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from(bucket)
-          .upload(filePath, file);
+        // Attempt server-side upload via API route first
+        let uploadedUrl: string | null = null;
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('bucket', bucket);
+          formData.append('filePath', filePath);
 
-        if (uploadError) {
-          throw uploadError;
+          const apiRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (apiRes.ok) {
+            const apiData = await apiRes.json();
+            if (apiData.publicUrl) {
+              uploadedUrl = apiData.publicUrl;
+            }
+          }
+        } catch (apiErr) {
+          console.warn('Server upload route failed, falling back to client upload:', apiErr);
         }
 
-        const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-        newUrls.push(data.publicUrl);
+        // Fallback to direct client Supabase storage upload if API route was not used or failed
+        if (!uploadedUrl) {
+          const { error: uploadError } = await supabase.storage
+            .from(bucket)
+            .upload(filePath, file);
+
+          if (uploadError) {
+            throw uploadError;
+          }
+
+          const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
+          uploadedUrl = data.publicUrl;
+        }
+
+        newUrls.push(uploadedUrl);
       }
 
       if (multiple) {

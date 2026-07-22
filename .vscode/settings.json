@@ -1,3 +1,4 @@
 {
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "python.defaultInterpreterPath": "${workspaceFolder}/parlexa-main/fastapi-service/venv/Scripts/python.exe"
 }
