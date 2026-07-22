@@ -30,7 +30,6 @@ export default async function AdminLayout({
 
   const navLinks = [
     { href: '/admin', label: 'Platform Overview', icon: <LayoutDashboard size={18} /> },
-    { href: '/admin/reviews', label: 'Review Queue', icon: <Clock size={18} />, accent: '#fbbf24' },
     { href: '/admin/listings', label: 'Manage Listings', icon: <ListOrdered size={18} /> },
     { href: '/admin/transactions', label: 'Transactions', icon: <DollarSign size={18} />, accent: '#34d399' },
     { href: '/admin/claims', label: 'Listing Claims', icon: <Key size={18} /> },

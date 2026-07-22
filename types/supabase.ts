@@ -58,6 +58,8 @@ export type Database = {
       agents: {
         Row: {
           admin_feedback: string | null
+          ai_score: number | null
+          ai_scores: Json | null
           approval_status: string | null
           category: string | null
           city: string | null
@@ -94,8 +96,11 @@ export type Database = {
           pricing: string | null
           pricing_model: string | null
           rating: number | null
+          quality_notes: string | null
+          quality_score: number | null
           raw_industry: string | null
           reviewed_at: string | null
+          reviewed_by: string | null
           reviews: number | null
           reviews_count: number | null
           score_authenticity: number | null
@@ -127,6 +132,8 @@ export type Database = {
         }
         Insert: {
           admin_feedback?: string | null
+          ai_score?: number | null
+          ai_scores?: Json | null
           approval_status?: string | null
           category?: string | null
           city?: string | null
@@ -163,8 +170,11 @@ export type Database = {
           pricing?: string | null
           pricing_model?: string | null
           rating?: number | null
+          quality_notes?: string | null
+          quality_score?: number | null
           raw_industry?: string | null
           reviewed_at?: string | null
+          reviewed_by?: string | null
           reviews?: number | null
           reviews_count?: number | null
           score_authenticity?: number | null
@@ -196,6 +206,8 @@ export type Database = {
         }
         Update: {
           admin_feedback?: string | null
+          ai_score?: number | null
+          ai_scores?: Json | null
           approval_status?: string | null
           category?: string | null
           city?: string | null
@@ -232,8 +244,11 @@ export type Database = {
           pricing?: string | null
           pricing_model?: string | null
           rating?: number | null
+          quality_notes?: string | null
+          quality_score?: number | null
           raw_industry?: string | null
           reviewed_at?: string | null
+          reviewed_by?: string | null
           reviews?: number | null
           reviews_count?: number | null
           score_authenticity?: number | null
