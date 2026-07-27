@@ -134,11 +134,6 @@ export function HeroSection({
                   <span className="tooltip-text">Verified by Parlexa</span>
                 </span>
               )}
-              {!hasVerifiedReviews && (
-                <span className="px-3 py-1 flex items-center justify-center bg-cyan-500/10 border border-cyan-500/30 rounded-full text-[12px] font-semibold text-cyan-300 gap-1.5 shadow-sm">
-                  ✨ Newly Launched
-                </span>
-              )}
             </div>
           </div>
           
