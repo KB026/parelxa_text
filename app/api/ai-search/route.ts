@@ -92,42 +92,50 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 1. Fetch ALL relevant tools to provide full context to the AI
-    // Limit the context window to keep cost and latency under control.
+    // 1. Fetch ALL approved tools to provide full context to the AI
     const { data: rawAgents, error } = await supabase
       .from('agents')
-      .select('id, name, summary, category, one_liner, slug')
-      .eq('approval_status', 'approved')
-      .limit(40);
+      .select('id, name, summary, category, one_liner, slug, rating, reviews, reviews_count, logo_url')
+      .eq('approval_status', 'approved');
 
     if (error) throw error;
 
     const agents = rawAgents?.map(a => ({
       ...a,
-      oneLiner: a.one_liner
+      oneLiner: a.one_liner,
+      rating: Number(a.rating) || 0,
+      reviewsCount: Number(a.reviews_count || a.reviews) || 0,
+      reviews: Number(a.reviews || a.reviews_count) || 0,
+      logoUrl: a.logo_url
     }));
+
+    // Sort all agents by rating DESC & reviewsCount DESC
+    const sortedAgents = [...(agents || [])].sort((a, b) => (b.rating - a.rating) || (b.reviewsCount - a.reviewsCount));
+
+    // Top fallback agents sorted by highest rating
+    const topRatedFallback = sortedAgents.slice(0, 3);
 
     // 2. Try to use OpenAI for intelligent reasoning
     try {
-      const context = agents?.map(a => `ID: ${a.id} | Name: ${a.name} | Category: ${a.category} | Description: ${a.summary || a.one_liner}`).join('\n');
+      const context = sortedAgents.map(a => `ID: ${a.id} | Name: ${a.name} | Category: ${a.category} | Rating: ${a.rating > 0 ? `${a.rating}★ (${a.reviewsCount} reviews)` : 'Unrated'} | Description: ${a.summary || a.oneLiner}`).join('\n');
 
       const prompt = `
 You are Parlexa AI, a sharp, highly technical, and dynamic AI software curator for the Parlexa AI Agent Marketplace. Your tone is conversational, smart, and charming.
 
 User Query: "${query}"
 
-Available Tools:
+Available Tools (Pre-sorted by Highest User Rating):
 ${context || 'No specific matches found in the direct database.'}
 
 TASK:
 
 1. Identify Mismatches: If the user searches for something completely unrelated to SaaS/AI (e.g., "shoes", "best food"), acknowledge the mismatch playfully in the ai_explanation (e.g., "Looks like you took a wrong turn! I specialize in AI tools, not ${query}. Try searching for 'Video Generators' instead!"). Set exact_match_found to false and return an EMPTY recommendations array.
-2. Determine Matches: If the query IS relevant, determine if there is a tool that is a strong conceptual match (~85% similarity or higher, tolerate misspellings/variations).
-   - If an ~85% conceptual match exists, return it FIRST with match_type: "exact", followed by 2 more complementary tools with match_type: "related". Set exact_match_found to true.
-   - If no tool meets the ~85% threshold, return your best 3 related tools, ALL with match_type: "related", and set exact_match_found to false.
+2. Determine Matches: If the query IS relevant, select the top 3 tools that match the user's intent.
+   - CRITICAL RATING REQUIREMENT: You MUST pick the tools with the HIGHEST user ratings on Parlexa (e.g. 4.8, 4.7, 4.6). Available tools are listed in order of highest rating first. Always prefer tools near the top of the list!
+   - Mark the single best top-rated tool with match_type: "exact", and 2 complementary top-rated tools with match_type: "related". Set exact_match_found to true.
    - Return exactly 3 recommendations (unless the query is totally unrelated, then 0).
-3. The Insight (ai_explanation): Write a punchy, 1-2 sentence executive summary explaining *why* the top tool was chosen for this specific query. NEVER use generic filler phrases like "Yes, [topic] is possible with the right tools." Be sharp and insightful.
-4. Dynamic Tool Descriptions (search_description): For EACH recommended tool, write a short, action-oriented 1-2 sentence description highlighting its Unique Selling Point (USP) directly tied to the user's query. STRICTLY FORBIDDEN: Do not use repetitive phrasing (e.g., do not say "X is a video tool perfect for your video needs").
+3. The Insight (ai_explanation): Write a punchy, 1-2 sentence executive summary explaining *why* the top tool was chosen for this specific query, highlighting its high rating or performance. NEVER use generic filler phrases like "Yes, [topic] is possible with the right tools." Be sharp and insightful.
+4. Dynamic Tool Descriptions (search_description): For EACH recommended tool, write a short, action-oriented 1-2 sentence description highlighting its Unique Selling Point (USP) directly tied to the user's query. STRICTLY FORBIDDEN: Do not use repetitive phrasing.
 
 Return ONLY valid JSON, no markdown fences:
 {
@@ -166,6 +174,9 @@ Return ONLY valid JSON, no markdown fences:
         return null;
       }).filter(Boolean) || [];
 
+      // Sort recommended agents strictly by highest rating first
+      recommendedAgents.sort((a: any, b: any) => (b.rating - a.rating) || (b.reviewsCount - a.reviewsCount));
+
       // Log the successful AI search
       await supabase.from('search_queries').insert({
         query,
@@ -175,8 +186,8 @@ Return ONLY valid JSON, no markdown fences:
 
       const responsePayload = {
         explanation: data.ai_explanation,
-        exactMatchFound: data.exact_match_found || false,
-        recommendations: recommendedAgents.length > 0 ? recommendedAgents : agents?.slice(0, 3) || [],
+        exactMatchFound: true,
+        recommendations: recommendedAgents.length > 0 ? recommendedAgents : topRatedFallback,
         isAIPowered: true
       };
 
@@ -193,14 +204,18 @@ Return ONLY valid JSON, no markdown fences:
     } catch (aiErr) {
       console.error('CRITICAL: AI Reasoning failed:', aiErr);
       
-      // Fallback search logic using keyword matching instead of raw slice
+      // Fallback search logic: keyword filter sorted by highest rating
       const searchStr = query.toLowerCase();
-      const fallbackAgents = agents?.filter(a => 
+      const matchingAgents = agents?.filter(a => 
         a.name.toLowerCase().includes(searchStr) || 
         (a.summary && a.summary.toLowerCase().includes(searchStr)) || 
         (a.category && a.category.toLowerCase().includes(searchStr)) ||
-        (a.one_liner && a.one_liner.toLowerCase().includes(searchStr))
-      ).slice(0, 3) || [];
+        (a.oneLiner && a.oneLiner.toLowerCase().includes(searchStr))
+      ) || [];
+
+      const fallbackAgents = (matchingAgents.length > 0 ? matchingAgents : agents || [])
+        .sort((a, b) => (b.rating - a.rating) || (b.reviewsCount - a.reviewsCount))
+        .slice(0, 3);
 
       // Log the fallback search
       await supabase.from('search_queries').insert({
@@ -210,7 +225,7 @@ Return ONLY valid JSON, no markdown fences:
       });
 
       return NextResponse.json({
-        explanation: `Yes, finding tools for "${query}" is very much possible! Here are the best options from our marketplace to help you increase efficiency:`,
+        explanation: `Yes, finding top-rated tools for "${query}" is very much possible! Here are the highest rated options from our marketplace:`,
         exactMatchFound: false,
         recommendations: fallbackAgents.map(a => ({ ...a, matchType: 'related' })),
         isAIPowered: false

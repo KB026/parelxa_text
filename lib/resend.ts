@@ -90,3 +90,61 @@ export async function sendVendorMessageEmail(vendorEmail: string, toolName: stri
     throw error;
   }
 }
+
+export interface BundleDemoToolEmailInfo {
+  name: string;
+  role_in_workflow?: string;
+}
+
+export async function sendBundleDemoRequestEmail(params: {
+  recipients: string[];
+  bundleName: string;
+  userEmail: string;
+  company: string;
+  timeline: string;
+  selectedTools: BundleDemoToolEmailInfo[];
+}) {
+  try {
+    const toolsHtml = params.selectedTools
+      .map(
+        t => `
+      <div class="tool-item">
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-role">${t.role_in_workflow || 'Integrated Tool in Stack'}</div>
+      </div>
+    `
+      )
+      .join('');
+
+    const html = loadTemplate('bundle-demo-request', {
+      BUNDLE_NAME: params.bundleName,
+      USER_EMAIL: params.userEmail,
+      COMPANY: params.company,
+      TIMELINE: params.timeline,
+      VENDOR_COUNT: String(params.selectedTools.length),
+      SELECTED_TOOLS_HTML: toolsHtml,
+      REQUEST_DATE: new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      })
+    });
+
+    const recipientList = params.recipients.filter(Boolean);
+    if (recipientList.length === 0) {
+      recipientList.push('admin@parlexa.in');
+    }
+
+    return await resend.emails.send({
+      from: 'noreply@parlexa.in',
+      to: recipientList,
+      cc: ['admin@parlexa.in'],
+      subject: `🔥 Multi-Vendor Demo Request: ${params.bundleName} (${params.selectedTools.length} Tools)`,
+      html
+    });
+  } catch (error) {
+    console.error('Bundle demo request email error:', error);
+    // Non-blocking in production if Resend API key is mock or sandbox
+    return { success: false, error };
+  }
+}

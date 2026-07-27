@@ -42,6 +42,10 @@ export async function Navbar() {
       {/* Center (Nav Links) */}
       <div className="hidden md:flex items-center gap-6 text-sm text-[#A1A1AA]">
         <Link href="/products" className="hover:text-[#EDEDED] transition-colors duration-200">All Agents</Link>
+        <Link href="/bundles" className="hover:text-[#EDEDED] transition-colors duration-200 flex items-center gap-1">
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#12B886]/20 text-[#12B886]">NEW</span>
+          AI Bundles
+        </Link>
         <div className="hover:text-[#EDEDED] transition-colors duration-200 [&_button]:text-[#A1A1AA] [&_button]:hover:text-[#EDEDED] [&_button]:font-medium [&_button]:transition-colors [&_button]:duration-200">
           <CategoriesDropdown />
         </div>

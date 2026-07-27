@@ -19,7 +19,8 @@ export async function GET(request: NextRequest) {
     .from('agents')
     .select('*')
     .eq('approval_status', 'approved')
-    .or(`listing_expires_at.gt.${new Date().toISOString()},listing_expires_at.is.null`);
+    .or(`listing_expires_at.gt.${new Date().toISOString()},listing_expires_at.is.null`)
+    .order('rating', { ascending: false, nullsFirst: false });
 
   if (categories.length > 0) {
     dbQuery = dbQuery.in('category', categories);
@@ -48,7 +49,9 @@ export async function GET(request: NextRequest) {
       const existingIds = new Set((keywordMatches || []).map(a => a.id));
       const uniqueFuzzy = filteredFuzzy.filter((a: Record<string, unknown>) => !existingIds.has(a.id as number));
       
-      keywordMatches = [...(keywordMatches || []), ...uniqueFuzzy].slice(0, 30);
+      keywordMatches = [...(keywordMatches || []), ...uniqueFuzzy]
+        .sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0))
+        .slice(0, 30);
     }
   }
 
@@ -75,8 +78,9 @@ export async function GET(request: NextRequest) {
     subCategory: agent.sub_category || '',
     summary: agent.summary,
     pricing: agent.pricing,
-    rating: agent.rating,
-    reviews_count: agent.reviews_count,
+    rating: Number(agent.rating) || 0,
+    reviews: Number(agent.reviews || agent.reviews_count) || 0,
+    reviews_count: Number(agent.reviews_count || agent.reviews) || 0,
     isVerified: agent.is_verified || false,
     tags: agent.tags,
     industries: agent.industries,
@@ -96,7 +100,7 @@ export async function GET(request: NextRequest) {
 
   // STEP 2: AI ranking via OpenAI
   const agentList = keywordMatches
-    .map(a => `${a.name} (${a.category}): ${a.summary}`)
+    .map(a => `${a.name} (${a.category}) - Rating: ${a.rating || 0}★ (${a.reviews_count || a.reviews || 0} reviews): ${a.summary}`)
     .join('\n');
 
   const prompt = `User searched: "${query}"
@@ -104,7 +108,7 @@ export async function GET(request: NextRequest) {
 These agents matched:
 ${agentList}
 
-Rank these agents by relevance to the search. Return ONLY a JSON array of agent names in ranked order.
+Rank these agents considering both search relevance AND high user ratings (preferring tools with top ratings like 5.0, 4.8, 4.7, 4.6). Return ONLY a JSON array of agent names in ranked order.
 ["Best Agent", "Second Best", ...]`;
 
   try {
@@ -126,14 +130,19 @@ Rank these agents by relevance to the search. Return ONLY a JSON array of agent 
       .filter(Boolean)
       .slice(0, 10);
 
+    // If AI ranking returned fewer than expected, append remaining keyword matches
+    const rankedIds = new Set(rankedAgents.map((a: any) => a.id));
+    const remainingKeywordMatches = keywordMatches.filter((a: any) => !rankedIds.has(a.id));
+    const finalAgents = [...rankedAgents, ...remainingKeywordMatches].slice(0, 10);
+
     // STEP 3: Log with is_ai_powered: TRUE
     await supabase.from('search_queries').insert({
       query,
-      recommendation_count: rankedAgents.length,
+      recommendation_count: finalAgents.length,
       is_ai_powered: true,
     });
 
-    return NextResponse.json({ agents: rankedAgents.map(mapToAgent) });
+    return NextResponse.json({ agents: finalAgents.map(mapToAgent) });
 
   } catch (err) {
     console.error('AI ranking failed, returning keyword matches:', err);

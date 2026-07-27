@@ -14,6 +14,7 @@ export async function Footer() {
             <h4 className="text-white text-sm font-semibold tracking-wider uppercase mb-6">Platform</h4>
             <div className="flex flex-col gap-3">
               <Link href="/products" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">Browse Agents</Link>
+              <Link href="/bundles" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">AI Bundles</Link>
               <Link href="/dashboard/vendor/listings/new" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">Submit Tool</Link>
               <Link href="/ai-finder" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">AI Finder</Link>
               <Link href="/compare" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">Compare Tools</Link>

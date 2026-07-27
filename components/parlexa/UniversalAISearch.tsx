@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Agent } from '@/lib/types';
 
-import { Sparkles, Search, Bot, ArrowRight, Wand2 } from 'lucide-react';
+import { Sparkles, Search, Bot, ArrowRight, Wand2, Star } from 'lucide-react';
 
 interface AISearchResult {
   explanation: string;
@@ -118,49 +118,52 @@ export function UniversalAISearch() {
                 <p style={{ fontSize: '16px', lineHeight: 1.6, color: 'white', margin: 0 }}>{result.explanation}</p>
               </div>
 
-              {result.exactMatchFound === false && result.recommendations.length > 0 && (
-                <div style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-dim)', fontWeight: 600 }}>
-                  No exact match found — here are similar tools that might help:
-                </div>
-              )}
-
               {result.recommendations.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {result.recommendations.map((agent, index) => {
-                    const isExactMatch = result.exactMatchFound && (agent as any).matchType === 'exact';
-                    const showRelatedHeader = result.exactMatchFound && index === 1;
+                    const isTopMatch = index === 0;
 
                     return (
                       <div key={agent.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        {showRelatedHeader && (
-                          <div style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-dim)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            Related Tools
-                          </div>
-                        )}
                         <div 
                           onClick={() => router.push(`/products/${agent.slug}`)}
                           style={{ 
                             display: 'flex', alignItems: 'center', gap: '16px', padding: '16px',
-                            background: isExactMatch ? 'rgba(14, 165, 233, 0.08)' : 'rgba(255,255,255,0.03)',
+                            background: isTopMatch ? 'rgba(14, 165, 233, 0.08)' : 'rgba(255,255,255,0.03)',
                             borderRadius: '16px',
-                            border: `1px solid ${isExactMatch ? 'rgba(14, 165, 233, 0.4)' : 'var(--border-subtle)'}`,
+                            border: `1px solid ${isTopMatch ? 'rgba(14, 165, 233, 0.4)' : 'var(--border-subtle)'}`,
                             cursor: 'pointer',
                             transition: 'all 0.2s'
                           }}
                           className="ai-recommendation-item"
                         >
-                          <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: isExactMatch ? 'rgba(14, 165, 233, 0.2)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Bot className={`w-5 h-5 ${isExactMatch ? 'text-sky-300' : 'text-sky-400'}`} />
+                          <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: isTopMatch ? 'rgba(14, 165, 233, 0.2)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Bot className={`w-5 h-5 ${isTopMatch ? 'text-sky-300' : 'text-sky-400'}`} />
                           </div>
                           <div style={{ flexGrow: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
                               <div style={{ fontWeight: 700, fontSize: '16px', color: 'white' }}>{agent.name}</div>
-                              {isExactMatch && (
+                              {((agent.rating && agent.rating > 0) || (agent as any).rating > 0) && (
+                                <span style={{ 
+                                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                  fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '12px', 
+                                  background: 'rgba(245, 158, 11, 0.12)', color: '#FBBF24', border: '1px solid rgba(245, 158, 11, 0.3)' 
+                                }}>
+                                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                  {Number(agent.rating || (agent as any).rating).toFixed(1)}
+                                  {Number((agent as any).reviewsCount || agent.reviews_count || agent.reviews) > 0 && (
+                                    <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+                                      ({(agent as any).reviewsCount || agent.reviews_count || agent.reviews})
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                              {isTopMatch && (
                                 <span style={{ 
                                   fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '20px', 
                                   background: 'rgba(14, 165, 233, 0.15)', color: 'var(--cyan)', border: '1px solid rgba(14, 165, 233, 0.3)' 
                                 }}>
-                                  Best Match
+                                  Top Pick
                                 </span>
                               )}
                             </div>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Multi-Vendor Demo Request - Parlexa</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Manrope', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background-color: #09090B;
+      color: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      width: 100%;
+      background-color: #09090B;
+      padding: 40px 15px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #121215;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .header {
+      padding: 32px 32px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 12px;
+      background: rgba(18, 184, 134, 0.12);
+      border: 1px solid rgba(18, 184, 134, 0.3);
+      color: #12B886;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 6px 14px;
+      border-radius: 100px;
+    }
+    .content {
+      padding: 32px;
+    }
+    .headline {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+    .lead-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .lead-row {
+      display: flex;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .lead-label {
+      width: 110px;
+      color: #A1A1AA;
+      font-weight: 500;
+    }
+    .lead-value {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+    .tools-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #12B886;
+      margin: 24px 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tool-item {
+      background: #18181C;
+      border-left: 3px solid #12B886;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .tool-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: #FFFFFF;
+      margin-bottom: 4px;
+    }
+    .tool-role {
+      font-size: 13px;
+      color: #A1A1AA;
+    }
+    .cta-container {
+      text-align: center;
+      margin: 32px 0 16px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: #12B886;
+      color: #000000;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+    }
+    .footer {
+      padding: 24px 32px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      color: #71717A;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <a href="https://parlexa.in" class="logo">PARLEXA</a>
+        <div>
+          <span class="badge">AI Bundle Demo Request</span>
+        </div>
+      </div>
+      <div class="content">
+        <h2 class="headline">New Demo Request for {{BUNDLE_NAME}}</h2>
+        <p style="color: #A1A1AA; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+          A prospective customer requested a coordinated demo for <strong>{{VENDOR_COUNT}}</strong> tools in the <strong>{{BUNDLE_NAME}}</strong> stack on Parlexa.
+        </p>
+
+        <div class="lead-box">
+          <div class="lead-row">
+            <span class="lead-label">Requester Email:</span>
+            <span class="lead-value">{{USER_EMAIL}}</span>
+          </div>
+          <div class="lead-row">
+            <span class="lead-label">Company:</span>
+            <span class="lead-value">{{COMPANY}}</span>
+          </div>
+          <div class="lead-row">
+            <span class="lead-label">Timeline:</span>
+            <span class="lead-value">{{TIMELINE}}</span>
+          </div>
+          <div class="lead-row" style="margin-bottom: 0;">
+            <span class="lead-label">Requested At:</span>
+            <span class="lead-value">{{REQUEST_DATE}}</span>
+          </div>
+        </div>
+
+        <div class="tools-title">Selected Tools in Stack ({{VENDOR_COUNT}}):</div>
+        <div>
+          {{SELECTED_TOOLS_HTML}}
+        </div>
+
+        <div class="cta-container">
+          <a href="https://parlexa.in/dashboard/vendor" class="cta-button">View Lead in Vendor Dashboard</a>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>&copy; 2026 Parlexa Inc. | Coordinated Multi-Vendor AI Stack Requests</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

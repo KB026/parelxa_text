@@ -1,0 +1,142 @@
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { BundleFull } from '@/lib/bundles-service';
+import { CompositeBundleIcon } from './CompositeBundleIcon';
+import { Star, CheckCircle2, ArrowRight, Layers } from 'lucide-react';
+import { trackBundleView } from '@/lib/analytics/bundle-analytics';
+
+interface BundlesFilterClientProps {
+  bundles: BundleFull[];
+}
+
+export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundles }) => {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  const categories = [
+    'All',
+    'AI & LLMs',
+    'Customer Experience',
+    'Marketing & Sales',
+    'Enterprise & Automation',
+    'HR & Workforce',
+    'Healthcare',
+    'FinTech',
+    'Retail & E-Commerce',
+    'Developer Tools & Infra',
+    'Logistics & Supply Chain',
+    'AgriTech',
+    'EdTech'
+  ];
+
+  const filteredBundles = selectedCategory === 'All'
+    ? bundles
+    : bundles.filter(b => b.category.toLowerCase() === selectedCategory.toLowerCase());
+
+  return (
+    <div className="space-y-10">
+      {/* CATEGORY TABS FILTER */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none border-b border-white/10">
+        {categories.map((cat) => {
+          const isActive = selectedCategory.toLowerCase() === cat.toLowerCase();
+          return (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+                isActive
+                  ? 'bg-[#12B886] text-black shadow-md shadow-[#12B886]/20'
+                  : 'bg-[#121215] text-gray-400 hover:text-white hover:bg-white/5 border border-white/5'
+              }`}
+            >
+              {cat}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* BUNDLE CARDS GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        {filteredBundles.map((bundle) => {
+          const logos = bundle.tools_full.map(t => t.logo_url);
+          const names = bundle.tools_full.map(t => t.name);
+
+          return (
+            <div
+              key={bundle.slug}
+              className="group relative flex flex-col bg-[#121215] hover:bg-[#16161A] border border-white/10 hover:border-[#12B886]/50 rounded-2xl p-6 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#12B886]/5"
+            >
+              {/* Header: Composite Icon + Category Pill */}
+              <div className="flex items-start justify-between gap-4 mb-6">
+                <CompositeBundleIcon
+                  logos={logos}
+                  names={names}
+                  toolCount={bundle.tool_count}
+                  size="md"
+                />
+
+                <div className="flex flex-col items-end gap-2">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#18181C] text-[#12B886] border border-[#12B886]/30 uppercase tracking-wider">
+                    {bundle.category.toUpperCase()}
+                  </span>
+                  <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-lg border border-white/5 text-xs text-amber-400 font-semibold">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span>{bundle.rating}</span>
+                    <span className="text-gray-500 font-normal">({bundle.review_count})</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Title & Tagline */}
+              <div className="mb-4">
+                <h3 className="text-xl font-bold text-white group-hover:text-[#12B886] transition-colors duration-200 mb-2">
+                  {bundle.name}
+                </h3>
+                <p className="text-sm text-gray-300 font-medium line-clamp-2 leading-relaxed">
+                  "{bundle.tagline}"
+                </p>
+              </div>
+
+              {/* Tool Count & Included Tools Preview */}
+              <div className="mt-auto space-y-4 pt-4 border-t border-white/5">
+                <div className="flex items-center justify-between text-xs font-medium text-gray-400">
+                  <span className="flex items-center gap-1.5 text-gray-300">
+                    <Layers className="w-4 h-4 text-[#12B886]" />
+                    <strong className="text-white font-bold">{bundle.tool_count} Tools</strong> in this Kit
+                  </span>
+                  <span className="text-[#12B886] font-semibold">Direct Access</span>
+                </div>
+
+                {/* Benefits List Preview */}
+                <div className="space-y-1.5">
+                  {bundle.benefits.slice(0, 2).map((benefit, idx) => (
+                    <div key={idx} className="flex items-start gap-2 text-xs text-gray-400">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#12B886] shrink-0 mt-0.5" />
+                      <span className="line-clamp-1">{benefit}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA Button */}
+                <Link
+                  href={`/bundles/${bundle.slug}`}
+                  onClick={() =>
+                    trackBundleView({
+                      bundle_id: bundle.id,
+                      bundle_slug: bundle.slug
+                    })
+                  }
+                  className="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#18181C] group-hover:bg-[#12B886] text-white group-hover:text-black font-bold text-sm transition-all duration-200 border border-white/10 group-hover:border-[#12B886]"
+                >
+                  <span>Get This Kit</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

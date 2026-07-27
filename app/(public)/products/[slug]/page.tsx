@@ -13,6 +13,8 @@ import { CompanySection } from '@/components/parlexa/details/CompanySection';
 import { UseCasesSection } from '@/components/parlexa/details/UseCasesSection';
 import { StickyLeadBox } from '@/components/parlexa/details/StickyLeadBox';
 import { SimilarTools } from '@/components/parlexa/details/SimilarTools';
+import { BundleCrossSell } from '@/components/parlexa/details/BundleCrossSell';
+import { getBundleForAgent } from '@/lib/bundles-service';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Star, Bookmark, ArrowLeftRight, Share2 } from 'lucide-react';
@@ -55,12 +57,13 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
-  const [stats, initialReviews, userReview, similarTools, externalReviews] = await Promise.all([
+  const [stats, initialReviews, userReview, similarTools, externalReviews, bundleCrossSell] = await Promise.all([
     getReviewStats(Number(agent.id)),
     getReviews(Number(agent.id), 'helpful', 1, 5),
     user ? getUserReview(Number(agent.id), user.id) : null,
     getSimilarAgents(agent.category, Number(agent.id), 4),
-    getExternalReviews(Number(agent.id), agent.name)
+    getExternalReviews(Number(agent.id), agent.name),
+    getBundleForAgent(Number(agent.id))
   ]);
 
   const jsonLd = {
@@ -116,8 +119,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
       }}>
         ← Back to Marketplace
       </Link>
-      
-
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '80px', maxWidth: '1280px', margin: '0 auto' }}>
         {/* Main Grid Layout */}
@@ -159,6 +160,13 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
               <ScrollReveal>
                 <UseCasesSection useCases={agent.useCases} />
               </ScrollReveal>
+
+              {/* BUNDLE CROSS-SELL SECTION */}
+              {bundleCrossSell && (
+                <ScrollReveal>
+                  <BundleCrossSell crossSell={bundleCrossSell} />
+                </ScrollReveal>
+              )}
 
               <ScrollReveal>
                 <ReviewSystem 
