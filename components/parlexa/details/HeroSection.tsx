@@ -158,8 +158,8 @@ export function HeroSection({
           <div 
             ref={tilt.ref}
             style={{ 
-              width: '100%', aspectRatio: '16/11', borderRadius: '24px', overflow: 'hidden', 
-              background: 'linear-gradient(135deg, rgba(56,189,248,0.15), rgba(168,85,247,0.1))', 
+              width: '100%', aspectRatio: '16/10', borderRadius: '24px', overflow: 'hidden', 
+              background: '#090a0f', 
               border: '1px solid rgba(255,255,255,0.08)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 24px 48px rgba(0,0,0,0.2)',
@@ -190,7 +190,7 @@ export function HeroSection({
                   <img 
                     src={activeMedia.url} 
                     alt="Featured preview" 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 1 }} 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', position: 'relative', zIndex: 1 }} 
                     onError={() => setFeaturedImgError(true)}
                   />
                 ) : (
@@ -220,7 +220,7 @@ export function HeroSection({
                     style={{
                       width: '80px', height: '50px', flexShrink: 0, borderRadius: '8px', overflow: 'hidden', padding: 0,
                       border: isActive ? '2px solid var(--cyan)' : '2px solid transparent',
-                      background: 'var(--bg-secondary)', cursor: 'pointer',
+                      background: '#090a0f', cursor: 'pointer',
                       opacity: isActive ? 1 : 0.5, transition: 'all 0.2s ease',
                       display: 'flex', alignItems: 'center', justifyContent: 'center'
                     }}
@@ -230,7 +230,7 @@ export function HeroSection({
                     ) : (
                       <img 
                         src={item.url} alt={`Thumbnail ${idx}`} 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         onError={() => setThumbErrors(prev => ({ ...prev, [idx]: true }))}
                       />
                     )}

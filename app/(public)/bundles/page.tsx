@@ -22,7 +22,7 @@ export default async function BundlesOverviewPage() {
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-5">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#12B886]/10 border border-[#12B886]/30 text-[#12B886] text-xs font-semibold tracking-wider uppercase">
             <Sparkles className="w-3.5 h-3.5 text-[#12B886]" />
-            12 Ready-Made Kits
+            10 Ready-Made Kits
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
@@ -36,7 +36,7 @@ export default async function BundlesOverviewPage() {
           {/* Quick Stats Grid */}
           <div className="pt-6 grid grid-cols-2 gap-4 max-w-lg mx-auto border-t border-white/10 text-center">
             <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#12B886]">12</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#12B886]">{bundles.length}</div>
               <div className="text-xs sm:text-sm text-gray-400 font-medium mt-1">Ready-Made Kits</div>
             </div>
             <div>

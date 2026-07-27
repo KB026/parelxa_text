@@ -1,12 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
-import { SEED_BUNDLES, BundleDefinition } from './bundles-data';
+import { SEED_JOURNEY_BUNDLES, JourneyBundleDefinition } from './bundles-data';
 
 export interface BundleToolFull {
   id: string | number;
   agent_id: number;
+  role_id?: number;
+  role_name: string;
+  role_description?: string;
+  role_order: number;
   position: number;
   role_in_workflow: string;
   reason: string;
+  what_it_does: string;
+  why_in_step: string;
   name: string;
   slug: string;
   logo_url: string | null;
@@ -17,13 +23,38 @@ export interface BundleToolFull {
   website: string | null;
   one_liner: string | null;
   category: string | null;
+  is_primary?: boolean;
 }
 
-export interface BundleFull extends BundleDefinition {
+export interface BundleRoleFull {
+  id: number;
+  role_name: string;
+  role_description: string;
+  role_order: number;
+  tool: BundleToolFull | null;
+}
+
+export interface BundleFull {
+  id: number;
+  slug: string;
+  name: string;
+  tagline: string;
+  description: string;
+  category: string;
+  type: 'journey' | 'department';
+  headline: string;
+  benefits: string[];
+  use_case: string;
+  who_needs_it: string[];
+  bundle_icon_url?: string;
+  is_featured: boolean;
+  is_active: boolean;
+  display_order: number;
   tool_count: number;
   rating: number;
   review_count: number;
   tool_logos: string[];
+  roles: BundleRoleFull[];
   tools_full: BundleToolFull[];
 }
 
@@ -35,7 +66,9 @@ export interface AgentBundleCrossSell {
     category: string;
     tagline: string;
     headline: string;
+    type: 'journey' | 'department';
   };
+  currentToolRole: string;
   otherTools: BundleToolFull[];
 }
 
@@ -52,7 +85,7 @@ function normalizeSlug(str: string): string {
   try {
     str = decodeURIComponent(str);
   } catch (e) {
-    // ignore decode error if malformed
+    // ignore
   }
   return str
     .toLowerCase()
@@ -68,69 +101,95 @@ export async function getBundlesList(): Promise<BundleFull[]> {
   try {
     const { data: dbBundles, error: bErr } = await supabase
       .from('bundles')
-      .select('*, bundle_tools(*, agents(*))')
-      .eq('is_active', true)
+      .select('*, bundle_roles(*, bundle_tools(*, agents(*)))')
       .order('display_order', { ascending: true });
 
     if (!bErr && dbBundles && dbBundles.length > 0) {
       return dbBundles.map((b: any) => {
-        const rawTools = (b.bundle_tools || []).sort((x: any, y: any) => x.position - y.position);
-        const toolsFull: BundleToolFull[] = rawTools.map((bt: any) => {
-          const a = bt.agents || {};
-          return {
-            id: bt.id,
-            agent_id: bt.agent_id,
-            position: bt.position,
-            role_in_workflow: bt.role_in_workflow,
-            reason: bt.reason,
-            name: a.name || 'Tool',
-            slug: a.slug || 'tool',
-            logo_url: a.logo_url || null,
-            rating: Number(a.rating) || 4.5,
-            reviews_count: Number(a.reviews_count || a.reviews) || 12,
-            pricing: a.pricing || 'Custom / Contact',
-            pricing_model: a.pricing_model || 'paid',
-            website: a.website || null,
-            one_liner: a.one_liner || null,
-            category: a.category || b.category
-          };
+        const seedDef = SEED_JOURNEY_BUNDLES.find(sb => sb.slug === b.slug) || SEED_JOURNEY_BUNDLES[0];
+        const rawRoles = (b.bundle_roles || []).sort((x: any, y: any) => x.role_order - y.role_order);
+
+        const roles: BundleRoleFull[] = [];
+        const toolsFull: BundleToolFull[] = [];
+
+        rawRoles.forEach((r: any, idx: number) => {
+          const seedRole = seedDef.roles.find(sr => sr.role_order === r.role_order) || seedDef.roles[idx] || seedDef.roles[0];
+          const primaryToolLink = (r.bundle_tools || []).find((bt: any) => bt.is_primary !== false) || (r.bundle_tools || [])[0];
+          let toolObj: BundleToolFull | null = null;
+
+          if (primaryToolLink) {
+            const a = primaryToolLink.agents || {};
+            toolObj = {
+              id: primaryToolLink.id,
+              agent_id: primaryToolLink.agent_id,
+              role_id: r.id,
+              role_name: r.role_name,
+              role_description: r.role_description || seedRole.role_description,
+              role_order: r.role_order,
+              position: r.role_order,
+              role_in_workflow: r.role_name,
+              reason: seedRole.why_in_step || r.role_description || `Provides ${r.role_name} in the ${b.name} journey.`,
+              what_it_does: seedRole.what_it_does || a.one_liner || 'Handles workflow execution for this journey step.',
+              why_in_step: seedRole.why_in_step || `Ensures step ${r.role_order} (${r.role_name}) is executed seamlessly.`,
+              name: a.name || 'Tool',
+              slug: a.slug || 'tool',
+              logo_url: a.logo_url || null,
+              rating: Number(a.rating) || 4.7,
+              reviews_count: Number(a.reviews_count || a.reviews) || 15,
+              pricing: a.pricing || 'Custom / Contact',
+              pricing_model: a.pricing_model || 'paid',
+              website: a.website || null,
+              one_liner: a.one_liner || null,
+              category: a.category || b.category,
+              is_primary: primaryToolLink.is_primary !== false
+            };
+            toolsFull.push(toolObj);
+          }
+
+          roles.push({
+            id: r.id,
+            role_name: r.role_name,
+            role_description: r.role_description || seedRole.role_description,
+            role_order: r.role_order,
+            tool: toolObj
+          });
         });
 
         const ratings = toolsFull.map(t => t.rating).filter(Boolean);
-        const avgRating = ratings.length > 0 ? Number((ratings.reduce((s, r) => s + r, 0) / ratings.length).toFixed(1)) : 4.6;
+        const avgRating = ratings.length > 0 ? Number((ratings.reduce((s, r) => s + r, 0) / ratings.length).toFixed(1)) : 4.7;
         const totalReviews = toolsFull.reduce((s, t) => s + t.reviews_count, 0);
 
         return {
           id: b.id,
           slug: b.slug,
           name: b.name,
-          tagline: b.tagline,
-          description: b.description,
-          category: b.category,
-          headline: b.headline,
-          benefits: b.benefits || [],
-          use_case: b.use_case || '',
-          who_needs_it: b.who_needs_it || [],
+          tagline: seedDef.tagline,
+          description: b.description || seedDef.description,
+          category: seedDef.category,
+          type: b.type || seedDef.type,
+          headline: seedDef.headline,
+          benefits: seedDef.benefits,
+          use_case: seedDef.use_case,
+          who_needs_it: seedDef.who_needs_it,
           bundle_icon_url: b.bundle_icon_url,
-          cover_image_url: b.cover_image_url,
-          is_featured: Boolean(b.is_featured),
-          is_active: Boolean(b.is_active),
+          is_featured: Boolean(seedDef.is_featured),
+          is_active: true,
           display_order: b.display_order || 1,
-          tools: b.bundle_tools || [],
           tool_count: toolsFull.length,
           rating: avgRating,
           review_count: totalReviews,
           tool_logos: toolsFull.map(t => t.logo_url).filter((l): l is string => Boolean(l)),
+          roles,
           tools_full: toolsFull
         };
       });
     }
   } catch (err) {
-    console.warn('DB query bundles failed, falling back to static definitions with DB agent enrichment:', err);
+    console.warn('DB query journey bundles failed, falling back to static definitions with DB agent enrichment:', err);
   }
 
   // Fallback: Fetch real active agents from agents table to enrich seed definitions
-  const allAgentIds = Array.from(new Set(SEED_BUNDLES.flatMap(b => b.tools.map(t => t.agent_id))));
+  const allAgentIds = Array.from(new Set(SEED_JOURNEY_BUNDLES.flatMap(b => b.roles.map(r => r.agent_id))));
   const { data: agentsData } = await supabase
     .from('agents')
     .select('id, name, slug, logo_url, rating, reviews_count, reviews, pricing, pricing_model, website, one_liner, category')
@@ -141,26 +200,45 @@ export async function getBundlesList(): Promise<BundleFull[]> {
     agentsData.forEach((a: any) => agentsMap.set(a.id, a));
   }
 
-  return SEED_BUNDLES.map(b => {
-    const toolsFull: BundleToolFull[] = b.tools.map(t => {
-      const a = agentsMap.get(t.agent_id) || {};
-      return {
-        id: `tool-${b.id}-${t.agent_id}`,
-        agent_id: t.agent_id,
-        position: t.position,
-        role_in_workflow: t.role_in_workflow,
-        reason: t.reason,
-        name: a.name || `Tool ${t.agent_id}`,
-        slug: a.slug || `tool-${t.agent_id}`,
+  return SEED_JOURNEY_BUNDLES.map(b => {
+    const roles: BundleRoleFull[] = [];
+    const toolsFull: BundleToolFull[] = [];
+
+    b.roles.forEach((r, idx) => {
+      const a = agentsMap.get(r.agent_id) || {};
+      const toolObj: BundleToolFull = {
+        id: `tool-${b.id}-${r.agent_id}`,
+        agent_id: r.agent_id,
+        role_id: idx + 1,
+        role_name: r.role_name,
+        role_description: r.role_description,
+        role_order: r.role_order,
+        position: r.role_order,
+        role_in_workflow: r.role_name,
+        reason: r.why_in_step,
+        what_it_does: r.what_it_does,
+        why_in_step: r.why_in_step,
+        name: a.name || `Tool ${r.agent_id}`,
+        slug: a.slug || `tool-${r.agent_id}`,
         logo_url: a.logo_url || null,
-        rating: Number(a.rating) || 4.6,
+        rating: Number(a.rating) || 4.7,
         reviews_count: Number(a.reviews_count || a.reviews) || 18,
         pricing: a.pricing || 'Custom / Contact',
         pricing_model: a.pricing_model || 'paid',
         website: a.website || null,
         one_liner: a.one_liner || null,
-        category: a.category || b.category
+        category: a.category || b.category,
+        is_primary: true
       };
+
+      toolsFull.push(toolObj);
+      roles.push({
+        id: idx + 1,
+        role_name: r.role_name,
+        role_description: r.role_description,
+        role_order: r.role_order,
+        tool: toolObj
+      });
     });
 
     const ratings = toolsFull.map(t => t.rating);
@@ -173,6 +251,7 @@ export async function getBundlesList(): Promise<BundleFull[]> {
       rating: avgRating,
       review_count: totalReviews,
       tool_logos: toolsFull.map(t => t.logo_url).filter((l): l is string => Boolean(l)),
+      roles,
       tools_full: toolsFull
     };
   });
@@ -198,7 +277,9 @@ export async function getBundleForAgent(agentId: number): Promise<AgentBundleCro
           category: b.category,
           tagline: b.tagline,
           headline: b.headline,
+          type: b.type
         },
+        currentToolRole: matchedTool.role_name,
         otherTools
       };
     }

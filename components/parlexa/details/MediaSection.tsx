@@ -54,7 +54,7 @@ export function MediaSection({ screenshots = [], videoUrl }: MediaSectionProps) 
               style={{ 
                 aspectRatio: '16/10', borderRadius: '16px', overflow: 'hidden', 
                 border: '1px solid var(--border-subtle)', cursor: 'zoom-in',
-                background: 'var(--bg-secondary)',
+                background: '#090a0f',
                 position: 'relative',
                 transition: 'all 0.3s ease',
               }}
@@ -77,7 +77,7 @@ export function MediaSection({ screenshots = [], videoUrl }: MediaSectionProps) 
                 alt={`Screenshot ${idx + 1}`} 
                 fill 
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
-                style={{ objectFit: 'cover', position: 'relative', zIndex: 1 }} 
+                style={{ objectFit: 'contain', position: 'relative', zIndex: 1 }} 
                 onError={() => setImgErrors(prev => ({ ...prev, [idx]: true }))}
                 unoptimized // In case external URLs break Next.js image optimization
               />

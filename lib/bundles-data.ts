@@ -1,333 +1,300 @@
-export interface BundleToolDefinition {
+export interface JourneyRoleDefinition {
+  role_name: string;
+  role_description: string;
+  role_order: number;
   agent_id: number;
-  position: number;
-  role_in_workflow: string;
-  reason: string;
+  what_it_does: string;
+  why_in_step: string;
 }
 
-export interface BundleDefinition {
+export interface JourneyBundleDefinition {
   id: number;
   slug: string;
   name: string;
   tagline: string;
   description: string;
   category: string;
+  type: 'journey' | 'department';
   headline: string;
   benefits: string[];
   use_case: string;
   who_needs_it: string[];
   bundle_icon_url?: string;
-  cover_image_url?: string;
   is_featured: boolean;
   is_active: boolean;
   display_order: number;
-  tools: BundleToolDefinition[];
+  roles: JourneyRoleDefinition[];
 }
 
-export const SEED_BUNDLES: BundleDefinition[] = [
+export const SEED_JOURNEY_BUNDLES: JourneyBundleDefinition[] = [
   {
     id: 1,
-    slug: 'ai-and-llms',
-    name: 'AI & LLMs',
-    tagline: 'Deploy enterprise-grade AI, not just ChatGPT',
-    description: 'A complete enterprise stack for fine-tuning, deploying, vector querying, and monitoring foundational LLMs with private data governance and compliance.',
-    category: 'AI & LLMs',
-    headline: 'Deploy enterprise-grade AI, not just ChatGPT',
+    slug: 'd2c-kit',
+    name: 'D2C Kit',
+    tagline: 'Scale your D2C brand from product discovery to repeat orders',
+    description: 'A complete 5-step journey for D2C brands to attract shoppers, boost conversions, close checkout deals, drive repeat purchases, and analyze catalog ROI.',
+    category: 'Retail & E-Commerce',
+    type: 'journey',
+    headline: 'Increase AOV by 35%, reduce cart abandonment by 50%',
     benefits: [
-      'Reduce model latency by up to 65% with custom vector indexing',
-      'Ensure zero data leakage with enterprise privacy boundaries',
-      'Unified telemetry and performance monitoring across multi-LLM workflows'
+      'Visual search & personalized recommendations boost order values',
+      'Automated WhatsApp commerce bots recover abandoned carts instantly',
+      'Post-purchase loyalty bots drive 2.5x higher repeat customer rate'
     ],
-    use_case: 'Building custom enterprise copilots and domain-specific LLM workflows',
-    who_needs_it: ['CTOs & Chief AI Officers', 'Enterprise Architects', 'ML Engineering Teams'],
+    use_case: 'D2C brand growth, e-commerce store personalization, and catalog optimization',
+    who_needs_it: ['D2C Brand Founders', 'E-Commerce Directors', 'Digital Merchandisers'],
     is_featured: true,
     is_active: true,
     display_order: 1,
-    tools: [
-      { agent_id: 94, position: 1, role_in_workflow: 'Foundational LLM Engine', reason: 'Provides localized LLM capability trained for high enterprise accuracy.' },
-      { agent_id: 48, position: 2, role_in_workflow: 'Orchestration Framework', reason: 'Automates complex multi-agent workflows, prompting pipelines, and external API calls.' },
-      { agent_id: 31, position: 3, role_in_workflow: 'Vector Indexing & Retrieval', reason: 'High-speed vector database for real-time RAG applications and doc search.' },
-      { agent_id: 59, position: 4, role_in_workflow: 'Automated Evaluation & Testing', reason: 'Ensures robust regression testing, hallucination detection, and prompt verification.' },
-      { agent_id: 56, position: 5, role_in_workflow: 'Enterprise Observability', reason: 'Monitors inference cost, response accuracy, and latency across deployed models.' }
+    roles: [
+      { role_name: 'Awareness', role_description: 'Gets audience attention before purchase', role_order: 1, agent_id: 3, what_it_does: 'Creates visual search and smart product recommendations on your storefront.', why_in_step: 'Attracts shoppers instantly and gets them browsing your product catalog.' },
+      { role_name: 'Conversion', role_description: 'Turns website visitors into buyers', role_order: 2, agent_id: 18, what_it_does: 'Predicts shopper demand trends and balances real-time store inventory.', why_in_step: 'Ensures bestsellers are always in stock so visitors buy instead of leaving.' },
+      { role_name: 'Closing', role_description: 'Drives cart completion & deal checkout', role_order: 3, agent_id: 22, what_it_does: 'Sends WhatsApp checkout deals and reminders for abandoned carts.', why_in_step: 'Recovers lost shoppers and turns cart drop-offs into completed sales.' },
+      { role_name: 'Retention', role_description: 'Engages customers post-purchase', role_order: 4, agent_id: 62, what_it_does: 'Sends back-in-stock notifications and manages buyer wishlists.', why_in_step: 'Brings past buyers back to your store for repeat orders.' },
+      { role_name: 'Measurement', role_description: 'Tracks revenue telemetry and analytics', role_order: 5, agent_id: 57, what_it_does: 'Analyzes customer reviews and feedback ratings in real time.', why_in_step: 'Shows you which products to restock and which to improve.' }
     ]
   },
   {
     id: 2,
-    slug: 'customer-experience',
-    name: 'Customer Experience',
-    tagline: 'Reduce support costs by 60%, improve CSAT by 40%',
-    description: 'Transform customer support into a 24/7 autonomous resolution engine with real-time sentiment analysis, multi-channel routing, and feedback analysis.',
-    category: 'Customer Experience',
-    headline: 'Reduce support costs by 60%, improve CSAT by 40%',
+    slug: 'startup-launch-kit',
+    name: 'Startup Launch Kit',
+    tagline: 'Validate your idea, build your MVP, and acquire your first 1,000 users',
+    description: 'The end-to-end founder stack to validate market demand, build low-code prototypes, execute go-to-market outreach, scale growth, and monitor telemetry.',
+    category: 'Enterprise & Automation',
+    type: 'journey',
+    headline: 'Go from idea to first 1,000 active users 3x faster',
     benefits: [
-      'Automate up to 80% of repetitive Tier-1 customer queries',
-      'Instant voice & text chat response in over 15 regional languages',
-      'Real-time sentiment scoring triggers seamless human agent handoff'
+      'Validate customer demand prior to writing production code',
+      'Convert design prototypes directly into React & mobile apps',
+      'Automated outreach engine populates your early user waitlist'
     ],
-    use_case: 'Omnichannel customer support automation for scale-ups and enterprises',
-    who_needs_it: ['VP of Customer Experience', 'Support Operations Leads', 'Customer Success Managers'],
+    use_case: 'Early-stage startup building, MVP prototyping, and rapid market launch',
+    who_needs_it: ['Startup Founders', 'Solo Entrepreneurs', 'Product Leads'],
     is_featured: true,
     is_active: true,
     display_order: 2,
-    tools: [
-      { agent_id: 9, position: 1, role_in_workflow: 'AI Conversational Bot', reason: 'Handles multi-turn support conversations across web, WhatsApp, and app.' },
-      { agent_id: 11, position: 2, role_in_workflow: 'Sentiment & Voice Analytics', reason: 'Analyzes tone, agent behavior, and customer satisfaction during interactions.' },
-      { agent_id: 95, position: 3, role_in_workflow: 'Multi-Channel Integration Gateway', reason: 'Routes incoming tickets across Zendesk, Salesforce, and email seamlessly.' },
-      { agent_id: 13, position: 4, role_in_workflow: 'Feedback & QA Analyzer', reason: 'Automatically grades support interactions and flags compliance violations.' }
+    roles: [
+      { role_name: 'Idea Validation', role_description: 'Validates market demand and customer pain points', role_order: 1, agent_id: 88, what_it_does: 'Collects customer survey feedback and analyzes market demand signals.', why_in_step: 'Proves people want your product before you write production code.' },
+      { role_name: 'MVP Building', role_description: 'Accelerates product development and low-code prototyping', role_order: 2, agent_id: 74, what_it_does: 'Converts Figma design mockups directly into functional web app code.', why_in_step: 'Cuts development time by 60% so you build your MVP fast.' },
+      { role_name: 'Go-to-Market', role_description: 'Launches marketing campaigns and initial user outreach', role_order: 3, agent_id: 51, what_it_does: 'Automates email and social outreach to build an early waitlist.', why_in_step: 'Fills your signup queue with interested users before launch day.' },
+      { role_name: 'Growth', role_description: 'Scales user acquisition and referral channels', role_order: 4, agent_id: 50, what_it_does: 'Scores visitor intent and tracks referral signups automatically.', why_in_step: 'Prioritizes your hottest leads so you convert users faster.' },
+      { role_name: 'Analytics', role_description: 'Measures core product metrics and retention telemetry', role_order: 5, agent_id: 6, what_it_does: 'Connects your user data streams into one real-time dashboard.', why_in_step: 'Shows daily active user trends so you know if your product is sticking.' }
     ]
   },
   {
     id: 3,
-    slug: 'marketing-and-sales',
-    name: 'Marketing & Sales',
-    tagline: 'Grow pipeline 3x, close deals 2x faster',
-    description: 'An integrated revenue engine that automates prospect outreach, lead scoring, email copywriting, meeting scheduling, and CRM integration.',
-    category: 'Marketing & Sales',
-    headline: 'Grow pipeline 3x, close deals 2x faster',
+    slug: 'service-business-kit',
+    name: 'Service Business Kit',
+    tagline: 'Acquire clients, automate discovery calls, deliver work, and collect payments',
+    description: 'Designed for agencies, consultants, and service providers to automate lead capture, discovery call booking, service delivery, billing, and client retention.',
+    category: 'Enterprise & Automation',
+    type: 'journey',
+    headline: 'Automate 80% of agency operations and double client capacity',
     benefits: [
-      '3x increase in qualified sales pipeline through automated outreach',
-      'Real-time intent lead scoring prioritizes high-value prospects',
-      'Seamless calendar scheduling and CRM record sync'
+      'Capture qualified client inquiries 24/7 without manual triage',
+      'Automated calendar scheduling eliminates back-and-forth emails',
+      'RPA bots automate monthly billing, invoicing, and contract sync'
     ],
-    use_case: 'Outbound sales automation and inbound lead conversion optimization',
-    who_needs_it: ['Head of Growth', 'VP of Sales', 'Demand Generation Managers'],
+    use_case: 'Agency operations automation, client onboarding, and automated billing',
+    who_needs_it: ['Agency Owners', 'Independent Consultants', 'Professional Service Leads'],
     is_featured: true,
     is_active: true,
     display_order: 3,
-    tools: [
-      { agent_id: 51, position: 1, role_in_workflow: 'Automated Outreach Engine', reason: 'Captures and manages prospect journeys with high email deliverability.' },
-      { agent_id: 50, position: 2, role_in_workflow: 'Intent Lead Scoring', reason: 'Scores lead engagement and buyer readiness in real time.' },
-      { agent_id: 40, position: 3, role_in_workflow: 'AI Email Copywriting', reason: 'Generates tailored email copy and landing page text at enterprise scale.' },
-      { agent_id: 91, position: 4, role_in_workflow: 'Meeting Scheduler', reason: 'Schedules sales demos and records meeting telemetry automatically.' },
-      { agent_id: 44, position: 5, role_in_workflow: 'CRM Integration & Analytics', reason: 'Tracks lead conversion funnels and synchronizes CRM data streams.' }
+    roles: [
+      { role_name: 'Client Acquisition', role_description: 'Generates qualified service leads', role_order: 1, agent_id: 51, what_it_does: 'Captures inquiry forms and triages prospective client requests 24/7.', why_in_step: 'Ensures no high-value client inquiry goes unanswered.' },
+      { role_name: 'Proposals & Scheduling', role_description: 'Coordinates discovery calls and project proposals', role_order: 2, agent_id: 91, what_it_does: 'Schedules discovery calls and generates meeting summaries automatically.', why_in_step: 'Eliminates back-and-forth emails to lock in client calls.' },
+      { role_name: 'Service Delivery', role_description: 'Automates task execution and client workflows', role_order: 3, agent_id: 49, what_it_does: 'Guides clients through project onboarding and step-by-step checklists.', why_in_step: 'Keeps client projects running smoothly without manual handholding.' },
+      { role_name: 'Invoicing & Payments', role_description: 'Manages billing, invoicing, and collections', role_order: 4, agent_id: 52, what_it_does: 'Automates monthly client billing, invoice generation, and syncs.', why_in_step: 'Collects payments on time so you maintain healthy cash flow.' },
+      { role_name: 'Client Retention', role_description: 'Nurtures long-term client relationships and renewals', role_order: 5, agent_id: 44, what_it_does: 'Tracks client health scores and flags upcoming contract renewal dates.', why_in_step: 'Alerts you to follow up with happy clients to secure retainers.' }
     ]
   },
   {
     id: 4,
-    slug: 'enterprise-and-automation',
-    name: 'Enterprise & Automation',
-    tagline: 'Automate 80% of manual processes',
-    description: 'Eliminate repetitive manual data entry, unstructured document ingestion, and fragmented data pipelines with an integrated no-code RPA & process intelligence stack.',
-    category: 'Enterprise & Automation',
-    headline: 'Automate 80% of manual processes',
+    slug: 'creator-economy-kit',
+    name: 'Creator Economy Kit',
+    tagline: 'Create content, grow your audience, manage your community, and monetize',
+    description: 'An integrated suite for creators, newsletter authors, and educators to auto-generate content, expand social reach, manage fan communities, and drive digital sales.',
+    category: 'Marketing & Sales',
+    type: 'journey',
+    headline: 'Grow audience 5x faster, monetize directly with AI tools',
     benefits: [
-      'Eliminate 95%+ of manual invoice and document processing errors',
-      'Connect legacy enterprise databases with modern API workflows',
-      'Continuous process intelligence discovers operational bottlenecks'
+      'Generate high-converting video scripts, newsletter copy, and visual posts',
+      'Multilingual AI voice translation expands your content globally',
+      'Automated community bots convert social followers into paid subscribers'
     ],
-    use_case: 'Enterprise process automation, invoice processing, and back-office efficiency',
-    who_needs_it: ['Chief Operating Officers', 'Digital Transformation Directors', 'Process Automation Leads'],
+    use_case: 'Content creation, social media growth, and digital product monetization',
+    who_needs_it: ['Content Creators', 'Newsletter Publishers', 'Digital Educators'],
     is_featured: false,
     is_active: true,
     display_order: 4,
-    tools: [
-      { agent_id: 49, position: 1, role_in_workflow: 'No-Code Automation Platform', reason: 'Guides users through complex software tasks and automates workflow steps.' },
-      { agent_id: 53, position: 2, role_in_workflow: 'Document Processing & Extraction', reason: 'Parses PDFs, scanned receipts, and unstructured contracts automatically.' },
-      { agent_id: 6, position: 3, role_in_workflow: 'Enterprise Data Pipeline', reason: 'Synthesizes cross-department data streams into real-time operational insights.' },
-      { agent_id: 52, position: 4, role_in_workflow: 'RPA Bot Assistant', reason: 'Executes scheduled back-office tasks, data syncs, and system updates.' }
+    roles: [
+      { role_name: 'Content Creation', role_description: 'Generates videos, copy, and visual assets', role_order: 1, agent_id: 40, what_it_does: 'Generates newsletter copy, social posts, and video scripts in seconds.', why_in_step: 'Keeps your content pipeline full without writer block.' },
+      { role_name: 'Audience Growth', role_description: 'Expands distribution and social media reach', role_order: 2, agent_id: 23, what_it_does: 'Translates your videos and podcasts into multiple global languages.', why_in_step: 'Expands your reach to international audiences effortlessly.' },
+      { role_name: 'Community Management', role_description: 'Engages subscribers and manages fan interactions', role_order: 3, agent_id: 9, what_it_does: 'Handles subscriber questions and DM replies across all channels.', why_in_step: 'Builds deep fan engagement without drowning in messages.' },
+      { role_name: 'Monetization', role_description: 'Drives digital product and sponsorship revenue', role_order: 4, agent_id: 22, what_it_does: 'Sells digital downloads, courses, and memberships directly in chat.', why_in_step: 'Turns social followers into paying customers on autopilot.' },
+      { role_name: 'Analytics', role_description: 'Tracks content engagement and earnings analytics', role_order: 5, agent_id: 56, what_it_does: 'Monitors content performance metrics and earnings telemetry.', why_in_step: 'Shows which posts generate the highest revenue so you post more of them.' }
     ]
   },
   {
     id: 5,
-    slug: 'hr-and-workforce',
-    name: 'HR & Workforce',
-    tagline: 'Hire 10x faster, reduce time-to-hire from 45 to 15 days',
-    description: 'End-to-end talent acquisition stack that sources candidates, scores resumes, coordinates interviews, runs assessments, and auto-generates offer packages.',
-    category: 'HR & Workforce',
-    headline: 'Hire 10x faster, reduce time-to-hire from 45 to 15 days',
+    slug: 'b2b-saas-kit',
+    name: 'B2B SaaS Kit',
+    tagline: 'Capture intent, run automated demos, onboard accounts, and reduce churn',
+    description: 'The revenue and customer success engine for B2B software companies to capture sales leads, automate product demos, streamline user onboarding, and prevent churn.',
+    category: 'Developer Tools & Infra',
+    type: 'journey',
+    headline: '3x B2B pipeline velocity, reduce churn by 40%',
     benefits: [
-      'Screen 1,000+ applicants in minutes with unbiased resume parsing',
-      'Automate candidate interview scheduling across calendar availability',
-      'Improve offer acceptance rate through streamlined candidate experience'
+      'Capture buyer intent signals and route leads to sales reps instantly',
+      'Automated interactive product demos guide buyers through setup',
+      'Product telemetry alerts customer success reps prior to contract renewal'
     ],
-    use_case: 'Full-lifecycle automated talent recruitment and employee onboarding',
-    who_needs_it: ['Chief Human Resources Officers', 'Head of Talent Acquisition', 'HR Operations Leads'],
-    is_featured: false,
+    use_case: 'B2B sales automation, user onboarding, and customer success management',
+    who_needs_it: ['VP of Sales', 'Head of Customer Success', 'SaaS Growth Leaders'],
+    is_featured: true,
     is_active: true,
     display_order: 5,
-    tools: [
-      { agent_id: 25, position: 1, role_in_workflow: 'Candidate Outreach Sourcing', reason: 'Scours talent marketplaces to source best-fit candidate profiles.' },
-      { agent_id: 46, position: 2, role_in_workflow: 'AI Resume Scorer', reason: 'Evaluates applicant fit and tracks talent through hiring stages.' },
-      { agent_id: 35, position: 3, role_in_workflow: 'Interview Scheduler', reason: 'Coordinates multi-stage panel interviews and collects reviewer feedback.' },
-      { agent_id: 64, position: 4, role_in_workflow: 'Assessment & Engagement', reason: 'Measures candidate sentiment, culture fit, and skill readiness.' },
-      { agent_id: 47, position: 5, role_in_workflow: 'Offer Package Generator', reason: 'Generates compliant offer letters and triggers onboarding document workflows.' }
+    roles: [
+      { role_name: 'Lead Generation', role_description: 'Captures high-intent B2B prospects', role_order: 1, agent_id: 51, what_it_does: 'Captures inbound B2B software leads and enriches company profiles.', why_in_step: 'Delivers qualified sales prospects directly to your reps.' },
+      { role_name: 'Demo & Sales', role_description: 'Automates sales demos and pipeline movement', role_order: 2, agent_id: 91, what_it_does: 'Runs automated product walkthroughs and records buyer feedback.', why_in_step: 'Moves prospects from demo request to sales proposal 2x faster.' },
+      { role_name: 'Onboarding', role_description: 'Guides new accounts through setup and adoption', role_order: 3, agent_id: 49, what_it_does: 'Guides new workspace users through product setup and key feature adoption.', why_in_step: 'Helps users reach their first aha moment fast to stop early drop-offs.' },
+      { role_name: 'Customer Success', role_description: 'Monitors account health and prevents churn', role_order: 4, agent_id: 13, what_it_does: 'Monitors customer account health and detects software usage drops.', why_in_step: 'Alerts success reps early so you prevent subscription churn.' },
+      { role_name: 'Product Analytics', role_description: 'Tracks feature usage and telemetry', role_order: 5, agent_id: 56, what_it_does: 'Tracks feature adoption telemetry and API response latency.', why_in_step: 'Gives product teams clear data on which features drive expansion.' }
     ]
   },
   {
     id: 6,
-    slug: 'healthcare',
-    name: 'Healthcare',
-    tagline: 'Improve patient outcomes, reduce diagnostic time by 50%',
-    description: 'Clinical decision support stack integrating medical image analysis, AI patient triage, EHR data synchronization, and evidence-based treatment guidance.',
-    category: 'Healthcare',
-    headline: 'Improve patient outcomes, reduce diagnostic time by 50%',
+    slug: 'hr-hiring-kit',
+    name: 'HR Hiring Kit',
+    tagline: 'Hire 10x faster — from candidate sourcing to offer acceptance',
+    description: 'A 5-step departmental stack that sources talent, screens resumes, coordinates panel interviews, auto-generates offer letters, and automates onboarding.',
+    category: 'HR & Workforce',
+    type: 'department',
+    headline: 'Reduce time-to-hire from 45 to 15 days',
     benefits: [
-      'Instant radiograph and CT scan triage for urgent abnormalities',
-      'Automate patient intake, symptom collection, and appointment booking',
-      'HIPAA-compliant EHR data integration and clinical telemetry'
+      'Screen 1,000+ applicants in minutes with unbiased resume parsing',
+      'Automate candidate interview scheduling across calendar availability',
+      'Improve offer acceptance rate through streamlined onboarding'
     ],
-    use_case: 'Hospital diagnostic acceleration, outpatient triage, and clinical workflow optimization',
-    who_needs_it: ['Chief Medical Officers', 'Hospital Administrators', 'Diagnostic Center Directors'],
+    use_case: 'Talent recruitment automation, applicant screening, and candidate onboarding',
+    who_needs_it: ['CHROs', 'Head of Talent Acquisition', 'HR Operations Leads'],
     is_featured: false,
     is_active: true,
     display_order: 6,
-    tools: [
-      { agent_id: 8, position: 1, role_in_workflow: 'Medical Imaging AI Engine', reason: 'Detects critical anomalies in chest X-rays, CTs, and scans rapidly.' },
-      { agent_id: 38, position: 2, role_in_workflow: 'Patient Triage Chatbot', reason: 'Provides automated patient pre-screening and thermal imaging analysis.' },
-      { agent_id: 58, position: 3, role_in_workflow: 'EHR System Integration', reason: 'Syncs patient health records, scheduling, and billing systems.' },
-      { agent_id: 15, position: 4, role_in_workflow: 'Treatment Recommendation Engine', reason: 'Analyzes blood smears and diagnostic reports for actionable clinical advice.' }
+    roles: [
+      { role_name: 'Sourcing', role_description: 'Discovers candidate profiles across channels', role_order: 1, agent_id: 25, what_it_does: 'Scours tech job boards and databases to discover talent profiles.', why_in_step: 'Builds a deep pipeline of qualified candidates for open roles.' },
+      { role_name: 'Screening', role_description: 'Evaluates resume fit and qualifications', role_order: 2, agent_id: 46, what_it_does: 'Parses resumes and scores candidate fit against job specs.', why_in_step: 'Filters out unqualified applicants in minutes instead of hours.' },
+      { role_name: 'Interviewing', role_description: 'Coordinates panel interviews and feedback', role_order: 3, agent_id: 35, what_it_does: 'Coordinates multi-interviewer schedules and collects feedback forms.', why_in_step: 'Saves hours of scheduling back-and-forth with candidates.' },
+      { role_name: 'Hiring & Offer', role_description: 'Generates offer packages and compliance docs', role_order: 4, agent_id: 47, what_it_does: 'Generates custom offer letters and manages digital sign-offs.', why_in_step: 'Secures top candidate acceptances before competing offers arrive.' },
+      { role_name: 'Onboarding', role_description: 'Integrates new hires into team workflows', role_order: 5, agent_id: 52, what_it_does: 'Automates new hire IT setup, doc collection, and orientation tasks.', why_in_step: 'Gets new employees productive on Day 1 without HR stress.' }
     ]
   },
   {
     id: 7,
-    slug: 'fintech',
-    name: 'FinTech',
-    tagline: 'Process 1000s daily, prevent fraud, stay compliant',
-    description: 'High-throughput financial intelligence stack engineered for real-time transaction fraud detection, automated credit underwriting, AML compliance, and digital onboarding.',
-    category: 'FinTech',
-    headline: 'Process 1000s daily, prevent fraud, stay compliant',
+    slug: 'sales-prospecting-to-closing-kit',
+    name: 'Sales Prospecting-to-Closing Kit',
+    tagline: 'Grow pipeline 3x, qualify intent, and close enterprise deals 2x faster',
+    description: 'Departmental sales execution suite covering account prospecting, buyer qualification, hyper-personalized outreach, contract closing, and account retention.',
+    category: 'Marketing & Sales',
+    type: 'department',
+    headline: 'Grow pipeline 3x, close enterprise deals 2x faster',
     benefits: [
-      'Sub-100ms fraud detection for high-frequency digital payments',
-      'Automated credit scoring utilizing alternative financial datasets',
-      'Continuous regulatory compliance monitoring and audit reporting'
+      'Real-time intent lead scoring prioritizes high-value prospects',
+      'Hyper-personalized copywriting engine boosts cold open rates',
+      'Automated sales assistants schedule demos and track deal telemetry'
     ],
-    use_case: 'Digital banking, payment gateway fraud prevention, and credit underwriting',
-    who_needs_it: ['Chief Risk Officers', 'Head of Fraud & Compliance', 'FinTech Product Leaders'],
-    is_featured: false,
+    use_case: 'Outbound sales acceleration, lead qualification, and deal closing',
+    who_needs_it: ['VP of Sales', 'Sales Development Managers', 'Account Executives'],
+    is_featured: true,
     is_active: true,
     display_order: 7,
-    tools: [
-      { agent_id: 16, position: 1, role_in_workflow: 'Real-Time Fraud Detection', reason: 'Analyzes transaction signals to block fraudulent activity instantly.' },
-      { agent_id: 65, position: 2, role_in_workflow: 'AI Credit Scoring', reason: 'Evaluates creditworthiness using deep financial statement analysis.' },
-      { agent_id: 54, position: 3, role_in_workflow: 'Compliance & AML Scanner', reason: 'Monitors external dark web threats, leaks, and regulatory compliance.' },
-      { agent_id: 7, position: 4, role_in_workflow: 'Portfolio Optimization Engine', reason: 'Optimizes yield allocations and asset risk balancing continuously.' },
-      { agent_id: 32, position: 5, role_in_workflow: 'Customer Onboarding & e-KYC', reason: 'Automates e-KYC, document authentication, and facial verification.' }
+    roles: [
+      { role_name: 'Prospecting', role_description: 'Identifies high-value enterprise decision makers', role_order: 1, agent_id: 50, what_it_does: 'Identifies target decision makers and tracks company intent signals.', why_in_step: 'Finds companies actively searching for software like yours.' },
+      { role_name: 'Qualification', role_description: 'Scores buyer intent and readiness', role_order: 2, agent_id: 65, what_it_does: 'Evaluates prospect budget, company size, and buying readiness.', why_in_step: 'Focuses your reps only on deals that are ready to buy.' },
+      { role_name: 'Outreach', role_description: 'Delivers personalized multi-channel outreach', role_order: 3, agent_id: 40, what_it_does: 'Writes personalized multi-touch email sequences for target accounts.', why_in_step: 'Doubles email response rates with tailored messaging.' },
+      { role_name: 'Closing', role_description: 'Manages contract negotiation and deal execution', role_order: 4, agent_id: 91, what_it_does: 'Schedules contract review calls and tracks deal milestone progress.', why_in_step: 'Removes deal friction to close enterprise contracts faster.' },
+      { role_name: 'Account Management', role_description: 'Expands accounts and drives upsells', role_order: 5, agent_id: 44, what_it_does: 'Tracks account satisfaction and identifies upsell opportunities.', why_in_step: 'Grows existing customer accounts and secures annual renewals.' }
     ]
   },
   {
     id: 8,
-    slug: 'retail-and-e-commerce',
-    name: 'Retail & E-Commerce',
-    tagline: 'Increase AOV by 35%, reduce cart abandonment by 50%',
-    description: 'Unified retail stack driving personalized product discovery, intelligent dynamic pricing, conversational commerce chatbots, and inventory optimization.',
-    category: 'Retail & E-Commerce',
-    headline: 'Increase AOV by 35%, reduce cart abandonment by 50%',
+    slug: 'fintech-and-compliance-kit',
+    name: 'FinTech & Compliance Kit',
+    tagline: 'Verify user identities, score transaction risk, process payments, and block fraud',
+    description: 'A 5-step financial operational journey to automate user KYC, calculate real-time transaction risk, process payments, detect fraud, and maintain audit reports.',
+    category: 'FinTech',
+    type: 'journey',
+    headline: 'Process payments 100% securely, stop fraud before it happens',
     benefits: [
-      'Visual search & personalized recommendations boost order values',
-      'Automated WhatsApp/Web commerce bots answer buyer questions instantly',
-      'Predictive inventory allocation minimizes stock-outs during sales peak'
+      'Automated KYC identity checks onboard users in under 30 seconds',
+      'Real-time transaction risk scoring blocks fraudulent chargebacks',
+      'Automated compliance reporting keeps your platform audit-ready'
     ],
-    use_case: 'E-commerce store personalization, retention marketing, and inventory forecasting',
-    who_needs_it: ['E-Commerce Directors', 'Head of Digital Merchandising', 'D2C Brand Founders'],
+    use_case: 'Financial user onboarding, fraud prevention, payment processing, and audit compliance',
+    who_needs_it: ['Chief Compliance Officers', 'FinTech Founders', 'Risk & Operations Directors'],
     is_featured: true,
     is_active: true,
     display_order: 8,
-    tools: [
-      { agent_id: 3, position: 1, role_in_workflow: 'Product Recommendation Engine', reason: 'Delivers hyper-personalized visual recommendations on storefronts.' },
-      { agent_id: 18, position: 2, role_in_workflow: 'Inventory Optimization', reason: 'Predicts demand trends and keeps inventory levels balanced.' },
-      { agent_id: 22, position: 3, role_in_workflow: 'Dynamic Pricing & Commerce Bot', reason: 'Engages shoppers on WhatsApp to recover abandoned carts and share deals.' },
-      { agent_id: 62, position: 4, role_in_workflow: 'Customer Service Chatbot', reason: 'Handles post-order tracking queries, returns, and support 24/7.' },
-      { agent_id: 57, position: 5, role_in_workflow: 'Review Analysis & Insights', reason: 'Synthesizes shopper reviews to identify catalog improvements.' }
+    roles: [
+      { role_name: 'KYC Verification', role_description: 'Verifies user identity docs and background compliance', role_order: 1, agent_id: 65, what_it_does: 'Verifies user identity docs and performs background compliance checks.', why_in_step: 'Onboards legitimate financial users while stopping fraud at the door.' },
+      { role_name: 'Risk Scoring', role_description: 'Calculates real-time credit and transaction risk scores', role_order: 2, agent_id: 50, what_it_does: 'Calculates real-time credit and transaction risk scores.', why_in_step: 'Prevents high-risk transactions before they process.' },
+      { role_name: 'Payment Processing', role_description: 'Automates multi-currency payment settlement and billing', role_order: 3, agent_id: 52, what_it_does: 'Automates multi-currency payment settlement and invoice syncs.', why_in_step: 'Ensures fast, reliable payment collection across global gateways.' },
+      { role_name: 'Fraud Detection', role_description: 'Monitors transaction patterns for anomalies and suspicious activity', role_order: 4, agent_id: 13, what_it_does: 'Monitors transaction patterns for anomalies and suspicious activity.', why_in_step: 'Flags fraud attempts instantly to protect your balance sheet.' },
+      { role_name: 'Audit Compliance', role_description: 'Generates automated audit trails and regulatory reports', role_order: 5, agent_id: 6, what_it_does: 'Generates automated audit trails and regulatory compliance reports.', why_in_step: 'Keeps your financial operations 100% audit-ready at all times.' }
     ]
   },
   {
     id: 9,
-    slug: 'developer-tools-and-infra',
-    name: 'Developer Tools & Infra',
-    tagline: 'Developers write 40% more code, spend 60% less time on boilerplate',
-    description: 'Engineering acceleration suite providing automated code generation, zero-code test creation, bug detection, and CI/CD optimization.',
-    category: 'Developer Tools & Infra',
-    headline: 'Developers write 40% more code, spend 60% less time on boilerplate',
+    slug: 'healthcare-and-clinical-care-kit',
+    name: 'Healthcare & Clinical Care Kit',
+    tagline: 'Book patient visits, transcribe clinical notes, triage symptoms, and process billing',
+    description: 'Designed for medical clinics and healthcare providers to streamline patient scheduling, EHR clinical note transcription, symptom triage, and medical billing.',
+    category: 'Healthcare',
+    type: 'journey',
+    headline: 'Save doctors 2+ hours daily on documentation, cut no-shows by 50%',
     benefits: [
-      'Accelerate feature shipping by automating repetitive test authoring',
-      'Instantly detect security vulnerabilities prior to production deployment',
-      'Automate API documentation and technical reference generation'
+      'Automated patient appointment reminders eliminate missed visits',
+      'AI clinical dictation transcribes doctor consultations directly into notes',
+      'Symptom triage bot routes urgent patient needs to care staff fast'
     ],
-    use_case: 'Software engineering acceleration, automated QA testing, and DevOps efficiency',
-    who_needs_it: ['VP of Engineering', 'DevOps Managers', 'Lead Software Architects'],
+    use_case: 'Clinic operational automation, patient appointment management, and EHR note transcription',
+    who_needs_it: ['Clinic Administrators', 'Medical Directors', 'Healthcare Operations Managers'],
     is_featured: false,
     is_active: true,
     display_order: 9,
-    tools: [
-      { agent_id: 74, position: 1, role_in_workflow: 'AI Code Generation', reason: 'Converts design mockups directly into clean React and Flutter code.' },
-      { agent_id: 60, position: 2, role_in_workflow: 'Bug Detection & QA Automation', reason: 'Creates and runs end-to-end test suites without manual script writing.' },
-      { agent_id: 83, position: 3, role_in_workflow: 'Documentation Generator', reason: 'Auto-documents API endpoints and interactive workflow logic.' },
-      { agent_id: 5, position: 4, role_in_workflow: 'CI/CD Optimization', reason: 'Optimizes cloud compute workloads and speeds up build pipelines.' }
+    roles: [
+      { role_name: 'Appointment Booking', role_description: 'Automates patient visit scheduling and calendar reminders', role_order: 1, agent_id: 91, what_it_does: 'Automates patient visit booking and calendar reminders 24/7.', why_in_step: 'Reduces patient no-shows and fills open appointment slots.' },
+      { role_name: 'Clinical Notes', role_description: 'Transcribes doctor-patient consultations into medical notes', role_order: 2, agent_id: 40, what_it_does: 'Transcribes doctor-patient consultations into structured medical notes.', why_in_step: 'Saves physicians 2+ hours daily on manual EHR documentation.' },
+      { role_name: 'Patient Triage', role_description: 'Asks symptom questions and routes urgent cases to care staff', role_order: 3, agent_id: 9, what_it_does: 'Asks preliminary symptom questions and routes urgent cases to care staff.', why_in_step: 'Prioritizes critical patient needs before they enter the clinic.' },
+      { role_name: 'Medical Billing', role_description: 'Parses medical billing codes and processes insurance claims', role_order: 4, agent_id: 52, what_it_does: 'Parses medical billing codes and processes insurance claims.', why_in_step: 'Cuts claim rejection rates and speeds up clinic reimbursements.' },
+      { role_name: 'Follow-Up Engagement', role_description: 'Sends prescription refill reminders and post-care checkups', role_order: 5, agent_id: 62, what_it_does: 'Sends prescription refill reminders and post-care health checkups.', why_in_step: 'Improves patient recovery outcomes and long-term retention.' }
     ]
   },
   {
     id: 10,
-    slug: 'logistics-and-supply-chain',
-    name: 'Logistics & Supply Chain',
-    tagline: 'Reduce delivery costs by 25%, improve on-time delivery to 98%',
-    description: 'Smart supply chain intelligence stack designed for dynamic route dispatch, warehouse automation, fleet tracking, and demand forecasting.',
-    category: 'Logistics & Supply Chain',
-    headline: 'Reduce delivery costs by 25%, improve on-time delivery to 98%',
+    slug: 'edtech-and-course-creator-kit',
+    name: 'EdTech & Course Creator Kit',
+    tagline: 'Enroll students, generate lesson plans, run quizzes, grade, and track progress',
+    description: 'An all-in-one educational stack to automate student enrollment, lesson content generation, automated quiz creation, instant grading, and retention tracking.',
+    category: 'EdTech',
+    type: 'journey',
+    headline: 'Launch courses 5x faster, boost student completion rates to 70%',
     benefits: [
-      'Dynamic dispatch routing reduces fuel consumption by up to 25%',
-      'Real-time last-mile tracking provides exact ETA transparency to customers',
-      'Warehouse automation streamlines order picking and dispatch throughput'
+      'Generate lesson plans, video scripts, and quizzes in minutes',
+      'Instant AI grading gives students immediate feedback on assignments',
+      'Automated retention alerts re-engage struggling students before they drop out'
     ],
-    use_case: 'Fleet dispatch, last-mile delivery tracking, and supply chain forecasting',
-    who_needs_it: ['VP of Supply Chain', 'Fleet Operations Directors', 'Logistics Managers'],
-    is_featured: false,
+    use_case: 'Online course creation, automated student grading, and learning retention management',
+    who_needs_it: ['Online Educators', 'EdTech Founders', 'Corporate Training Directors'],
+    is_featured: true,
     is_active: true,
     display_order: 10,
-    tools: [
-      { agent_id: 10, position: 1, role_in_workflow: 'Route Optimization Engine', reason: 'Calculates optimal multi-stop routes considering traffic and capacity.' },
-      { agent_id: 20, position: 2, role_in_workflow: 'Demand Forecasting & Tracking', reason: 'Provides real-time visibility and predicts regional order spikes.' },
-      { agent_id: 17, position: 3, role_in_workflow: 'Warehouse Management System', reason: 'Monitors warehouse machinery and inventory movement automatically.' },
-      { agent_id: 21, position: 4, role_in_workflow: 'Last-Mile Tracking Gateway', reason: 'Keeps end-customers informed with live tracking updates and proof of delivery.' }
-    ]
-  },
-  {
-    id: 11,
-    slug: 'agritech',
-    name: 'AgriTech',
-    tagline: 'Increase yield by 30%, reduce pesticide costs by 40%',
-    description: 'Precision agriculture intelligence stack combining satellite/camera crop health monitoring, localized microclimate prediction, and AI pest control recommendations.',
-    category: 'AgriTech',
-    headline: 'Increase yield by 30%, reduce pesticide costs by 40%',
-    benefits: [
-      'Early detection of crop disease through smartphone camera imaging',
-      'Precision weather & microclimate forecasting guides irrigation timing',
-      'Optimize fertilizer and pesticide usage to lower input expenditure'
-    ],
-    use_case: 'Precision agriculture, farm yield management, and crop quality assessment',
-    who_needs_it: ['Agri-Business Operations Leads', 'Agronomists', 'Farming Co-operative Directors'],
-    is_featured: false,
-    is_active: true,
-    display_order: 11,
-    tools: [
-      { agent_id: 29, position: 1, role_in_workflow: 'Crop Health Inspection', reason: 'Uses computer vision to assess crop quality and detect early disease.' },
-      { agent_id: 75, position: 2, role_in_workflow: 'Weather Prediction Bot', reason: 'Delivers actionable farming advice based on real-time microclimate data.' },
-      { agent_id: 19, position: 3, role_in_workflow: 'Yield Optimization Engine', reason: 'Digitizes plot management, seed selection, and harvest yield prediction.' },
-      { agent_id: 30, position: 4, role_in_workflow: 'Pest Management Advisor', reason: 'Guides targeted pesticide applications to protect crops and save costs.' }
-    ]
-  },
-  {
-    id: 12,
-    slug: 'edtech',
-    name: 'EdTech',
-    tagline: 'Improve student outcomes by 25%, reduce teacher workload by 40%',
-    description: 'Comprehensive educational AI suite featuring adaptive learning pathways, automated homework evaluation, predictive student intervention, and content creation.',
-    category: 'EdTech',
-    headline: 'Improve student outcomes by 25%, reduce teacher workload by 40%',
-    benefits: [
-      'Adaptive learning paths adjust to individual student comprehension speeds',
-      'Automated grading frees educators to focus on 1-on-1 student mentorship',
-      'Early risk detection identifies students needing academic intervention'
-    ],
-    use_case: 'K-12 & Higher Ed adaptive learning, automated grading, and curriculum generation',
-    who_needs_it: ['School Principals & Deans', 'EdTech Product Managers', 'Academic Directors'],
-    is_featured: false,
-    is_active: true,
-    display_order: 12,
-    tools: [
-      { agent_id: 190, position: 1, role_in_workflow: 'Personalized Learning Engine', reason: 'Creates interactive visual study guides and adaptive lesson modules.' },
-      { agent_id: 188, position: 2, role_in_workflow: 'Automated Grading System', reason: 'Evaluates written assignments and provides instant feedback to learners.' },
-      { agent_id: 36, position: 3, role_in_workflow: 'Student Success Predictor', reason: 'Tracks student progress and flags at-risk learners early.' },
-      { agent_id: 33, position: 4, role_in_workflow: 'AI Content Generation', reason: 'Generates quizzes, flashcards, and supplementary course materials automatically.' }
+    roles: [
+      { role_name: 'Student Enrollment', role_description: 'Captures student signups and processes course enrollments', role_order: 1, agent_id: 51, what_it_does: 'Captures student signups and processes course enrollments automatically.', why_in_step: 'Fills course cohorts without manual admin overhead.' },
+      { role_name: 'Course Content Gen', role_description: 'Generates lesson outlines, video scripts, and reading materials', role_order: 2, agent_id: 40, what_it_does: 'Generates lesson outlines, video scripts, and reading materials.', why_in_step: 'Cuts course creation time from months down to days.' },
+      { role_name: 'Assessments & Quizzes', role_description: 'Builds interactive quizzes and practice exams tailored to lessons', role_order: 3, agent_id: 88, what_it_does: 'Builds interactive quizzes and practice exams tailored to lessons.', why_in_step: 'Tests student understanding at every step of the course.' },
+      { role_name: 'Grading & Feedback', role_description: 'Grades student assignments and provides instant feedback tips', role_order: 4, agent_id: 46, what_it_does: 'Grades student assignments and provides instant feedback tips.', why_in_step: 'Gives students immediate guidance while freeing up instructor time.' },
+      { role_name: 'Student Retention', role_description: 'Monitors student progress and sends encouragement to learners', role_order: 5, agent_id: 44, what_it_does: 'Monitors student progress and sends encouragement to struggling learners.', why_in_step: 'Boosts course completion rates from 15% up to 70%.' }
     ]
   }
 ];

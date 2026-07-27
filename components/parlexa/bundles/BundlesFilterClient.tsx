@@ -16,17 +16,13 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
 
   const categories = [
     'All',
-    'AI & LLMs',
-    'Customer Experience',
+    'Retail & E-Commerce',
     'Marketing & Sales',
     'Enterprise & Automation',
     'HR & Workforce',
-    'Healthcare',
-    'FinTech',
-    'Retail & E-Commerce',
     'Developer Tools & Infra',
-    'Logistics & Supply Chain',
-    'AgriTech',
+    'FinTech',
+    'Healthcare',
     'EdTech'
   ];
 
@@ -61,6 +57,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
         {filteredBundles.map((bundle) => {
           const logos = bundle.tools_full.map(t => t.logo_url);
           const names = bundle.tools_full.map(t => t.name);
+          const roleNames = (bundle.roles || []).map(r => r.role_name);
 
           return (
             <div
@@ -78,7 +75,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
 
                 <div className="flex flex-col items-end gap-2">
                   <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#18181C] text-[#12B886] border border-[#12B886]/30 uppercase tracking-wider">
-                    {bundle.category.toUpperCase()}
+                    {bundle.type === 'journey' ? 'JOURNEY KIT' : 'DEPARTMENT KIT'}
                   </span>
                   <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-lg border border-white/5 text-xs text-amber-400 font-semibold">
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
@@ -93,9 +90,25 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
                 <h3 className="text-xl font-bold text-white group-hover:text-[#12B886] transition-colors duration-200 mb-2">
                   {bundle.name}
                 </h3>
-                <p className="text-sm text-gray-300 font-medium line-clamp-2 leading-relaxed">
+                <p className="text-sm text-gray-300 font-medium line-clamp-2 leading-relaxed mb-3">
                   "{bundle.tagline}"
                 </p>
+
+                {/* Journey Roles Sequence Pills */}
+                {roleNames.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-2">
+                    {roleNames.map((rn, idx) => (
+                      <React.Fragment key={rn}>
+                        <span className="text-[10px] font-bold text-gray-300 bg-[#18181C] px-2 py-0.5 rounded border border-white/10">
+                          {rn}
+                        </span>
+                        {idx < roleNames.length - 1 && (
+                          <span className="text-[10px] text-[#12B886] font-bold">→</span>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Tool Count & Included Tools Preview */}
@@ -103,9 +116,9 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
                 <div className="flex items-center justify-between text-xs font-medium text-gray-400">
                   <span className="flex items-center gap-1.5 text-gray-300">
                     <Layers className="w-4 h-4 text-[#12B886]" />
-                    <strong className="text-white font-bold">{bundle.tool_count} Tools</strong> in this Kit
+                    <strong className="text-white font-bold">{bundle.tool_count} Sequential Steps</strong>
                   </span>
-                  <span className="text-[#12B886] font-semibold">Direct Access</span>
+                  <span className="text-[#12B886] font-semibold">1 Tool per Role</span>
                 </div>
 
                 {/* Benefits List Preview */}

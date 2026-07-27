@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Clock, ListOrdered, DollarSign, Key, Users, Shield, CheckCircle, ClipboardCheck, FileText, Settings, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, Clock, ListOrdered, DollarSign, Key, Users, Shield, CheckCircle, ClipboardCheck, FileText, Settings, MessageSquare, Layers } from 'lucide-react';
 import { Navbar } from "@/components/parlexa/Navbar";
 import { Footer } from "@/components/parlexa/Footer";
 import { createClient } from "@/lib/supabase/server";
@@ -30,6 +30,7 @@ export default async function AdminLayout({
 
   const navLinks = [
     { href: '/admin', label: 'Platform Overview', icon: <LayoutDashboard size={18} /> },
+    { href: '/admin/bundle-builder', label: 'Bundle Builder', icon: <Layers size={18} />, accent: '#12B886' },
     { href: '/admin/listings', label: 'Manage Listings', icon: <ListOrdered size={18} /> },
     { href: '/admin/transactions', label: 'Transactions', icon: <DollarSign size={18} />, accent: '#34d399' },
     { href: '/admin/claims', label: 'Listing Claims', icon: <Key size={18} /> },
@@ -62,7 +63,6 @@ export default async function AdminLayout({
                 fontWeight: 600, fontSize: '14px', textDecoration: 'none',
                 display: 'flex', alignItems: 'center', gap: '12px',
                 transition: 'all 0.2s ease',
-                // Using a hover-supporting approach for CSS-in-JS or just clean styles
               }}
               className="admin-sidebar-link"
             >
