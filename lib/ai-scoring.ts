@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export interface SubScore {
   score: number; // 0-10
@@ -80,12 +81,11 @@ export function scoreIndianPricing(agent: AgentForScoring): SubScore {
 }
 
 // ---------------------------------------------------------------------------
-// STEP 2: The 4 dimensions Gemini judges.
+// STEP 2: The 4 dimensions judged by Gemini / OpenAI / Heuristic.
 // ---------------------------------------------------------------------------
 async function scoreWithGemini(
   agent: AgentForScoring
 ): Promise<Omit<AiScores, 'indian_pricing'>> {
-  // Model name locked to gemini-flash-latest — do not swap to gemini-2.5-flash
   const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
   const prompt = `
@@ -159,6 +159,175 @@ Return ONLY valid JSON, no markdown formatting, no preamble, in exactly this sha
   };
 }
 
+// OpenAI Fallback Scoring
+async function scoreWithOpenAI(
+  agent: AgentForScoring
+): Promise<Omit<AiScores, 'indian_pricing'>> {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  const prompt = `
+You are scoring a submitted AI tool listing for a marketplace. Score each dimension 0-10 with a short reason (max 2 sentences each).
+
+TOOL INFO:
+Name: ${agent.name || 'not provided'}
+Summary: ${agent.summary || 'not provided'}
+Use cases: ${agent.use_cases ?? 'not provided'}
+Category: ${agent.category ?? 'not provided'}
+Industry: ${agent.raw_industry ?? 'not provided'}
+Demo URL: ${agent.demo_url ?? 'not provided'}
+Video URL: ${agent.video_url ?? 'not provided'}
+Screenshots provided: ${agent.screenshots?.length ?? 0}
+Logo provided: ${agent.logo_url ? 'yes' : 'no'}
+Founders: ${agent.founders ?? 'not provided'}
+Founded year: ${agent.founded_year ?? 'not provided'}
+Team size: ${agent.team_size ?? 'not provided'}
+Company LinkedIn: ${agent.company_linkedin ?? 'not provided'}
+Company name: ${agent.company_name ?? 'not provided'}
+City: ${agent.city ?? 'not provided'}
+
+Score these 4 dimensions:
+1. business_application — Is the use case clear, specific, and viable as a business tool?
+2. user_friendliness — Is a demo or video walkthrough provided?
+3. ui_ux_design — Are screenshots and a logo provided?
+4. foundation_leadership — Are founders, team size, LinkedIn listed?
+
+Return ONLY valid JSON:
+{
+  "business_application": {"score": 0-10, "reason": "..."},
+  "user_friendliness": {"score": 0-10, "reason": "..."},
+  "ui_ux_design": {"score": 0-10, "reason": "..."},
+  "foundation_leadership": {"score": 0-10, "reason": "..."}
+}
+`.trim();
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [{ role: 'user', content: prompt }],
+    response_format: { type: 'json_object' },
+  });
+
+  const content = completion.choices[0]?.message?.content?.trim() || '{}';
+  const parsed = JSON.parse(content);
+  const clamp = (n: any) => Math.max(0, Math.min(10, Number(n) || 0));
+
+  return {
+    business_application: {
+      score: clamp(parsed.business_application?.score),
+      reason: parsed.business_application?.reason || 'Use case and summary evaluated.',
+    },
+    user_friendliness: {
+      score: clamp(parsed.user_friendliness?.score),
+      reason: parsed.user_friendliness?.reason || 'Walkthrough and demo availability.',
+    },
+    ui_ux_design: {
+      score: clamp(parsed.ui_ux_design?.score),
+      reason: parsed.ui_ux_design?.reason || 'Visual assets and design presentation.',
+    },
+    foundation_leadership: {
+      score: clamp(parsed.foundation_leadership?.score),
+      reason: parsed.foundation_leadership?.reason || 'Founding team and company details.',
+    },
+  };
+}
+
+// Deterministic Heuristic Fallback
+function scoreWithHeuristic(
+  agent: AgentForScoring
+): Omit<AiScores, 'indian_pricing'> {
+  let bizScore = 5;
+  const bizReasons: string[] = [];
+  if (agent.summary && agent.summary.length > 50) {
+    bizScore += 3;
+    bizReasons.push('Detailed problem description provided');
+  } else {
+    bizReasons.push('Basic tool description provided');
+  }
+  if (agent.use_cases) {
+    bizScore += 2;
+    bizReasons.push('Enterprise use cases specified');
+  }
+
+  let ufScore = 5;
+  const ufReasons: string[] = [];
+  if (agent.demo_url) {
+    ufScore += 3;
+    ufReasons.push('Live demo URL provided');
+  }
+  if (agent.video_url) {
+    ufScore += 2;
+    ufReasons.push('Video walkthrough provided');
+  }
+  if (!agent.demo_url && !agent.video_url) {
+    ufReasons.push('No demo or video walkthrough link');
+  }
+
+  let uiScore = 5;
+  const uiReasons: string[] = [];
+  if (agent.screenshots && agent.screenshots.length > 0) {
+    uiScore += 3;
+    uiReasons.push(`${agent.screenshots.length} screenshot(s) uploaded`);
+  } else {
+    uiReasons.push('No product screenshots provided');
+  }
+  if (agent.logo_url) {
+    uiScore += 2;
+    uiReasons.push('Company logo uploaded');
+  }
+
+  let leadScore = 4;
+  const leadReasons: string[] = [];
+  if (agent.founders) {
+    leadScore += 2;
+    leadReasons.push(`Founders listed (${agent.founders})`);
+  }
+  if (agent.company_linkedin) {
+    leadScore += 2;
+    leadReasons.push('Company LinkedIn listed');
+  }
+  if (agent.company_name) {
+    leadScore += 1;
+    leadReasons.push(`Company name (${agent.company_name})`);
+  }
+  if (agent.team_size) {
+    leadScore += 1;
+    leadReasons.push(`Team size (${agent.team_size})`);
+  }
+
+  const clamp = (n: number) => Math.max(0, Math.min(10, n));
+
+  return {
+    business_application: { score: clamp(bizScore), reason: bizReasons.join('; ') },
+    user_friendliness: { score: clamp(ufScore), reason: ufReasons.join('; ') },
+    ui_ux_design: { score: clamp(uiScore), reason: uiReasons.join('; ') },
+    foundation_leadership: { score: clamp(leadScore), reason: leadReasons.join('; ') },
+  };
+}
+
+async function score4Dimensions(
+  agent: AgentForScoring
+): Promise<Omit<AiScores, 'indian_pricing'>> {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (geminiKey && !geminiKey.startsWith('AQ.')) {
+    try {
+      return await scoreWithGemini(agent);
+    } catch (err: any) {
+      console.warn('Gemini scoring failed, trying OpenAI fallback:', err?.message || String(err));
+    }
+  } else if (geminiKey) {
+    console.warn('GEMINI_API_KEY is invalid/OAuth format. Triggering OpenAI or Heuristic fallback.');
+  }
+
+  if (process.env.OPENAI_API_KEY) {
+    try {
+      return await scoreWithOpenAI(agent);
+    } catch (err: any) {
+      console.warn('OpenAI fallback scoring failed:', err?.message || String(err));
+    }
+  }
+
+  return scoreWithHeuristic(agent);
+}
+
 // ---------------------------------------------------------------------------
 // STEP 3: Verified Badge bonus — applied only to Foundation/Leadership.
 // ---------------------------------------------------------------------------
@@ -184,7 +353,7 @@ export function applyVerificationBonus(
 // ---------------------------------------------------------------------------
 export async function scoreAgent(agent: AgentForScoring): Promise<AiScores> {
   const [geminiScores, indianPricing] = await Promise.all([
-    scoreWithGemini(agent),
+    score4Dimensions(agent),
     Promise.resolve(scoreIndianPricing(agent)),
   ]);
 
