@@ -72,7 +72,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Send confirmation email
+    // 4. Insert external review links if submitted by vendor
+    if (listing_data.external_reviews && Array.isArray(listing_data.external_reviews) && insertedData?.[0]?.id) {
+      const agentId = insertedData[0].id;
+      const validLinks = listing_data.external_reviews
+        .filter((item: any) => item && item.platform && item.url && item.url.trim().length > 0)
+        .slice(0, 3)
+        .map((item: any) => ({
+          agent_id: agentId,
+          platform: item.platform,
+          source: item.platform,
+          url: item.url.trim(),
+          source_url: item.url.trim(),
+          status: 'unverified',
+        }));
+
+      if (validLinks.length > 0) {
+        const { error: extError } = await supabase.from('external_reviews').insert(validLinks);
+        if (extError) {
+          console.error('Error inserting external review submissions:', extError);
+        }
+      }
+    }
+
+    // 5. Send confirmation email
     try {
       if (user.email) {
         await sendSubmissionConfirmation(user.email, listing_data.name);

@@ -5,12 +5,19 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { Loader2, Sparkles, AlertCircle, CheckCircle, XCircle, Clock } from 'lucide-react';
 
+import { ExternalReview } from '@/lib/api/externalReviews';
+
 interface SubScore {
   score: number;
   reason: string;
 }
 
 interface AiScores {
+  business_application?: SubScore;
+  user_friendliness?: SubScore;
+  ui_ux_design?: SubScore;
+  foundation_leadership?: SubScore;
+  indian_pricing?: SubScore;
   clarity?: SubScore;
   credibility?: SubScore;
   visual?: SubScore;
@@ -32,6 +39,7 @@ interface PendingAgent {
   quality_notes: string | null;
   reviewed_at: string | null;
   reviewed_by: string | null;
+  external_reviews?: ExternalReview[] | null;
 }
 
 export default function ApprovalQueuePage() {
@@ -66,6 +74,64 @@ export default function ApprovalQueuePage() {
       }
     >
   >({});
+
+  // External review verification modal state
+  const [verifyingReview, setVerifyingReview] = useState<{
+    id: number;
+    platform: string;
+    url: string;
+    agentId: number;
+  } | null>(null);
+  const [extRating, setExtRating] = useState('4.5');
+  const [extCount, setExtCount] = useState('10');
+  const [verifyingLoading, setVerifyingLoading] = useState(false);
+
+  const handleVerifyReviewSubmit = async () => {
+    if (!verifyingReview) return;
+    setVerifyingLoading(true);
+
+    try {
+      const res = await fetch('/api/admin/verify-external-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          review_id: verifyingReview.id,
+          rating: parseFloat(extRating),
+          reviews_count: parseInt(extCount, 10),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to verify external review');
+      }
+
+      setPendingAgents(prev =>
+        prev.map(agent => {
+          if (agent.id === verifyingReview.agentId && agent.external_reviews) {
+            const updatedExt = agent.external_reviews.map(r =>
+              r.id === verifyingReview.id
+                ? {
+                    ...r,
+                    status: 'verified' as const,
+                    rating: parseFloat(extRating),
+                    reviews_count: parseInt(extCount, 10),
+                  }
+                : r
+            );
+            return { ...agent, external_reviews: updatedExt };
+          }
+          return agent;
+        })
+      );
+
+      setVerifyingReview(null);
+    } catch (err: any) {
+      alert('Error verifying external review: ' + (err.message || String(err)));
+    } finally {
+      setVerifyingLoading(false);
+    }
+  };
 
   const supabase = createClient();
 
@@ -535,50 +601,202 @@ export default function ApprovalQueuePage() {
                           <>
                             {/* Read-Only AI Sub-Scores */}
                             {agent.ai_scores && (
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {/* Clarity */}
-                                <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
-                                  <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                      Clarity
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                {agent.ai_scores.business_application ? (
+                                  <>
+                                    {/* Business Application */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          Business App
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.business_application.score}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.business_application.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+
+                                    {/* User Friendliness */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          User Friendliness
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.user_friendliness?.score ?? 0}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.user_friendliness?.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+
+                                    {/* UI / UX Design */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          UI/UX Design
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.ui_ux_design?.score ?? 0}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.ui_ux_design?.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+
+                                    {/* Foundation & Leadership */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          Leadership
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.foundation_leadership?.score ?? 0}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.foundation_leadership?.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+
+                                    {/* Indian Sensitive Pricing */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          Indian Pricing
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.indian_pricing?.score ?? 0}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.indian_pricing?.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    {/* Clarity */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          Clarity
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.clarity?.score ?? 0}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.clarity?.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+
+                                    {/* Credibility */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          Credibility
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.credibility?.score ?? 0}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.credibility?.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+
+                                    {/* Visual */}
+                                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+                                      <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                          Visual (UI/UX)
+                                        </span>
+                                        <span className="text-sm font-bold text-cyan-400">
+                                          {agent.ai_scores.visual?.score ?? 0}/10
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        {agent.ai_scores.visual?.reason || 'No reasoning provided.'}
+                                      </p>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            )}
+
+                            {/* External Reviews Proof Submissions (if present) */}
+                            {agent.external_reviews && agent.external_reviews.length > 0 && (
+                              <div className="bg-white/[0.02] border border-cyan-500/20 rounded-xl p-5 space-y-3">
+                                <div className="flex justify-between items-center">
+                                  <h4 className="text-xs font-bold text-cyan-400 uppercase tracking-wide flex items-center gap-2">
+                                    <span>External Review Proofs</span>
+                                    <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full">
+                                      {agent.external_reviews.filter(r => r.status === 'verified').length} / {agent.external_reviews.length} Verified
                                     </span>
-                                    <span className="text-sm font-bold text-cyan-400">
-                                      {agent.ai_scores.clarity?.score ?? 0}/10
-                                    </span>
-                                  </div>
-                                  <p className="text-xs text-gray-300 leading-relaxed">
-                                    {agent.ai_scores.clarity?.reason || 'No reasoning provided.'}
-                                  </p>
+                                  </h4>
                                 </div>
 
-                                {/* Credibility */}
-                                <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
-                                  <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                      Credibility
-                                    </span>
-                                    <span className="text-sm font-bold text-cyan-400">
-                                      {agent.ai_scores.credibility?.score ?? 0}/10
-                                    </span>
-                                  </div>
-                                  <p className="text-xs text-gray-300 leading-relaxed">
-                                    {agent.ai_scores.credibility?.reason || 'No reasoning provided.'}
-                                  </p>
-                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                  {agent.external_reviews.map(rev => (
+                                    <div
+                                      key={rev.id}
+                                      className="p-3 bg-black/40 border border-white/10 rounded-lg flex flex-col justify-between gap-2"
+                                    >
+                                      <div>
+                                        <div className="flex justify-between items-center mb-1">
+                                          <span className="text-xs font-bold text-white">{rev.platform || rev.source}</span>
+                                          {rev.status === 'verified' ? (
+                                            <span className="text-[10px] font-semibold text-green-400 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20 flex items-center gap-1">
+                                              <CheckCircle className="w-3 h-3" /> Verified
+                                            </span>
+                                          ) : (
+                                            <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                                              Unverified
+                                            </span>
+                                          )}
+                                        </div>
 
-                                {/* Visual */}
-                                <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
-                                  <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                                      Visual (UI/UX)
-                                    </span>
-                                    <span className="text-sm font-bold text-cyan-400">
-                                      {agent.ai_scores.visual?.score ?? 0}/10
-                                    </span>
-                                  </div>
-                                  <p className="text-xs text-gray-300 leading-relaxed">
-                                    {agent.ai_scores.visual?.reason || 'No reasoning provided.'}
-                                  </p>
+                                        <a
+                                          href={rev.url || rev.source_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-xs text-cyan-400 hover:underline break-all block"
+                                        >
+                                          {rev.url || rev.source_url || 'View Link'} →
+                                        </a>
+
+                                        {rev.status === 'verified' && (
+                                          <div className="text-xs text-gray-300 mt-2 font-mono">
+                                            ★ {rev.rating} / 5.0 ({rev.reviews_count} reviews)
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {rev.status !== 'verified' && (
+                                        <button
+                                          onClick={() => {
+                                            setVerifyingReview({
+                                              id: rev.id,
+                                              platform: rev.platform || rev.source,
+                                              url: rev.url || rev.source_url,
+                                              agentId: agent.id,
+                                            });
+                                            setExtRating('4.5');
+                                            setExtCount('15');
+                                          }}
+                                          className="w-full mt-1 py-1 px-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-semibold rounded transition-all"
+                                        >
+                                          Check & Verify Rating
+                                        </button>
+                                      )}
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
                             )}
@@ -736,6 +954,82 @@ export default function ApprovalQueuePage() {
                   className="flex-1 px-4 py-2 bg-red-500/20 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/30 disabled:opacity-50 font-semibold text-sm transition-all flex items-center justify-center gap-2"
                 >
                   {processingId ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Rejection'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* External Review Verification Modal */}
+        {verifyingReview && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-[#0f1419] border border-cyan-500/30 rounded-xl p-6 max-w-md w-full shadow-2xl">
+              <h3 className="text-xl font-bold text-white mb-1">
+                Verify {verifyingReview.platform} Rating
+              </h3>
+              <p className="text-xs text-gray-400 mb-4">
+                Open the URL in a tab, verify the real rating and review count on {verifyingReview.platform}, then save below.
+              </p>
+
+              <div className="mb-4 p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
+                <span className="text-xs text-gray-400 block mb-1">Submitted Link:</span>
+                <a
+                  href={verifyingReview.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-cyan-400 underline font-mono break-all"
+                >
+                  {verifyingReview.url} ↗
+                </a>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1">
+                    Rating (0.0 - 5.0)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    value={extRating}
+                    onChange={e => setExtRating(e.target.value)}
+                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2 text-white font-bold text-sm outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1">
+                    Total Review Count
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={extCount}
+                    onChange={e => setExtCount(e.target.value)}
+                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2 text-white font-bold text-sm outline-none focus:border-cyan-400"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setVerifyingReview(null)}
+                  className="flex-1 px-4 py-2 bg-white/[0.08] text-gray-300 rounded-lg hover:bg-white/[0.12] text-sm font-medium transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleVerifyReviewSubmit}
+                  disabled={verifyingLoading}
+                  className="flex-1 px-4 py-2 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 disabled:opacity-50 text-sm transition-all flex items-center justify-center gap-2"
+                >
+                  {verifyingLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Confirm & Save'
+                  )}
                 </button>
               </div>
             </div>

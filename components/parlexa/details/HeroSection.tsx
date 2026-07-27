@@ -66,10 +66,12 @@ function useTilt() {
 
 interface HeroSectionProps {
   agent: Agent;
+  hasVerifiedReviews?: boolean;
 }
 
 export function HeroSection({ 
-  agent
+  agent,
+  hasVerifiedReviews = false
 }: HeroSectionProps) {
   const [featuredImgError, setFeaturedImgError] = useState(false);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
@@ -124,12 +126,17 @@ export function HeroSection({
                 {agent.name.substring(0, 2).toUpperCase()}
               </div>
             )}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
               <h1 style={{ fontSize: '48px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{agent.name}</h1>
               {agent.isVerified && (
                 <span className="badge-tooltip" style={{ flexShrink: 0 }}>
                   <span className="verified-badge" />
                   <span className="tooltip-text">Verified by Parlexa</span>
+                </span>
+              )}
+              {!hasVerifiedReviews && (
+                <span className="px-3 py-1 flex items-center justify-center bg-cyan-500/10 border border-cyan-500/30 rounded-full text-[12px] font-semibold text-cyan-300 gap-1.5 shadow-sm">
+                  ✨ Newly Launched
                 </span>
               )}
             </div>

@@ -55,6 +55,7 @@ interface FormData {
   company_gstin: string;
   contact_name: string;
   contact_phone: string;
+  external_reviews: Array<{ platform: string; url: string }>;
 }
 
 const defaultForm: FormData = {
@@ -63,6 +64,7 @@ const defaultForm: FormData = {
   pricing_model: '', pricing: '', price_range: '', free_trial: '', has_india_pricing: false, inr_price: '',
   company_name: '', founded_year: '', team_size: '', city: '', founders: '', company_linkedin: '', company_gstin: '',
   contact_name: '', contact_phone: '',
+  external_reviews: [],
 };
 
 export default function NewListingPage() {
@@ -104,7 +106,7 @@ export default function NewListingPage() {
     return () => clearTimeout(timer);
   }, [autoSave]);
 
-  const updateField = (field: keyof FormData, value: string | string[] | boolean) => {
+  const updateField = (field: keyof FormData, value: any) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -463,6 +465,78 @@ export default function NewListingPage() {
                 <label className="listing-label">Contact Phone *</label>
                 <input className="listing-input" type="tel" placeholder="e.g. +91 9876543210" value={form.contact_phone} onChange={e => updateField('contact_phone', e.target.value)} />
               </div>
+            </div>
+
+            {/* Optional External Reviews Proof Section */}
+            <div className="listing-field" style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <div>
+                  <label className="listing-label" style={{ marginBottom: 0 }}>External Reviews & Tractions <span className="optional">(Optional - Max 3)</span></label>
+                  <p style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '2px' }}>
+                    Provide links to your reviews on G2, Capterra, Trustpilot, Product Hunt, etc. Admins will verify your ratings.
+                  </p>
+                </div>
+                {form.external_reviews.length < 3 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateField('external_reviews', [
+                        ...form.external_reviews,
+                        { platform: 'G2', url: '' },
+                      ])
+                    }
+                    className="px-3 py-1 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/30 rounded text-xs font-semibold"
+                  >
+                    + Add Link
+                  </button>
+                )}
+              </div>
+
+              {form.external_reviews.map((rev, idx) => (
+                <div key={idx} className="listing-grid-2" style={{ marginTop: '12px', alignItems: 'center' }}>
+                  <div className="listing-field" style={{ margin: 0 }}>
+                    <select
+                      className="listing-input listing-select"
+                      value={rev.platform}
+                      onChange={e => {
+                        const updated = [...form.external_reviews];
+                        updated[idx].platform = e.target.value;
+                        updateField('external_reviews', updated);
+                      }}
+                    >
+                      <option value="G2">G2</option>
+                      <option value="Capterra">Capterra</option>
+                      <option value="Trustpilot">Trustpilot</option>
+                      <option value="Product Hunt">Product Hunt</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div className="listing-field" style={{ margin: 0, display: 'flex', gap: '8px' }}>
+                    <input
+                      className="listing-input"
+                      type="url"
+                      placeholder="https://g2.com/products/your-product/reviews"
+                      value={rev.url}
+                      onChange={e => {
+                        const updated = [...form.external_reviews];
+                        updated[idx].url = e.target.value;
+                        updateField('external_reviews', updated);
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = form.external_reviews.filter((_, i) => i !== idx);
+                        updateField('external_reviews', updated);
+                      }}
+                      style={{ color: '#ef4444', padding: '0 8px', fontSize: '16px', cursor: 'pointer' }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </>
         )}

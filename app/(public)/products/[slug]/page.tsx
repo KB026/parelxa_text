@@ -95,6 +95,8 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
   const isVendor = user?.id === agent.userId;
   const isSaved = user ? await checkWishlistStatus(Number(agent.id)) : false;
 
+  const hasVerifiedReviews = Boolean(externalReviews && externalReviews.length > 0);
+
   return (
     <div className="pb-28 md:pb-12 px-5 md:px-8" style={{ maxWidth: '1280px', margin: '0 auto', paddingTop: '100px' }}>
       <script
@@ -128,6 +130,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
             <div className="flex flex-col gap-12 md:mb-12">
               <HeroSection 
                 agent={agent} 
+                hasVerifiedReviews={hasVerifiedReviews}
               />
               <ScrollReveal>
                 <AboutSection 

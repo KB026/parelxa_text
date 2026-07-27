@@ -92,17 +92,22 @@ export function ExternalReviews({ reviews, agentName }: ExternalReviewsProps) {
                   >
                     {sourceIcons[review.source] || <Globe className="w-5 h-5" />}
                   </div>
-                  <span style={{ fontWeight: 700, fontSize: '15px', color: 'white', letterSpacing: '-0.01em' }}>{review.source}</span>
+                  <span style={{ fontWeight: 700, fontSize: '15px', color: 'white', letterSpacing: '-0.01em' }}>{review.source || review.platform}</span>
                 </div>
-                {review.rating > 0 && (
-                  <div style={{ 
-                    display: 'flex', alignItems: 'center', gap: '6px', 
-                    color: '#fbbf24', fontSize: '15px', fontWeight: 800,
-                    background: 'rgba(251, 191, 36, 0.1)', padding: '4px 10px', borderRadius: '20px'
-                  }}>
-                    <Star className="w-4 h-4 fill-current" /> {review.rating ? review.rating.toFixed(1) : '0.0'}
-                  </div>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '11px', background: 'rgba(34, 197, 94, 0.15)', color: '#4ade80', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, border: '1px solid rgba(34, 197, 94, 0.3)' }}>
+                    ✓ Verified
+                  </span>
+                  {review.rating > 0 && (
+                    <div style={{ 
+                      display: 'flex', alignItems: 'center', gap: '6px', 
+                      color: '#fbbf24', fontSize: '15px', fontWeight: 800,
+                      background: 'rgba(251, 191, 36, 0.1)', padding: '4px 10px', borderRadius: '20px'
+                    }}>
+                      <Star className="w-4 h-4 fill-current" /> {review.rating ? review.rating.toFixed(1) : '0.0'}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <p style={{ 

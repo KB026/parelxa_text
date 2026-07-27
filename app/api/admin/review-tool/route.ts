@@ -98,18 +98,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 5. Compute final_score and non-overlapping decision
+    // 5. Compute final_score and non-overlapping decision (inclusive lower bounds)
     const aiScoreNum = Number(agent.ai_score);
     const adminScoreNum = Number(admin_score);
     const finalScore = Math.round(((aiScoreNum + adminScoreNum) / 2) * 10) / 10;
 
     let decision: 'rejected' | 'pending' | 'approved';
-    if (finalScore < 4) {
+    if (finalScore < 5.0) {
       decision = 'rejected';
-    } else if (finalScore > 7) {
+    } else if (finalScore >= 7.0) {
       decision = 'approved';
     } else {
-      decision = 'pending'; // 4 <= finalScore <= 7
+      decision = 'pending'; // 5.0 <= finalScore < 7.0
     }
 
     // Prepare quality notes
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       notes && notes.trim().length > 0
         ? notes.trim()
         : decision === 'pending'
-        ? 'Manual review required (score between 4.0 and 7.0)'
+        ? 'Manual review required (score between 5.0 and 7.0)'
         : null;
 
     // 6. Update agent row in Supabase using adminSupabase
@@ -170,15 +170,47 @@ export async function POST(req: NextRequest) {
 
             if (aiScoresObj) {
               const subReasons: string[] = [];
-              if (aiScoresObj.clarity?.reason) {
-                subReasons.push(`• Clarity: ${aiScoresObj.clarity.reason}`);
+
+              // Format 5-dimension sub-scores
+              if (aiScoresObj.business_application?.reason) {
+                subReasons.push(
+                  `• Business Application (${aiScoresObj.business_application.score ?? 0}/10): ${aiScoresObj.business_application.reason}`
+                );
               }
-              if (aiScoresObj.credibility?.reason) {
-                subReasons.push(`• Credibility: ${aiScoresObj.credibility.reason}`);
+              if (aiScoresObj.user_friendliness?.reason) {
+                subReasons.push(
+                  `• User Friendliness (${aiScoresObj.user_friendliness.score ?? 0}/10): ${aiScoresObj.user_friendliness.reason}`
+                );
               }
-              if (aiScoresObj.visual?.reason) {
-                subReasons.push(`• Visual: ${aiScoresObj.visual.reason}`);
+              if (aiScoresObj.ui_ux_design?.reason) {
+                subReasons.push(
+                  `• UI/UX Design (${aiScoresObj.ui_ux_design.score ?? 0}/10): ${aiScoresObj.ui_ux_design.reason}`
+                );
               }
+              if (aiScoresObj.foundation_leadership?.reason) {
+                subReasons.push(
+                  `• Foundation & Leadership (${aiScoresObj.foundation_leadership.score ?? 0}/10): ${aiScoresObj.foundation_leadership.reason}`
+                );
+              }
+              if (aiScoresObj.indian_pricing?.reason) {
+                subReasons.push(
+                  `• Indian Sensitive Pricing (${aiScoresObj.indian_pricing.score ?? 0}/10): ${aiScoresObj.indian_pricing.reason}`
+                );
+              }
+
+              // Fallback for legacy 3-dimension scores
+              if (subReasons.length === 0) {
+                if (aiScoresObj.clarity?.reason) {
+                  subReasons.push(`• Clarity: ${aiScoresObj.clarity.reason}`);
+                }
+                if (aiScoresObj.credibility?.reason) {
+                  subReasons.push(`• Credibility: ${aiScoresObj.credibility.reason}`);
+                }
+                if (aiScoresObj.visual?.reason) {
+                  subReasons.push(`• Visual: ${aiScoresObj.visual.reason}`);
+                }
+              }
+
               if (subReasons.length > 0) {
                 feedbackLines.push(`AI Feedback:\n${subReasons.join('\n')}`);
               }
@@ -199,11 +231,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 8. Return result
+    // 8. Return result with explicit outcome labeling
+    const outcomeLabel =
+      decision === 'approved'
+        ? 'Approved'
+        : decision === 'rejected'
+        ? 'Rejected'
+        : 'Manual Review';
+
     return NextResponse.json({
       success: true,
       final_score: finalScore,
       decision,
+      outcome: outcomeLabel,
     });
   } catch (error: any) {
     console.error('Unexpected error in /api/admin/review-tool:', error);
@@ -213,3 +253,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

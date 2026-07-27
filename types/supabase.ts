@@ -315,33 +315,51 @@ export type Database = {
       external_reviews: {
         Row: {
           agent_id: number | null
+          created_at: string | null
           id: number
           last_fetched_at: string | null
+          platform: string | null
           rating: number | null
           reviews_count: number | null
           snippet: string | null
           source: string
           source_url: string | null
+          status: string | null
+          url: string | null
+          verified_at: string | null
+          verified_by: string | null
         }
         Insert: {
           agent_id?: number | null
+          created_at?: string | null
           id?: number
           last_fetched_at?: string | null
-          rating?: number | null
-          reviews_count?: number | null
-          snippet?: string | null
-          source: string
-          source_url?: string | null
-        }
-        Update: {
-          agent_id?: number | null
-          id?: number
-          last_fetched_at?: string | null
+          platform?: string | null
           rating?: number | null
           reviews_count?: number | null
           snippet?: string | null
           source?: string
           source_url?: string | null
+          status?: string | null
+          url?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          agent_id?: number | null
+          created_at?: string | null
+          id?: number
+          last_fetched_at?: string | null
+          platform?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          snippet?: string | null
+          source?: string
+          source_url?: string | null
+          status?: string | null
+          url?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Relationships: [
           {
