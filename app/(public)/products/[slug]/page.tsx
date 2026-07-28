@@ -3,28 +3,28 @@ import { notFound } from 'next/navigation';
 import { getAgentBySlug, getReviewStats, getReviews, getUserReview, getSimilarAgents } from '@/lib/api';
 
 import { trackInteraction } from '@/lib/analytics';
-import { ReviewSystem } from '@/components/parlexa/reviews/ReviewSystem';
+import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/server';
 import { HeroSection } from '@/components/parlexa/details/HeroSection';
-
 import { AboutSection } from '@/components/parlexa/details/AboutSection';
-
 import { CompanySection } from '@/components/parlexa/details/CompanySection';
 import { UseCasesSection } from '@/components/parlexa/details/UseCasesSection';
 import { StickyLeadBox } from '@/components/parlexa/details/StickyLeadBox';
-import { SimilarTools } from '@/components/parlexa/details/SimilarTools';
-import { BundleCrossSell } from '@/components/parlexa/details/BundleCrossSell';
 import { getBundleForAgent } from '@/lib/bundles-service';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Star, Bookmark, ArrowLeftRight, Share2 } from 'lucide-react';
-
-import { ViewTracker } from '@/components/parlexa/details/ViewTracker';
 import { getExternalReviews } from '@/lib/api/externalReviews';
-import { ExternalReviews } from '@/components/parlexa/details/ExternalReviews';
 import { checkWishlistStatus } from '@/app/actions/wishlist';
 import { ScrollReveal } from '@/components/parlexa/ui/ScrollReveal';
 import { VisitWebsiteButton } from '@/components/parlexa/details/VisitWebsiteButton';
+import { ProductSchema } from '@/components/seo/ProductSchema';
+
+const ReviewSystem = dynamic(() => import('@/components/parlexa/reviews/ReviewSystem').then(mod => mod.ReviewSystem));
+const SimilarTools = dynamic(() => import('@/components/parlexa/details/SimilarTools').then(mod => mod.SimilarTools));
+const BundleCrossSell = dynamic(() => import('@/components/parlexa/details/BundleCrossSell').then(mod => mod.BundleCrossSell));
+const ExternalReviews = dynamic(() => import('@/components/parlexa/details/ExternalReviews').then(mod => mod.ExternalReviews));
+const ViewTracker = dynamic(() => import('@/components/parlexa/details/ViewTracker').then(mod => mod.ViewTracker), { ssr: false });
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const agent = await getAgentBySlug(params.slug);
@@ -66,35 +66,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
     getBundleForAgent(Number(agent.id))
   ]);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": agent.name,
-    "description": agent.description || agent.summary,
-    "applicationCategory": agent.category,
-    "operatingSystem": "Web, Cloud",
-    "offers": {
-      "@type": "Offer",
-      "price": agent.pricing.toLowerCase().includes('free') ? "0" : "1",
-      "priceCurrency": "USD",
-    },
-    "aggregateRating": stats && stats.totalReviews > 0 ? {
-      "@type": "AggregateRating",
-      "ratingValue": stats.averageRating,
-      "reviewCount": stats.totalReviews
-    } : undefined
-  };
-
-  const breadcrumbs = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Marketplace", "item": "https://parlexa.in/products" },
-      { "@type": "ListItem", "position": 2, "name": agent.category, "item": `https://parlexa.in/products?cats=${encodeURIComponent(agent.category)}` },
-      { "@type": "ListItem", "position": 3, "name": agent.name, "item": `https://parlexa.in/products/${params.slug}` }
-    ]
-  };
-
   const isVendor = user?.id === agent.userId;
   const isSaved = user ? await checkWishlistStatus(Number(agent.id)) : false;
 
@@ -102,14 +73,7 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
 
   return (
     <div className="pb-28 md:pb-12 px-5 md:px-8" style={{ maxWidth: '1280px', margin: '0 auto', paddingTop: '100px' }}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
-      />
+      <ProductSchema agent={agent} stats={stats} />
       <ViewTracker agentId={Number(agent.id)} userId={user?.id} />
 
       {/* Back Link */}

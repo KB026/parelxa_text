@@ -130,11 +130,27 @@ ${context || 'No specific matches found in the direct database.'}
 TASK:
 
 1. Identify Mismatches: If the user searches for something completely unrelated to SaaS/AI (e.g., "shoes", "best food"), acknowledge the mismatch playfully in the ai_explanation (e.g., "Looks like you took a wrong turn! I specialize in AI tools, not ${query}. Try searching for 'Video Generators' instead!"). Set exact_match_found to false and return an EMPTY recommendations array.
-2. Determine Matches: If the query IS relevant, select the top 3 tools that match the user's intent.
-   - CRITICAL RATING REQUIREMENT: You MUST pick the tools with the HIGHEST user ratings on Parlexa (e.g. 4.8, 4.7, 4.6). Available tools are listed in order of highest rating first. Always prefer tools near the top of the list!
-   - Mark the single best top-rated tool with match_type: "exact", and 2 complementary top-rated tools with match_type: "related". Set exact_match_found to true.
-   - Return exactly 3 recommendations (unless the query is totally unrelated, then 0).
+
+2. Determine Matches & Intent Disambiguation:
+   - ROLE/FUNCTION DISAMBIGUATION (DO vs. TRAIN):
+     * When a query names a role or function (e.g., "sales agent", "support agent", "hiring agent", "onboarding agent"), default to interpreting this as "an AI agent that performs/executes that function" (e.g., executing outreach, automated cold emailing, handling support tickets, managing sales pipelines, screening candidates).
+     * Do NOT select tools that train, educate, coach, or simulate scenarios for humans on that function (e.g., sales readiness, employee coaching, roleplay platforms) UNLESS the query explicitly contains training/coaching/learning/enablement language (e.g., "training", "coach", "teach", "enablement", "onboard my team", "upskill", "practice").
+     * Apply this general disambiguation rule across all role+agent query patterns and categories on the platform.
+
+   - TIERED RELEVANCE WIDENING FOR RELATED TOOLS (ALWAYS RETURN EXACTLY 3 TOOLS TOTAL FOR RELEVANT QUERIES):
+     * You MUST return EXACTLY 3 recommendations (1 exact match + 2 related matches) whenever the query is relevant to AI/SaaS.
+     * Match #1 (match_type: "exact"): The single best tool directly matching the query's specific task/intent.
+     * Matches #2 & #3 (match_type: "related"): Must be selected strictly using this 3-tier relevance strategy:
+       - Tier 1 (Tightest Task Match): Tools performing the exact same specific task or micro-use case (e.g., other sales outreach tools for sales query, other website/app builders for website query).
+       - Tier 2 (Adjacent Category/Ecosystem): If Tier 1 has fewer than 3 tools, fill remaining slots with tools from the SAME category or directly adjacent workflow ecosystem (e.g., for website/app building: Developer Tools & Infra, UI web components like gp-treemap, AI coding agents like Pu.sh/Aide-Memory/Klutch MCP; for sales: CRM automation, marketing intelligence, customer engagement).
+       - Tier 3 (Broad Domain Fallback): If Tiers 1 and 2 combined do not fill 3 slots, select general developer/productivity AI tools in the closest tech domain.
+       - ABSOLUTE PROHIBITION: NEVER force a match from an unrelated domain silo (e.g., NEVER select legal contract tools like Spotdraft or HR tools for website building; NEVER select real estate or financial tools for coding queries). High rating is NEVER a justification for cross-domain mismatch.
+
+   - RATING PREFERENCE WITHIN TIERS:
+     * Among candidate tools within the same relevance tier, prefer tools with higher user ratings.
+
 3. The Insight (ai_explanation): Write a punchy, 1-2 sentence executive summary explaining *why* the top tool was chosen for this specific query, highlighting its high rating or performance. NEVER use generic filler phrases like "Yes, [topic] is possible with the right tools." Be sharp and insightful.
+
 4. Dynamic Tool Descriptions (search_description): For EACH recommended tool, write a short, action-oriented 1-2 sentence description highlighting its Unique Selling Point (USP) directly tied to the user's query. STRICTLY FORBIDDEN: Do not use repetitive phrasing.
 
 Return ONLY valid JSON, no markdown fences:
@@ -174,8 +190,7 @@ Return ONLY valid JSON, no markdown fences:
         return null;
       }).filter(Boolean) || [];
 
-      // Sort recommended agents strictly by highest rating first
-      recommendedAgents.sort((a: any, b: any) => (b.rating - a.rating) || (b.reviewsCount - a.reviewsCount));
+      // Preserve AI's intent-matched order (exact match first)
 
       // Log the successful AI search
       await supabase.from('search_queries').insert({

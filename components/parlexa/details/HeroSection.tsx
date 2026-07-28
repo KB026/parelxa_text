@@ -2,6 +2,7 @@
 
 import { Agent } from '@/lib/types';
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 function useTilt() {
   const ref = useRef<HTMLDivElement>(null);
@@ -113,21 +114,24 @@ export function HeroSection({
         <div className="animate-fade-up">
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
             {agent.logoUrl ? (
-              <img 
-                src={agent.logoUrl} 
-                alt={`${agent.name} logo`} 
-                className="w-12 h-12 rounded-xl border border-white/10 shadow-sm object-cover bg-white shrink-0"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
+              <div className="w-12 h-12 rounded-xl border border-white/10 shadow-sm overflow-hidden bg-white shrink-0 relative">
+                <Image 
+                  src={agent.logoUrl} 
+                  alt={`${agent.name} logo`} 
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-cover"
+                  unoptimized
+                  priority
+                />
+              </div>
             ) : (
               <div className="w-12 h-12 rounded-xl border border-white/10 shadow-sm bg-white/5 flex items-center justify-center text-lg font-bold text-white/50 shrink-0">
                 {agent.name.substring(0, 2).toUpperCase()}
               </div>
             )}
-            <div className="flex items-center gap-4 flex-wrap">
-              <h1 style={{ fontSize: '48px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{agent.name}</h1>
+            <div className="flex items-center gap-4 flex-wrap max-w-full overflow-hidden">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold m-0 tracking-tight leading-tight text-white break-words max-w-full">{agent.name}</h1>
               {agent.isVerified && (
                 <span className="badge-tooltip" style={{ flexShrink: 0 }}>
                   <span className="verified-badge" />
@@ -154,92 +158,91 @@ export function HeroSection({
         </div>
 
         {/* MEDIA SECTION */}
-        <div className="animate-fade-up" style={{ display: 'flex', flexDirection: 'column', gap: '16px', animationDelay: '0.15s' }}>
-          <div 
-            ref={tilt.ref}
-            style={{ 
-              width: '100%', aspectRatio: '16/10', borderRadius: '24px', overflow: 'hidden', 
-              background: '#090a0f', 
-              border: '1px solid rgba(255,255,255,0.08)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 24px 48px rgba(0,0,0,0.2)',
-              position: 'relative',
-              ...tilt.style
-            }}
-          >
-            {/* Glare Overlay */}
+        {mediaItems.length > 0 && (
+          <div className="animate-fade-up" style={{ animationDelay: '0.2s' }}>
             <div 
-              style={{
-                position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 10,
-                opacity: 0, ...tilt.glareStyle
-              }} 
-            />
-            
-            {activeMedia ? (
-              activeMedia.type === 'video' ? (
-                <iframe
-                  src={activeMedia.url.replace('watch?v=', 'embed/')}
-                  title="Product Demo"
-                  width="100%" height="100%" frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  style={{ position: 'relative', zIndex: 1 }}
-                />
-              ) : (
-                !featuredImgError ? (
-                  <img 
+              ref={tilt.ref}
+              style={{ 
+                position: 'relative', width: '100%', borderRadius: '16px', overflow: 'hidden', 
+                backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)',
+                boxShadow: 'var(--shadow-xl)', ...tilt.style
+              }}
+            >
+              <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 10, ...tilt.glareStyle }} />
+              
+              <div style={{ width: '100%', aspectRatio: '16/9', position: 'relative', backgroundColor: '#000' }}>
+                {activeMedia?.type === 'video' ? (
+                  <iframe 
                     src={activeMedia.url} 
-                    alt="Featured preview" 
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', position: 'relative', zIndex: 1 }} 
+                    title={`${agent.name} video`}
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : activeMedia?.type === 'image' && !featuredImgError ? (
+                  <Image 
+                    src={activeMedia.url} 
+                    alt={`${agent.name} preview`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 800px"
+                    style={{ objectFit: 'cover' }}
                     onError={() => setFeaturedImgError(true)}
+                    unoptimized
+                    priority={activeMediaIndex === 0}
                   />
                 ) : (
-                  <div style={{ fontSize: '64px', fontWeight: 800, color: 'rgba(255,255,255,0.2)', position: 'relative', zIndex: 1 }}>
-                    {agent.name.substring(0, 2).toUpperCase()}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', color: 'var(--text-muted)' }}>
+                    Preview not available
                   </div>
-                )
-              )
-            ) : (
-              <div style={{ fontSize: '64px', fontWeight: 800, color: 'rgba(255,255,255,0.2)', position: 'relative', zIndex: 1 }}>
-                {agent.name.substring(0, 2).toUpperCase()}
+                )}
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Thumbnail Strip */}
-          {mediaItems.length > 1 && (
-            <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none' }}>
-              {mediaItems.map((item, idx) => {
-                if (item.type === 'image' && thumbErrors[idx]) return null;
-                const isActive = activeMediaIndex === idx;
-
-                return (
+            {/* THUMBNAILS ROW */}
+            {mediaItems.length > 1 && (
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
+                {mediaItems.map((item, idx) => (
                   <button
                     key={idx}
-                    onClick={() => { setActiveMediaIndex(idx); setFeaturedImgError(false); }}
+                    onClick={() => {
+                      setActiveMediaIndex(idx);
+                      setFeaturedImgError(false);
+                    }}
                     style={{
-                      width: '80px', height: '50px', flexShrink: 0, borderRadius: '8px', overflow: 'hidden', padding: 0,
-                      border: isActive ? '2px solid var(--cyan)' : '2px solid transparent',
-                      background: '#090a0f', cursor: 'pointer',
-                      opacity: isActive ? 1 : 0.5, transition: 'all 0.2s ease',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      width: '96px', height: '54px', borderRadius: '8px', overflow: 'hidden',
+                      border: activeMediaIndex === idx ? '2px solid var(--accent)' : '1px solid var(--border)',
+                      padding: 0, background: 'none', cursor: 'pointer', flexShrink: 0,
+                      opacity: activeMediaIndex === idx ? 1 : 0.6, transition: 'all 0.2s',
+                      position: 'relative'
                     }}
                   >
                     {item.type === 'video' ? (
-                      <div style={{ color: 'var(--text-white)', fontSize: '10px', fontWeight: 700 }}>VIDEO</div>
-                    ) : (
-                      <img 
-                        src={item.url} alt={`Thumbnail ${idx}`} 
-                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                      <div style={{ width: '100%', height: '100%', backgroundColor: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px', fontWeight: 600 }}>
+                        ▶ Video
+                      </div>
+                    ) : !thumbErrors[idx] ? (
+                      <Image 
+                        src={item.url} 
+                        alt={`Thumbnail ${idx + 1}`}
+                        fill
+                        sizes="96px"
+                        style={{ objectFit: 'cover' }}
                         onError={() => setThumbErrors(prev => ({ ...prev, [idx]: true }))}
+                        unoptimized
+                        loading="lazy"
                       />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', backgroundColor: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '10px' }}>
+                        Image
+                      </div>
                     )}
                   </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
     </section>
   );

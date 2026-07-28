@@ -8,13 +8,9 @@ import { Star, Bookmark, Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { toggleWishlist } from '@/app/actions/wishlist';
 import { getSavedToolsIds, clearSavedToolsCache } from '@/lib/wishlistClient';
-import { motion, useReducedMotion } from 'framer-motion';
-
-const MotionLink = motion(Link);
 
 export function AgentCard({ agent, rank }: { agent: Agent, rank?: number }) {
   const { selectedIds, toggleCompare } = useCompare();
-  const shouldReduceMotion = useReducedMotion();
   const isFeatured = agent.isFeatured;
   const promotionId = agent.promotionId;
   const name = agent?.name || 'Unnamed Agent';
@@ -76,12 +72,10 @@ export function AgentCard({ agent, rank }: { agent: Agent, rank?: number }) {
   };
   
   return (
-    <MotionLink 
+    <Link 
       href={`/products/${agent?.slug || agent?.id}`} 
       onClick={handleVisitSite}
-      whileHover={shouldReduceMotion ? {} : { y: -4 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="group relative block w-full h-full focus:outline-none"
+      className="group relative block w-full h-full focus:outline-none transition-transform duration-200 hover:-translate-y-1"
     >
       {/* Overlapping Rank Badge */}
       {rank && (
@@ -133,6 +127,6 @@ export function AgentCard({ agent, rank }: { agent: Agent, rank?: number }) {
           </div>
         </div>
       </div>
-    </MotionLink>
+    </Link>
   );
 }

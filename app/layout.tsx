@@ -8,23 +8,28 @@ const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
+  display: "swap",
 });
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+  display: "swap",
 });
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",
+  display: "swap",
 });
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-space-grotesk",
+  display: "swap",
 });
 
 import { CompareProvider } from "@/context/CompareContext";
-import { CompareBar } from "@/components/parlexa/CompareBar";
+import dynamic from "next/dynamic";
+const CompareBar = dynamic(() => import("@/components/parlexa/CompareBar").then(mod => mod.CompareBar), { ssr: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://parlexa.in'),
@@ -32,16 +37,30 @@ export const metadata: Metadata = {
     default: "Parlexa — The Global AI Agent Marketplace",
     template: "%s | Parlexa — The Global AI Agent Marketplace"
   },
-  description: "The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.",
-  keywords: ["AI Agents", "B2B AI Tools", "SaaS Marketplace", "AI Automation", "Parlexa"],
-  authors: [{ name: "Parlexa Team" }],
+  description: "The premier B2B marketplace for AI agents and tools. Discover, compare, and scale powerful AI solutions built for enterprise workflows.",
+  keywords: ["AI Agents", "B2B AI Tools", "SaaS Marketplace", "AI Automation", "Parlexa", "India AI Marketplace"],
+  authors: [{ name: "Parlexa Team", url: "https://parlexa.in" }],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://parlexa.in",
     siteName: "Parlexa",
+    title: "Parlexa — The Global AI Agent Marketplace",
+    description: "The premier B2B marketplace for AI agents and tools. Discover, compare, and scale powerful AI solutions built for enterprise workflows.",
     images: [{
-      url: "/og-image.png",
+      url: "https://parlexa.in/og-image.png",
       width: 1200,
       height: 630,
       alt: "Parlexa — The Global AI Agent Marketplace"
@@ -50,8 +69,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Parlexa — The Global AI Agent Marketplace",
-    description: "The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.",
-    images: ["/og-image.png"],
+    description: "The premier B2B marketplace for AI agents and tools. Discover, compare, and scale powerful AI solutions built for enterprise workflows.",
+    images: ["https://parlexa.in/og-image.png"],
   },
   robots: "index, follow",
 };

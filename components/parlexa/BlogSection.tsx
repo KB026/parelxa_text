@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import Link from 'next/link';
 import { ArrowRight, X } from 'lucide-react';
 
 // Predefined jagged clipping paths to give a hand-torn look
@@ -146,9 +147,9 @@ export function BlogSection() {
         ))}
       </div>
 
-      <button className="bg-brand-violet text-white hover:bg-brand-violet-dark font-medium rounded-lg px-4 py-2 transition-all">
+      <Link href="/blog" className="inline-block bg-brand-violet text-white hover:bg-brand-violet-dark font-medium rounded-lg px-6 py-2.5 transition-all">
         View All Posts
-      </button>
+      </Link>
 
       {/* Newspaper Clipping Modal */}
       {selectedBlog && typeof document !== 'undefined' && createPortal(

@@ -46,7 +46,7 @@ export const BundleDetailClient: React.FC<BundleDetailClientProps> = ({
           <h2 className="text-2xl font-extrabold text-white">What's Included in this Kit</h2>
           <p className="text-sm text-gray-400 mt-1">Simple 2-line breakdown of each tool's role in the {bundleName} workflow.</p>
         </div>
-        <span className="text-xs font-bold text-[#12B886] bg-[#12B886]/10 border border-[#12B886]/30 px-3 py-1.5 rounded-full">
+        <span className="text-xs font-bold text-[#38BDF8] bg-[#0EA5E9]/10 border border-[#0EA5E9]/30 px-3 py-1.5 rounded-full">
           {sortedTools.length} Sequential Steps
         </span>
       </div>
@@ -55,12 +55,12 @@ export const BundleDetailClient: React.FC<BundleDetailClientProps> = ({
         {sortedTools.map((tool) => (
           <div
             key={tool.agent_id}
-            className="group bg-[#121215] border border-white/10 hover:border-[#12B886]/50 rounded-2xl p-6 transition-all duration-300 space-y-5 flex flex-col justify-between"
+            className="group bg-[#121215] border border-white/10 hover:border-[#0EA5E9]/50 rounded-2xl p-6 transition-all duration-300 space-y-5 flex flex-col justify-between"
           >
             <div className="space-y-4">
               {/* Role Step Badge */}
               <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#12B886]/10 border border-[#12B886]/30 text-[#12B886] text-xs font-extrabold uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#0EA5E9]/10 border border-[#0EA5E9]/30 text-[#38BDF8] text-xs font-extrabold uppercase tracking-wider">
                   <span>Step {tool.role_order}:</span>
                   <span>{tool.role_name}</span>
                 </span>
@@ -77,11 +77,11 @@ export const BundleDetailClient: React.FC<BundleDetailClientProps> = ({
                   {tool.logo_url ? (
                     <img src={tool.logo_url} alt={tool.name} className="w-full h-full object-cover rounded-lg" />
                   ) : (
-                    <span className="font-bold text-[#12B886] text-lg">{tool.name.charAt(0)}</span>
+                    <span className="font-bold text-[#38BDF8] text-lg">{tool.name.charAt(0)}</span>
                   )}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#12B886] transition-colors duration-200">
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#38BDF8] transition-colors duration-200">
                     {tool.name}
                   </h3>
                   <span className="text-xs text-gray-400 truncate block">
@@ -94,7 +94,7 @@ export const BundleDetailClient: React.FC<BundleDetailClientProps> = ({
               <div className="p-4 rounded-xl bg-[#18181C] border border-white/5 space-y-3">
                 {/* Line 1: What it does */}
                 <div className="flex items-start gap-2.5 text-xs text-gray-200">
-                  <Zap className="w-4 h-4 text-[#12B886] shrink-0 mt-0.5" />
+                  <Zap className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
                   <div>
                     <span className="font-bold text-white block text-[11px] uppercase tracking-wider mb-0.5">What it does:</span>
                     <span className="leading-relaxed text-gray-300 font-medium">{tool.what_it_does}</span>
@@ -103,7 +103,7 @@ export const BundleDetailClient: React.FC<BundleDetailClientProps> = ({
 
                 {/* Line 2: Why in this step */}
                 <div className="flex items-start gap-2.5 text-xs text-gray-200 pt-2 border-t border-white/5">
-                  <CheckCircle2 className="w-4 h-4 text-[#12B886] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
                   <div>
                     <span className="font-bold text-white block text-[11px] uppercase tracking-wider mb-0.5">Why in Step {tool.role_order}:</span>
                     <span className="leading-relaxed text-gray-300 font-medium">{tool.why_in_step}</span>
@@ -121,7 +121,7 @@ export const BundleDetailClient: React.FC<BundleDetailClientProps> = ({
               <Link
                 href={`/products/${tool.slug}`}
                 onClick={() => handleToolClick(tool.agent_id, tool.slug)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#12B886]/10 text-[#12B886] font-bold text-xs hover:bg-[#12B886] hover:text-black transition-all duration-200"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0EA5E9]/10 text-[#38BDF8] font-bold text-xs hover:bg-gradient-to-r hover:from-[#38BDF8] hover:to-[#0EA5E9] hover:text-slate-950 transition-all duration-200"
               >
                 <span>View Product Page</span>
                 <ArrowRight className="w-3.5 h-3.5" />

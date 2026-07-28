@@ -126,13 +126,13 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
       {/* Bundle Selector & Header Controls */}
       <div className="p-6 rounded-2xl bg-[#121215] border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1">
-          <label className="text-xs font-bold text-[#12B886] uppercase tracking-wider block">
+          <label className="text-xs font-bold text-[#38BDF8] uppercase tracking-wider block">
             Select Bundle to Configure:
           </label>
           <select
             value={selectedSlug}
             onChange={(e) => setSelectedSlug(e.target.value)}
-            className="bg-[#18181C] text-white text-base font-bold px-4 py-2.5 rounded-xl border border-white/10 focus:border-[#12B886] outline-none cursor-pointer min-w-[280px]"
+            className="bg-[#18181C] text-white text-base font-bold px-4 py-2.5 rounded-xl border border-white/10 focus:border-[#0EA5E9] outline-none cursor-pointer min-w-[280px]"
           >
             {bundles.map(b => (
               <option key={b.slug} value={b.slug}>
@@ -146,7 +146,7 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#12B886] hover:bg-[#0fa678] text-black font-extrabold text-sm transition-all duration-200 shadow-lg shadow-[#12B886]/20 disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#38BDF8] to-[#0EA5E9] hover:from-[#0EA5E9] hover:to-[#0284C7] text-slate-950 font-extrabold text-sm transition-all duration-200 shadow-lg shadow-[#0EA5E9]/20 disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? 'Saving...' : 'Save Bundle Setup'}</span>
@@ -155,7 +155,7 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
       </div>
 
       {message && (
-        <div className="p-4 rounded-xl bg-[#18181C] border border-[#12B886]/30 text-sm font-semibold text-[#12B886]">
+        <div className="p-4 rounded-xl bg-[#18181C] border border-[#0EA5E9]/30 text-sm font-semibold text-[#38BDF8]">
           {message}
         </div>
       )}
@@ -164,7 +164,7 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
       {currentBundle && (
         <div className="p-6 rounded-2xl bg-[#121215] border border-white/10 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#12B886]/10 text-[#12B886] border border-[#12B886]/30 uppercase">
+            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#0EA5E9]/10 text-[#38BDF8] border border-[#0EA5E9]/30 uppercase">
               {currentBundle.type} Kit
             </span>
             <span className="text-xs text-gray-400 font-semibold">{currentBundle.category}</span>
@@ -179,7 +179,7 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
         <div className="space-y-6">
           <div className="flex items-center justify-between pb-2 border-b border-white/10">
             <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
-              <Layers className="w-5 h-5 text-[#12B886]" />
+              <Layers className="w-5 h-5 text-[#38BDF8]" />
               Journey Role Steps & Tool Assignments ({currentBundle.roles.length} Steps)
             </h3>
             <span className="text-xs text-gray-400 font-semibold">1 Tool per Role (No Duplicates)</span>
@@ -192,18 +192,18 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
               return (
                 <div
                   key={r.role_order}
-                  className="p-5 rounded-2xl bg-[#121215] border border-white/10 hover:border-[#12B886]/40 transition-all space-y-4"
+                  className="p-5 rounded-2xl bg-[#121215] border border-white/10 hover:border-[#0EA5E9]/40 transition-all space-y-4"
                 >
                   {/* Step Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#12B886] text-black font-extrabold text-xs flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#38BDF8] to-[#0EA5E9] text-slate-950 font-extrabold text-xs flex items-center justify-center shrink-0">
                         {r.role_order}
                       </div>
                       <div>
                         <h4 className="text-base font-bold text-white flex items-center gap-2">
                           <span>{r.role_name}</span>
-                          <span className="text-xs text-[#12B886] font-normal font-sans">
+                          <span className="text-xs text-[#38BDF8] font-normal font-sans">
                             ({r.role_description})
                           </span>
                         </h4>
@@ -215,7 +215,7 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
                       <select
                         value={tool ? tool.agent_id : ''}
                         onChange={(e) => handleAssignTool(r.role_order, Number(e.target.value))}
-                        className="w-full bg-[#18181C] text-xs font-bold text-white px-3 py-2 rounded-xl border border-white/10 focus:border-[#12B886] outline-none"
+                        className="w-full bg-[#18181C] text-xs font-bold text-white px-3 py-2 rounded-xl border border-white/10 focus:border-[#0EA5E9] outline-none"
                       >
                         <option value="">-- Select Tool for Step {r.role_order} --</option>
                         {candidateAgents.map(a => (
@@ -235,7 +235,7 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
                           {tool.logo_url ? (
                             <img src={tool.logo_url} alt={tool.name} className="w-full h-full object-cover rounded" />
                           ) : (
-                            <span className="font-bold text-[#12B886] text-sm">{tool.name.charAt(0)}</span>
+                            <span className="font-bold text-[#38BDF8] text-sm">{tool.name.charAt(0)}</span>
                           )}
                         </div>
                         <div>
@@ -244,7 +244,7 @@ export const BundleBuilderClient: React.FC<BundleBuilderClientProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs text-[#12B886] font-bold">
+                      <div className="flex items-center gap-2 text-xs text-[#38BDF8] font-bold">
                         <CheckCircle2 className="w-4 h-4" />
                         <span>Assigned to Step {r.role_order}</span>
                       </div>

@@ -14,6 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '',
     '/products',
+    '/directory',
+    '/blog',
     '/login',
   ].map(route => ({
     url: `${baseUrl}${route}`,
@@ -24,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Agent routes
   const agentRoutes = agents.map(agent => ({
-    url: `${baseUrl}/products/${agent.id}`,
+    url: `${baseUrl}/products/${agent.slug || agent.id}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.6,

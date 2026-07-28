@@ -9,7 +9,29 @@ export async function getCategories(): Promise<Category[]> {
     console.error('CRITICAL ERROR fetching categories:', error);
     return [];
   }
-  return data;
+
+  // Split any multi-value category strings (e.g. "Enterprise & Automation, Customer Support") into canonical single categories
+  const categoryMap = new Map<string, Category>();
+  let idCounter = 1;
+
+  for (const item of data) {
+    if (!item.name) continue;
+    // Split on commas if multiple category tags were concatenated in DB
+    const rawNames = item.name.split(',').map((n: string) => n.trim()).filter(Boolean);
+    for (const name of rawNames) {
+      if (!categoryMap.has(name)) {
+        categoryMap.set(name, {
+          id: item.id || idCounter++,
+          name: name,
+          icon: item.icon || 'LayoutGrid',
+          color: item.color || 'bg-blue-100 text-blue-600',
+          desc: item.desc || item.description || `Verified ${name} AI tools and agents`
+        });
+      }
+    }
+  }
+
+  return Array.from(categoryMap.values());
 }
 
 export async function getAgents(category?: string): Promise<Agent[]> {

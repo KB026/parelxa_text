@@ -42,7 +42,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                 isActive
-                  ? 'bg-[#12B886] text-black shadow-md shadow-[#12B886]/20'
+                  ? 'bg-gradient-to-r from-[#38BDF8] to-[#0EA5E9] text-slate-950 font-bold shadow-md shadow-[#0EA5E9]/20'
                   : 'bg-[#121215] text-gray-400 hover:text-white hover:bg-white/5 border border-white/5'
               }`}
             >
@@ -62,7 +62,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
           return (
             <div
               key={bundle.slug}
-              className="group relative flex flex-col bg-[#121215] hover:bg-[#16161A] border border-white/10 hover:border-[#12B886]/50 rounded-2xl p-6 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#12B886]/5"
+              className="group relative flex flex-col bg-[#121215] hover:bg-[#16161A] border border-white/10 hover:border-[#0EA5E9]/50 rounded-2xl p-6 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#0EA5E9]/5"
             >
               {/* Header: Composite Icon + Category Pill */}
               <div className="flex items-start justify-between gap-4 mb-6">
@@ -74,7 +74,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
                 />
 
                 <div className="flex flex-col items-end gap-2">
-                  <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#18181C] text-[#12B886] border border-[#12B886]/30 uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#18181C] text-[#38BDF8] border border-[#0EA5E9]/30 uppercase tracking-wider">
                     {bundle.type === 'journey' ? 'JOURNEY KIT' : 'DEPARTMENT KIT'}
                   </span>
                   <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-lg border border-white/5 text-xs text-amber-400 font-semibold">
@@ -87,7 +87,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
 
               {/* Title & Tagline */}
               <div className="mb-4">
-                <h3 className="text-xl font-bold text-white group-hover:text-[#12B886] transition-colors duration-200 mb-2">
+                <h3 className="text-xl font-bold text-white group-hover:text-[#38BDF8] transition-colors duration-200 mb-2">
                   {bundle.name}
                 </h3>
                 <p className="text-sm text-gray-300 font-medium line-clamp-2 leading-relaxed mb-3">
@@ -103,7 +103,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
                           {rn}
                         </span>
                         {idx < roleNames.length - 1 && (
-                          <span className="text-[10px] text-[#12B886] font-bold">→</span>
+                          <span className="text-[10px] text-[#38BDF8] font-bold">→</span>
                         )}
                       </React.Fragment>
                     ))}
@@ -115,17 +115,17 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
               <div className="mt-auto space-y-4 pt-4 border-t border-white/5">
                 <div className="flex items-center justify-between text-xs font-medium text-gray-400">
                   <span className="flex items-center gap-1.5 text-gray-300">
-                    <Layers className="w-4 h-4 text-[#12B886]" />
+                    <Layers className="w-4 h-4 text-[#38BDF8]" />
                     <strong className="text-white font-bold">{bundle.tool_count} Sequential Steps</strong>
                   </span>
-                  <span className="text-[#12B886] font-semibold">1 Tool per Role</span>
+                  <span className="text-[#38BDF8] font-semibold">1 Tool per Role</span>
                 </div>
 
                 {/* Benefits List Preview */}
                 <div className="space-y-1.5">
                   {bundle.benefits.slice(0, 2).map((benefit, idx) => (
                     <div key={idx} className="flex items-start gap-2 text-xs text-gray-400">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#12B886] shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#38BDF8] shrink-0 mt-0.5" />
                       <span className="line-clamp-1">{benefit}</span>
                     </div>
                   ))}
@@ -140,7 +140,7 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
                       bundle_slug: bundle.slug
                     })
                   }
-                  className="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#18181C] group-hover:bg-[#12B886] text-white group-hover:text-black font-bold text-sm transition-all duration-200 border border-white/10 group-hover:border-[#12B886]"
+                  className="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#18181C] group-hover:bg-gradient-to-r group-hover:from-[#38BDF8] group-hover:to-[#0EA5E9] text-white group-hover:text-slate-950 font-bold text-sm transition-all duration-200 border border-white/10 group-hover:border-[#0EA5E9]"
                 >
                   <span>Get This Kit</span>
                   <ArrowRight className="w-4 h-4" />

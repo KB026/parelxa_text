@@ -4,20 +4,25 @@ import { Agent, Category } from "@/lib/types";
 import { Metadata } from "next";
 import Link from 'next/link';
 import { Flame, Sparkles, ArrowRight } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { AgentCard } from "@/components/parlexa/AgentCard";
-import { AIFinderCTA } from "@/components/parlexa/AIFinderCTA";
-import { RealStories } from "@/components/parlexa/RealStories";
-import { AINewsTicker } from "@/components/parlexa/AINewsTicker";
-import { BlogSection } from "@/components/parlexa/BlogSection";
 import { UniversalAISearch } from "@/components/parlexa/UniversalAISearch";
-import { FAQSection } from "@/components/parlexa/FAQSection";
-import { DynamicBackground } from "@/components/parlexa/DynamicBackground";
 import { ScrollReveal } from "@/components/parlexa/ScrollReveal";
-import HowItWorks from "@/components/parlexa/HowItWorks";
 import { TrendingSection } from "@/components/parlexa/TrendingSection";
+import { CategoryGrid } from "@/components/parlexa/CategoryGrid";
+
+const HowItWorks = dynamic(() => import("@/components/parlexa/HowItWorks"));
+const AIFinderCTA = dynamic(() => import("@/components/parlexa/AIFinderCTA").then(mod => mod.AIFinderCTA));
+const RealStories = dynamic(() => import("@/components/parlexa/RealStories").then(mod => mod.RealStories));
+const AINewsTicker = dynamic(() => import("@/components/parlexa/AINewsTicker").then(mod => mod.AINewsTicker));
+const FAQSection = dynamic(() => import("@/components/parlexa/FAQSection").then(mod => mod.FAQSection));
+const BlogSection = dynamic(() => import("@/components/parlexa/BlogSection").then(mod => mod.BlogSection));
+const WhyParlexaSection = dynamic(() => import("@/components/parlexa/WhyParlexaSection").then(mod => mod.WhyParlexaSection));
+export const revalidate = 0;
+
 export const metadata: Metadata = {
-  title: "The Global AI Agent Marketplace | Discover Enterprise AI Tools Worldwide | Parlexa",
-  description: "The global premier marketplace for AI agents and tools. Discover, compare, and integrate powerful AI solutions built to scale enterprises worldwide.",
+  title: "Parlexa | Discover & Deploy Enterprise AI Tools & Agents",
+  description: "Discover, compare, and deploy 200+ verified enterprise AI tools and AI agents worldwide. Build, scale, and automate your workforce with Parlexa.",
   alternates: {
     canonical: '/',
   },
@@ -79,10 +84,10 @@ export default async function PublicHomePage() {
               <span className="text-[11px] font-semibold text-gray-300 uppercase tracking-[0.2em] select-none">Global AI Ecosystem</span>
             </div>
             <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-[1.05] font-medium tracking-tight mt-6 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
-              Enterprise AI Agents. <br className="hidden sm:block" /> 
-              <span className="bg-gradient-to-r from-white to-gray-500 text-transparent bg-clip-text">Built for scale.</span>
+              Enterprise AI Tools & AI Agents. <br className="hidden sm:block" /> 
+              <span className="bg-gradient-to-r from-white to-gray-500 text-transparent bg-clip-text">Built for Enterprise Scale.</span>
             </h1>
-          <p className="text-gray-400 text-base md:text-lg lg:text-xl max-w-[670px] mt-5 md:mt-6 px-2">Discover and deploy AI agents ready for your workforce. The only marketplace you can trust.</p>
+          <p className="text-gray-400 text-base md:text-lg lg:text-xl max-w-[670px] mt-5 md:mt-6 px-2">Discover, compare, and deploy 200+ verified enterprise AI tools and AI agents worldwide.</p>
           
 
           <div className="w-full relative z-30 hover:scale-[1.02] transition-transform duration-500">
@@ -100,6 +105,9 @@ export default async function PublicHomePage() {
         </div>
         </section>
       </div>
+
+      {/* Why Parlexa Section */}
+      <WhyParlexaSection />
 
       {/* How It Works */}
       <HowItWorks />
@@ -150,6 +158,11 @@ export default async function PublicHomePage() {
       {/* Trending Tools */}
       {trendingAgents.length > 0 && (
         <TrendingSection trendingAgents={trendingAgents} />
+      )}
+
+      {/* Category Grid Section with Custom Illustrated Icons & Hover Focus Effect */}
+      {categories.length > 0 && (
+        <CategoryGrid categories={categories} />
       )}
 
       {/* Real Stories Use Cases */}

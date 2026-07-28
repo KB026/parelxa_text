@@ -28,7 +28,7 @@ export default async function BundleBuilderAdminPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#12B886]/10 text-[#12B886] text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0EA5E9]/10 text-[#38BDF8] text-xs font-bold uppercase tracking-wider mb-2">
             <Layers className="w-3.5 h-3.5" />
             Admin Bundle Control
           </div>

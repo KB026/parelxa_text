@@ -1,0 +1,6 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="60" rx="12" fill="#0A0A0A"/>
+  <circle cx="36" cy="30" r="16" fill="#8B5CF6"/>
+  <path d="M30 22L42 30L30 38V22Z" fill="#FFFFFF"/>
+  <text x="64" y="37" font-family="system-ui, sans-serif" font-weight="800" font-size="22" fill="#FFFFFF" letter-spacing="-0.5">Parlexa</text>
+</svg>

@@ -54,7 +54,7 @@ export const CompositeBundleIcon: React.FC<CompositeBundleIconProps> = ({
     return (
       <div
         key={index}
-        className="relative flex items-center justify-center rounded-md bg-[#18181C] border border-white/[0.08] overflow-hidden group hover:border-[#12B886]/50 transition-all duration-200"
+        className="relative flex items-center justify-center rounded-md bg-[#18181C] border border-white/[0.08] overflow-hidden group hover:border-[#0EA5E9]/50 transition-all duration-200"
       >
         {logo ? (
           <img
@@ -67,14 +67,14 @@ export const CompositeBundleIcon: React.FC<CompositeBundleIconProps> = ({
               const parent = (e.target as HTMLElement).parentElement;
               if (parent) {
                 const span = document.createElement('span');
-                span.className = 'font-bold text-[#12B886]';
+                span.className = 'font-bold text-[#38BDF8]';
                 span.innerText = initial;
                 parent.appendChild(span);
               }
             }}
           />
         ) : (
-          <span className="font-bold text-[#12B886] select-none">{initial}</span>
+          <span className="font-bold text-[#38BDF8] select-none">{initial}</span>
         )}
       </div>
     );
@@ -82,11 +82,11 @@ export const CompositeBundleIcon: React.FC<CompositeBundleIconProps> = ({
 
   return (
     <div
-      className={`relative grid ${gridClass} ${dimensions.container} bg-[#0D0D11] border border-white/10 shadow-lg shadow-black/50 group-hover:border-[#12B886]/60 transition-all duration-300 ${className}`}
+      className={`relative grid ${gridClass} ${dimensions.container} bg-[#0D0D11] border border-white/10 shadow-lg shadow-black/50 group-hover:border-[#0EA5E9]/60 transition-all duration-300 ${className}`}
     >
       {items}
       {/* Accent glow line */}
-      <div className="absolute -inset-px rounded-[inherit] bg-gradient-to-r from-[#12B886]/20 via-transparent to-[#12B886]/20 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute -inset-px rounded-[inherit] bg-gradient-to-r from-[#38BDF8]/20 via-transparent to-[#0EA5E9]/20 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
     </div>
   );
 };

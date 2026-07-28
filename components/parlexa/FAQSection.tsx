@@ -2,23 +2,28 @@
 
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { FaqSchema } from '@/components/seo/FaqSchema';
 
-const FAQS = [
+export const HOMEPAGE_FAQS = [
   {
-    question: "What is Parlexa?",
-    answer: "Parlexa is India's first AI agent marketplace, connecting businesses with vetted AI tools across categories like customer support, marketing, HR, healthcare, and fintech — built for the Indian business context."
+    question: "What is an AI agent marketplace and what is Parlexa?",
+    answer: "An AI agent marketplace is a centralized platform where organizations can discover, evaluate, and procure autonomous AI software tools. Parlexa (parlexa.in) is the premier B2B marketplace featuring over 200+ verified AI agents and tools, enabling enterprise decision-makers to search by category, compare pricing, and deploy AI solutions with confidence."
   },
   {
-    question: "How is Parlexa different from global AI agent marketplaces?",
-    answer: "Most AI agent marketplaces (like the GPT Store or Poe) are built for global, English-first, subscription-based markets. Parlexa focuses specifically on tools relevant to Indian businesses, with local pricing context, category curation for Indian industries, and no assumption of a global monetization model."
+    question: "What are AI agents used for across enterprise business verticals?",
+    answer: "Enterprise AI agents automate complex, multi-step workflows across sales, customer support, contact centers, software development, finance, and HR. Unlike static text generators, autonomous agents invoke internal APIs, query enterprise databases, and execute operational tasks—such as resolving support tickets, processing multilingual voice calls, auditing financial transactions, and generating production code."
   },
   {
-    question: "How does Parlexa's AI Search work?",
-    answer: "Parlexa uses AI to understand what you're trying to solve (not just keyword matching) and recommends the most relevant tools from our marketplace, with a plain-language explanation of why."
+    question: "How should a business choose the right AI tool for its tech stack?",
+    answer: "When selecting an AI tool, businesses should evaluate five core parameters: workflow latency, data compliance (such as SOC2 or local sovereign isolation), API integration ecosystem, pricing model (per-resolution vs seat-based), and auditability. Parlexa simplifies this selection by providing standardized feature matrices, verified buyer reviews, and contextual AI search matching."
   },
   {
-    question: "Are the AI tools on Parlexa verified?",
-    answer: "Yes. Every listing goes through admin review before approval. Verified tools display a blue checkmark badge."
+    question: "What do enterprise AI tools typically cost?",
+    answer: "Enterprise AI pricing generally follows three models: freemium or tiered plans for SMBs, per-resolution or usage-based pricing for customer support and voice bots, and custom annual licenses for air-gapped enterprise deployments. Many tools on Parlexa offer free trials or starter tiers, allowing organizations to benchmark performance before committing to custom enterprise contracts."
+  },
+  {
+    question: "How does Parlexa's Tool Quality Review and verification process work?",
+    answer: "Every AI tool listed on Parlexa undergoes strict administrative auditing before publication. Our verification team reviews data privacy standards, active maintenance records, security parameters, and integration capabilities. Only tools that meet enterprise quality standards receive verified badges and active directory placement."
   }
 ];
 
@@ -29,51 +34,35 @@ export function FAQSection() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": FAQS.map(faq => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  };
-
   return (
     <section className="max-w-3xl mx-auto py-24 px-5">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
+      <FaqSchema faqs={HOMEPAGE_FAQS} />
       
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-semibold text-[#EDEDED] mb-4 tracking-tight">
+        <h2 className="text-3xl md:text-4xl font-semibold text-[#EDEDED] mb-4 tracking-tight">
           Frequently Asked Questions
         </h2>
-        <p className="text-lg text-[#A1A1AA] leading-relaxed">
-          Everything you need to know about Parlexa
+        <p className="text-base md:text-lg text-[#A1A1AA] leading-relaxed">
+          Everything you need to know about Parlexa and enterprise AI agent deployment
         </p>
       </div>
 
       <div className="flex flex-col">
-        {FAQS.map((faq, index) => {
+        {HOMEPAGE_FAQS.map((faq, index) => {
           const isOpen = openIndex === index;
           return (
             <div key={index} className="border-b border-white/[0.08] py-4">
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full flex justify-between items-center text-lg font-medium text-[#EDEDED] transition-colors cursor-pointer group text-left"
+                className="w-full flex justify-between items-center text-base md:text-lg font-medium text-[#EDEDED] transition-colors cursor-pointer group text-left gap-4"
                 data-state={isOpen ? "open" : "closed"}
               >
-                {faq.question}
-                <Plus className="w-5 h-5 text-[#71717A] transition-transform duration-300 group-data-[state=open]:rotate-45 group-hover:text-[#EDEDED]" />
+                <span>{faq.question}</span>
+                <Plus className="w-5 h-5 text-[#71717A] shrink-0 transition-transform duration-300 group-data-[state=open]:rotate-45 group-hover:text-[#EDEDED]" />
               </button>
               
               <div 
-                className={`overflow-hidden transition-all duration-300 ease-in-out text-[#A1A1AA] leading-relaxed text-[15px] ${isOpen ? 'max-h-[500px] mt-2 opacity-100' : 'max-h-0 opacity-0'}`}
+                className={`overflow-hidden transition-all duration-300 ease-in-out text-[#A1A1AA] leading-relaxed text-[15px] ${isOpen ? 'max-h-[500px] mt-3 opacity-100' : 'max-h-0 opacity-0'}`}
               >
                 {faq.answer}
               </div>

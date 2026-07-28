@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { DynamicBackground } from '@/components/parlexa/DynamicBackground';
+import dynamic from 'next/dynamic';
+const DynamicBackground = dynamic(() => import('@/components/parlexa/DynamicBackground').then(mod => mod.DynamicBackground), { ssr: false });
 
 export async function Footer() {
   return (
@@ -37,6 +38,7 @@ export async function Footer() {
             <h4 className="text-white text-sm font-semibold tracking-wider uppercase mb-6">Company</h4>
             <div className="flex flex-col gap-3">
               <Link href="/about" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">About</Link>
+              <Link href="/press" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">Press & Media</Link>
               <Link href="/contact" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">Contact</Link>
               <Link href="/careers" className="text-gray-400 text-sm hover:text-white transition-colors duration-200">Careers</Link>
             </div>
