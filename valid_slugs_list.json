@@ -1,0 +1,917 @@
+[
+  {
+    "slug": "testsigma",
+    "name": "Testsigma",
+    "category": "Developer Tools & Infra"
+  },
+  {
+    "slug": "crayon-data",
+    "name": "Crayon Data",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "jiffy-ai",
+    "name": "JIFFY.ai",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "bharatgpt",
+    "name": "BharatGPT",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "upliance-ai",
+    "name": "Upliance AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "gnani-ai",
+    "name": "Gnani.ai",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "locus",
+    "name": "Locus",
+    "category": "Logistics & Supply Chain"
+  },
+  {
+    "slug": "persona-360",
+    "name": "Persona 360",
+    "category": "Marketing & Sales, Healthcare, FinTech, Retail & E-Commerce, AgriTech, EdTech"
+  },
+  {
+    "slug": "testin-tools",
+    "name": "Testin Tools",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "ohita",
+    "name": "Ohita",
+    "category": null
+  },
+  {
+    "slug": "ripik-ai",
+    "name": "Ripik.ai",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "kushal",
+    "name": "Kushal",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "orratio",
+    "name": "Orratio",
+    "category": null
+  },
+  {
+    "slug": "lawvm",
+    "name": "LawVM",
+    "category": null
+  },
+  {
+    "slug": "manthan",
+    "name": "Manthan",
+    "category": "Retail & E-Commerce"
+  },
+  {
+    "slug": "loginext",
+    "name": "LogiNext",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "aicvscreen",
+    "name": "AICVScreen",
+    "category": null
+  },
+  {
+    "slug": "soket-labs",
+    "name": "Soket Labs",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "statespace",
+    "name": "Statespace",
+    "category": null
+  },
+  {
+    "slug": "seltz",
+    "name": "Seltz",
+    "category": null
+  },
+  {
+    "slug": "intello-labs",
+    "name": "Intello Labs",
+    "category": "AgriTech"
+  },
+  {
+    "slug": "sigma-shake",
+    "name": "Sigma Shake",
+    "category": null
+  },
+  {
+    "slug": "qpiai",
+    "name": "QpiAI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "healthkart-ai-health",
+    "name": "HealthKart (AI Health)",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "omens",
+    "name": "Omens",
+    "category": null
+  },
+  {
+    "slug": "leena-ai",
+    "name": "Leena AI",
+    "category": "HR & Workforce"
+  },
+  {
+    "slug": "skillcatalog",
+    "name": "SkillCatalog",
+    "category": null
+  },
+  {
+    "slug": "thelawin",
+    "name": "Thelawin",
+    "category": null
+  },
+  {
+    "slug": "signova-ai",
+    "name": "Signova AI",
+    "category": null
+  },
+  {
+    "slug": "ap-quiz",
+    "name": "AP Quiz",
+    "category": null
+  },
+  {
+    "slug": "video-messaging-for-work",
+    "name": "Video Messaging for Work",
+    "category": null
+  },
+  {
+    "slug": "krutrim",
+    "name": "Krutrim",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "zoho-ai-zia",
+    "name": "Zoho AI (Zia)",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "elvean",
+    "name": "Elvean",
+    "category": null
+  },
+  {
+    "slug": "tiao",
+    "name": "Tiao",
+    "category": null
+  },
+  {
+    "slug": "good-ai-task",
+    "name": "Good AI Task",
+    "category": null
+  },
+  {
+    "slug": "polynya",
+    "name": "Polynya",
+    "category": null
+  },
+  {
+    "slug": "staqu-technologies",
+    "name": "Staqu Technologies",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "proxvanta",
+    "name": "ProxVanta",
+    "category": null
+  },
+  {
+    "slug": "mindtickle",
+    "name": "Mindtickle",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "slopit",
+    "name": "SlopIt",
+    "category": null
+  },
+  {
+    "slug": "zuddl",
+    "name": "Zuddl",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "spyne",
+    "name": "Spyne",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "aivo",
+    "name": "Aivo",
+    "category": null
+  },
+  {
+    "slug": "pocket-fm",
+    "name": "Pocket FM",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "aindra-systems",
+    "name": "Aindra Systems",
+    "category": "Healthcare"
+  },
+  {
+    "slug": "wysa",
+    "name": "Wysa",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "shorthills-ai",
+    "name": "Shorthills AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "neysa-networks",
+    "name": "Neysa Networks",
+    "category": "Developer Tools & Infra"
+  },
+  {
+    "slug": "entropik",
+    "name": "Entropik",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "tagbox",
+    "name": "Tagbox",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "fractal-analytics",
+    "name": "Fractal Analytics",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "galytix",
+    "name": "Galytix",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "vishwa-ai",
+    "name": "Vishwa AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "qure-ai",
+    "name": "Qure.ai",
+    "category": "Healthcare"
+  },
+  {
+    "slug": "avaamo",
+    "name": "Avaamo",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "mcpfinder",
+    "name": "MCPfinder",
+    "category": null
+  },
+  {
+    "slug": "turbinefi",
+    "name": "TurbineFi",
+    "category": null
+  },
+  {
+    "slug": "simplepdf-copilot",
+    "name": "SimplePDF Copilot",
+    "category": null
+  },
+  {
+    "slug": "zipteams",
+    "name": "Zipteams",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "brifly",
+    "name": "Brifly",
+    "category": null
+  },
+  {
+    "slug": "senseforth-ai",
+    "name": "Senseforth.ai",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "cloudsek",
+    "name": "CloudSEK",
+    "category": "Developer Tools & Infra"
+  },
+  {
+    "slug": "pepper-content",
+    "name": "Pepper Content",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "sprinklr-ai",
+    "name": "Sprinklr AI",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "netcore-cloud-smartech-ai",
+    "name": "Netcore Cloud (Smartech AI)",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "bobble-ai",
+    "name": "Bobble AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "predis-ai",
+    "name": "Predis.ai",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "sirionlabs",
+    "name": "SirionLabs",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "geofastmapapi",
+    "name": "GeoFastMapAPI",
+    "category": null
+  },
+  {
+    "slug": "gbrain",
+    "name": "GBrain",
+    "category": null
+  },
+  {
+    "slug": "whatfix",
+    "name": "Whatfix",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "cyberwriter",
+    "name": "CyberWriter",
+    "category": null
+  },
+  {
+    "slug": "dreamtime",
+    "name": "Dreamtime",
+    "category": null
+  },
+  {
+    "slug": "agensi",
+    "name": "Agensi",
+    "category": null
+  },
+  {
+    "slug": "octokraft",
+    "name": "Octokraft",
+    "category": null
+  },
+  {
+    "slug": "netlify-for-agents",
+    "name": "Netlify for Agents",
+    "category": null
+  },
+  {
+    "slug": "deckweaver",
+    "name": "DeckWeaver",
+    "category": null
+  },
+  {
+    "slug": "onfinance",
+    "name": "OnFinance",
+    "category": "FinTech"
+  },
+  {
+    "slug": "wuobly",
+    "name": "Wuobly",
+    "category": null
+  },
+  {
+    "slug": "freshworks-freddy-ai",
+    "name": "Freshworks (Freddy AI)",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "limechat",
+    "name": "LimeChat",
+    "category": "Retail & E-Commerce"
+  },
+  {
+    "slug": "atomicwork",
+    "name": "Atomicwork",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "sourcebridge",
+    "name": "SourceBridge",
+    "category": null
+  },
+  {
+    "slug": "scribble-data",
+    "name": "Scribble Data",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "hiver",
+    "name": "Hiver",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "suparagent-ai",
+    "name": "Suparagent AI",
+    "category": null
+  },
+  {
+    "slug": "pixis",
+    "name": "Pixis",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "amber-by-infeedo",
+    "name": "Amber by inFeedo",
+    "category": "HR & Workforce"
+  },
+  {
+    "slug": "librethinker",
+    "name": "LibreThinker",
+    "category": null
+  },
+  {
+    "slug": "mihup-ai",
+    "name": "Mihup.ai",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "patchwork",
+    "name": "PatchWork",
+    "category": null
+  },
+  {
+    "slug": "laxis",
+    "name": "Laxis",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "privateclaw",
+    "name": "PrivateClaw",
+    "category": null
+  },
+  {
+    "slug": "exotel",
+    "name": "Exotel",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "pratilipi",
+    "name": "Pratilipi",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "netcopilot",
+    "name": "NetCopilot",
+    "category": null
+  },
+  {
+    "slug": "hahooh",
+    "name": "Hahooh",
+    "category": null
+  },
+  {
+    "slug": "arya-ai",
+    "name": "Arya.ai",
+    "category": "FinTech"
+  },
+  {
+    "slug": "kissanai",
+    "name": "KissanAI",
+    "category": "AgriTech"
+  },
+  {
+    "slug": "secondseat-verifier",
+    "name": "SecondSeat Verifier",
+    "category": null
+  },
+  {
+    "slug": "helium-gethelium-co",
+    "name": "Helium (gethelium.co)",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "comicink",
+    "name": "ComicInk",
+    "category": null
+  },
+  {
+    "slug": "spec27",
+    "name": "Spec27",
+    "category": null
+  },
+  {
+    "slug": "bolna-ai",
+    "name": "Bolna AI",
+    "category": "Developer Tools & Infra"
+  },
+  {
+    "slug": "airveda",
+    "name": "Airveda",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "leadsquared",
+    "name": "LeadSquared",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "uniphore",
+    "name": "Uniphore",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "geomarketeer",
+    "name": "Geomarketeer",
+    "category": "AI & LLMs, Marketing & Sales, Enterprise & Automation"
+  },
+  {
+    "slug": "kogo",
+    "name": "KOGO",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "observe-ai",
+    "name": "Observe.AI",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "propmonitor",
+    "name": "PropMonitor",
+    "category": "AI & LLMs, Enterprise & Automation"
+  },
+  {
+    "slug": "juspay",
+    "name": "Juspay",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "botrelic",
+    "name": "Botrelic",
+    "category": "AI & LLMs, Customer Experience, Enterprise & Automation"
+  },
+  {
+    "slug": "pixxel",
+    "name": "Pixxel",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "niramai-health-analytix",
+    "name": "Niramai Health Analytix",
+    "category": "Healthcare"
+  },
+  {
+    "slug": "shipsy",
+    "name": "Shipsy",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "typescript-framework-for-event-driven-ai-agents",
+    "name": "TypeScript Framework for Event-Driven AI Agents",
+    "category": null
+  },
+  {
+    "slug": "falsoai",
+    "name": "FalsoAI",
+    "category": null
+  },
+  {
+    "slug": "datafrey",
+    "name": "DataFrey",
+    "category": null
+  },
+  {
+    "slug": "gan-ai",
+    "name": "Gan.ai",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "flight-risk",
+    "name": "Flight Risk",
+    "category": null
+  },
+  {
+    "slug": "flutura",
+    "name": "Flutura",
+    "category": "Developer Tools & Infra"
+  },
+  {
+    "slug": "innefu-labs",
+    "name": "Innefu Labs",
+    "category": "Developer Tools & Infra"
+  },
+  {
+    "slug": "core",
+    "name": "CORE",
+    "category": null
+  },
+  {
+    "slug": "clevertap",
+    "name": "CleverTap",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "rephrase-ai",
+    "name": "Rephrase.ai",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "over-under-market-intelligence",
+    "name": "Over Under Market Intelligence",
+    "category": null
+  },
+  {
+    "slug": "skit-ai",
+    "name": "Skit.ai",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "dalvoy-ai",
+    "name": "Dalvoy AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "salesblink",
+    "name": "SalesBlink",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "kore-ai",
+    "name": "Kore.ai",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "iclaw",
+    "name": "iClaw",
+    "category": null
+  },
+  {
+    "slug": "fluid-ai",
+    "name": "Fluid AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "moengage",
+    "name": "MoEngage",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "flam",
+    "name": "Flam",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "surveysparrow",
+    "name": "SurveySparrow",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "mu-sigma",
+    "name": "Mu Sigma",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "enlist-ai",
+    "name": "Enlist AI",
+    "category": null
+  },
+  {
+    "slug": "gp-treemap",
+    "name": "gp-treemap",
+    "category": null
+  },
+  {
+    "slug": "docsumo",
+    "name": "Docsumo",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "mad-street-den-vue-ai",
+    "name": "Mad Street Den (Vue.ai)",
+    "category": "Retail & E-Commerce"
+  },
+  {
+    "slug": "almabase",
+    "name": "Almabase",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "spotdraft",
+    "name": "Spotdraft",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "yellow-ai",
+    "name": "Yellow.ai",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "darwinbox",
+    "name": "Darwinbox",
+    "category": "HR & Workforce"
+  },
+  {
+    "slug": "parlexa-ai",
+    "name": "Parlexa AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "kognitos",
+    "name": "Kognitos",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "tredict",
+    "name": "Tredict",
+    "category": null
+  },
+  {
+    "slug": "mediator-ai",
+    "name": "Mediator.ai",
+    "category": null
+  },
+  {
+    "slug": "expertia-ai",
+    "name": "Expertia AI",
+    "category": "HR & Workforce"
+  },
+  {
+    "slug": "swym",
+    "name": "Swym",
+    "category": "Retail & E-Commerce"
+  },
+  {
+    "slug": "zenoti",
+    "name": "Zenoti",
+    "category": "Healthcare"
+  },
+  {
+    "slug": "nimbus",
+    "name": "Nimbus",
+    "category": null
+  },
+  {
+    "slug": "seleci",
+    "name": "Seleci",
+    "category": null
+  },
+  {
+    "slug": "easl",
+    "name": "easl",
+    "category": null
+  },
+  {
+    "slug": "vibe-check",
+    "name": "Vibe Check",
+    "category": null
+  },
+  {
+    "slug": "dhiwise",
+    "name": "DhiWise",
+    "category": "Developer Tools & Infra"
+  },
+  {
+    "slug": "klutch-mcp",
+    "name": "Klutch MCP",
+    "category": null
+  },
+  {
+    "slug": "cropin",
+    "name": "CropIn",
+    "category": "AgriTech"
+  },
+  {
+    "slug": "orbitshift",
+    "name": "OrbitShift",
+    "category": "Marketing & Sales"
+  },
+  {
+    "slug": "athletedata",
+    "name": "AthleteData",
+    "category": null
+  },
+  {
+    "slug": "mirrorneuron",
+    "name": "MirrorNeuron",
+    "category": null
+  },
+  {
+    "slug": "richpanel",
+    "name": "Richpanel",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "agentport",
+    "name": "AgentPort",
+    "category": null
+  },
+  {
+    "slug": "atomic",
+    "name": "Atomic",
+    "category": null
+  },
+  {
+    "slug": "ragnerock",
+    "name": "Ragnerock",
+    "category": null
+  },
+  {
+    "slug": "sql-analyst-agent",
+    "name": "SQL Analyst Agent",
+    "category": null
+  },
+  {
+    "slug": "openseo",
+    "name": "OpenSEO",
+    "category": null
+  },
+  {
+    "slug": "uncanny-vision",
+    "name": "Uncanny Vision",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "simplyboost",
+    "name": "SimplyBoost",
+    "category": "AI & LLMs, Customer Experience"
+  },
+  {
+    "slug": "eli-explain-like-i-m-five",
+    "name": "ELI: Explain Like I'm Five",
+    "category": null
+  },
+  {
+    "slug": "pu-sh",
+    "name": "Pu.sh",
+    "category": null
+  },
+  {
+    "slug": "sarvam-ai",
+    "name": "Sarvam AI",
+    "category": "AI & LLMs"
+  },
+  {
+    "slug": "kumbukum",
+    "name": "Kumbukum",
+    "category": null
+  },
+  {
+    "slug": "ai-clean",
+    "name": "AI-clean",
+    "category": null
+  },
+  {
+    "slug": "supervoicemode",
+    "name": "SuperVoiceMode",
+    "category": null
+  },
+  {
+    "slug": "sigtuple",
+    "name": "SigTuple",
+    "category": "Healthcare"
+  },
+  {
+    "slug": "facecalculators-com",
+    "name": "facecalculators.com",
+    "category": null
+  },
+  {
+    "slug": "pdfnative-mcp",
+    "name": "pdfnative-mcp",
+    "category": null
+  },
+  {
+    "slug": "haptik",
+    "name": "Haptik",
+    "category": "Customer Experience"
+  },
+  {
+    "slug": "kotlin",
+    "name": "Kotlin",
+    "category": "Enterprise & Automation"
+  },
+  {
+    "slug": "aide-memory",
+    "name": "Aide-Memory",
+    "category": null
+  }
+]

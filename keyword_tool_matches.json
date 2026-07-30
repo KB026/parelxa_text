@@ -1,0 +1,90 @@
+{
+  "bharat": [
+    {
+      "slug": "bharatgpt",
+      "name": "BharatGPT",
+      "category": "AI & LLMs"
+    }
+  ],
+  "gnani": [
+    {
+      "slug": "gnani-ai",
+      "name": "Gnani.ai",
+      "category": "Customer Experience"
+    }
+  ],
+  "sarvam": [
+    {
+      "slug": "sarvam-ai",
+      "name": "Sarvam AI",
+      "category": "AI & LLMs"
+    }
+  ],
+  "krutrim": [
+    {
+      "slug": "krutrim",
+      "name": "Krutrim",
+      "category": "AI & LLMs"
+    }
+  ],
+  "kore": [
+    {
+      "slug": "kore-ai",
+      "name": "Kore.ai",
+      "category": "Enterprise & Automation"
+    }
+  ],
+  "yellow": [
+    {
+      "slug": "yellow-ai",
+      "name": "Yellow.ai",
+      "category": "Customer Experience"
+    }
+  ],
+  "haptik": [
+    {
+      "slug": "haptik",
+      "name": "Haptik",
+      "category": "Customer Experience"
+    }
+  ],
+  "uniphore": [
+    {
+      "slug": "uniphore",
+      "name": "Uniphore",
+      "category": "Customer Experience"
+    }
+  ],
+  "observe": [
+    {
+      "slug": "observe-ai",
+      "name": "Observe.AI",
+      "category": "Customer Experience"
+    }
+  ],
+  "gong": [],
+  "jasper": [],
+  "copy": [],
+  "intercom": [],
+  "zendesk": [],
+  "drift": [],
+  "hubspot": [],
+  "salesforce": [],
+  "claude": [],
+  "chatgpt": [],
+  "notion": [],
+  "writer": [
+    {
+      "slug": "cyberwriter",
+      "name": "CyberWriter",
+      "category": null
+    }
+  ],
+  "retell": [],
+  "vapi": [],
+  "syllable": [],
+  "bland": [],
+  "devrev": [],
+  "vernacular": [],
+  "reversinglabs": []
+}
