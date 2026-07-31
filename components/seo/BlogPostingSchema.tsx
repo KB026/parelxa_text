@@ -20,6 +20,8 @@ export function BlogPostingSchema({ post, url }: BlogPostingSchemaProps) {
     "publisher": {
       "@type": "Organization",
       "name": "Parlexa",
+      "url": "https://parlexa.in",
+      "description": "Parlexa is an enterprise AI agent directory and AI marketplace.",
       "logo": {
         "@type": "ImageObject",
         "url": "https://parlexa.in/logo.png"

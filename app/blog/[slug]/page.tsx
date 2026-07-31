@@ -59,7 +59,7 @@ function renderMarkdownContent(content: string) {
           className="text-2xl md:text-3xl font-bold font-serif text-[#F4F4F5] mt-10 mb-4 tracking-tight border-b border-white/10 pb-3"
           style={{ fontFamily: '"Playfair Display", "PT Serif", Georgia, serif' }}
         >
-          {headingText}
+          {parseFormattedText(headingText)}
         </h2>
       );
     }
@@ -73,7 +73,7 @@ function renderMarkdownContent(content: string) {
           className="text-xl md:text-2xl font-bold font-serif text-[#E4E4E7] mt-8 mb-3"
           style={{ fontFamily: '"Playfair Display", "PT Serif", Georgia, serif' }}
         >
-          {headingText}
+          {parseFormattedText(headingText)}
         </h3>
       );
     }
@@ -83,6 +83,43 @@ function renderMarkdownContent(content: string) {
       return (
         <hr key={idx} className="my-10 border-t border-white/10" />
       );
+    }
+
+    // Check for Markdown Table (lines starting with |)
+    if (section.trim().startsWith('|')) {
+      const lines = section.trim().split('\n').filter(line => line.trim().startsWith('|'));
+      if (lines.length >= 2) {
+        const headerRow = lines[0].split('|').slice(1, -1).map(cell => cell.trim());
+        // lines[1] is alignment separator e.g. | :--- | :--- |
+        const bodyRows = lines.slice(2).map(line => line.split('|').slice(1, -1).map(cell => cell.trim()));
+
+        return (
+          <div key={idx} className="my-8 overflow-x-auto rounded-xl border border-white/10 bg-[#141414] shadow-xl">
+            <table className="w-full text-left text-sm text-[#D4D4D8]">
+              <thead className="bg-[#1C1C22] text-xs uppercase tracking-wider text-white font-mono border-b border-white/10">
+                <tr>
+                  {headerRow.map((col, cIdx) => (
+                    <th key={cIdx} className="px-4 py-3 font-semibold text-[#A78BFA]">
+                      {parseFormattedText(col)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {bodyRows.map((row, rIdx) => (
+                  <tr key={rIdx} className={rIdx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}>
+                    {row.map((cell, cIdx) => (
+                      <td key={cIdx} className="px-4 py-3 text-[15px] leading-relaxed">
+                        {parseFormattedText(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
     }
 
     // Check for unordered bullet list
@@ -133,20 +170,87 @@ function renderMarkdownContent(content: string) {
   });
 }
 
-// Helper function to parse bold text (**text**) and markdown links ([text](url))
+// Helper function to parse bold text (**text**), markdown links ([text](url)), bold links (**[text](url)**), and inline code (`code`)
 function parseFormattedText(text: string): React.ReactNode[] {
-  // Regex to match Markdown links: [Link Text](URL) and Bold: **text**
-  const tokenRegex = /(\[.*?\]\(.*?\)|\*\*.*?\*\*)/g;
+  if (!text) return [];
+
+  // Match bold links **[text](url)** OR link-bolds [**text**](url) OR standard links [text](url) OR bold **text** OR italic *text* OR inline code `code`
+  const tokenRegex = /(\*\*\s*\[.*?\]\(.*?\)\s*\*\*|\[\s*\*\*.*?\*\*\s*\]\(.*?\)|\[.*?\]\(.*?\)|\*\*.*?\*\*|\*.*?\*|`.*?`)/g;
   const parts = text.split(tokenRegex);
 
-  return parts.map((part, index) => {
-    // Match Link
+  const nodes: React.ReactNode[] = [];
+  parts.forEach((part, index) => {
+    if (!part) return;
+
+    // 1. Match **[text](url)**
+    const boldLinkMatch = part.match(/^\*\*\s*\[(.*?)\]\((.*?)\)\s*\*\*$/);
+    if (boldLinkMatch) {
+      const [, linkText, linkUrl] = boldLinkMatch;
+      const isInternal = linkUrl.startsWith('/');
+      if (isInternal) {
+        nodes.push(
+          <Link
+            key={index}
+            href={linkUrl}
+            className="text-[#A78BFA] hover:text-[#C4B5FD] font-bold underline underline-offset-4 decoration-[#8B5CF6]/60 hover:decoration-[#8B5CF6] transition-all bg-[#8B5CF6]/15 px-1.5 py-0.5 rounded border border-[#8B5CF6]/30 inline-flex items-center gap-0.5"
+          >
+            <strong>{linkText}</strong>
+          </Link>
+        );
+        return;
+      }
+      nodes.push(
+        <a
+          key={index}
+          href={linkUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#A78BFA] hover:text-[#C4B5FD] font-bold underline underline-offset-4 transition-colors"
+        >
+          <strong>{linkText}</strong>
+        </a>
+      );
+      return;
+    }
+
+    // 2. Match [**text**](url)
+    const linkBoldMatch = part.match(/^\[\s*\*\*(.*?)\*\*\s*\]\((.*?)\)$/);
+    if (linkBoldMatch) {
+      const [, linkText, linkUrl] = linkBoldMatch;
+      const isInternal = linkUrl.startsWith('/');
+      if (isInternal) {
+        nodes.push(
+          <Link
+            key={index}
+            href={linkUrl}
+            className="text-[#A78BFA] hover:text-[#C4B5FD] font-bold underline underline-offset-4 decoration-[#8B5CF6]/60 hover:decoration-[#8B5CF6] transition-all bg-[#8B5CF6]/15 px-1.5 py-0.5 rounded border border-[#8B5CF6]/30 inline-flex items-center gap-0.5"
+          >
+            <strong>{linkText}</strong>
+          </Link>
+        );
+        return;
+      }
+      nodes.push(
+        <a
+          key={index}
+          href={linkUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#A78BFA] hover:text-[#C4B5FD] font-bold underline underline-offset-4 transition-colors"
+        >
+          <strong>{linkText}</strong>
+        </a>
+      );
+      return;
+    }
+
+    // 3. Match standard link [text](url)
     const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/);
     if (linkMatch) {
       const [, linkText, linkUrl] = linkMatch;
       const isInternal = linkUrl.startsWith('/');
       if (isInternal) {
-        return (
+        nodes.push(
           <Link
             key={index}
             href={linkUrl}
@@ -155,8 +259,9 @@ function parseFormattedText(text: string): React.ReactNode[] {
             {linkText}
           </Link>
         );
+        return;
       }
-      return (
+      nodes.push(
         <a
           key={index}
           href={linkUrl}
@@ -167,20 +272,46 @@ function parseFormattedText(text: string): React.ReactNode[] {
           {linkText}
         </a>
       );
+      return;
     }
 
-    // Match Bold
+    // 4. Match bold text **text**
     const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
     if (boldMatch) {
-      return (
+      nodes.push(
         <strong key={index} className="font-semibold text-[#FAFAFA]">
           {boldMatch[1]}
         </strong>
       );
+      return;
     }
 
-    return part;
+    // 5. Match italic text *text*
+    const italicMatch = part.match(/^\*(.*?)\*$/);
+    if (italicMatch) {
+      nodes.push(
+        <em key={index} className="italic text-[#E4E4E7]">
+          {italicMatch[1]}
+        </em>
+      );
+      return;
+    }
+
+    // 6. Match inline code `code`
+    const codeMatch = part.match(/^`(.*?)`$/);
+    if (codeMatch) {
+      nodes.push(
+        <code key={index} className="bg-white/10 text-[#A78BFA] font-mono text-xs px-1.5 py-0.5 rounded">
+          {codeMatch[1]}
+        </code>
+      );
+      return;
+    }
+
+    nodes.push(part);
   });
+
+  return nodes;
 }
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {

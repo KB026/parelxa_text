@@ -16,8 +16,10 @@ export function ProductSchema({ agent, stats }: ProductSchemaProps) {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": agent.name,
-    "description": agent.description || agent.summary || agent.oneLiner,
-    "applicationCategory": agent.category,
+    "description": (agent.description || agent.summary || agent.oneLiner) 
+      ? `${agent.description || agent.summary || agent.oneLiner} Discovered on Parlexa, the enterprise AI agent directory and AI marketplace.`
+      : `${agent.name} is an enterprise AI tool listed on Parlexa, the AI agent directory and AI marketplace.`,
+    "applicationCategory": agent.category || "BusinessApplication",
     "operatingSystem": "Web, Cloud, Cross-Platform",
     "image": agent.logoUrl || undefined,
     "url": `https://parlexa.in/products/${agent.slug || agent.id}`,

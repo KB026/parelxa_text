@@ -10,6 +10,7 @@ import { UniversalAISearch } from "@/components/parlexa/UniversalAISearch";
 import { ScrollReveal } from "@/components/parlexa/ScrollReveal";
 import { TrendingSection } from "@/components/parlexa/TrendingSection";
 import { CategoryGrid } from "@/components/parlexa/CategoryGrid";
+import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
 
 const HowItWorks = dynamic(() => import("@/components/parlexa/HowItWorks"));
 const AIFinderCTA = dynamic(() => import("@/components/parlexa/AIFinderCTA").then(mod => mod.AIFinderCTA));
@@ -66,6 +67,7 @@ export default async function PublicHomePage() {
 
   return (
     <div className="home-container bg-[#0A0A0A] min-h-screen">
+      <OrganizationSchema />
       {/* Hero Section Container */}
       <div className="w-full pb-32 bg-gradient-to-b from-[#09090B] to-[#12121a]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}>
         <section className="relative overflow-hidden w-full min-h-[90vh] pt-[120px] pb-20 flex flex-col items-center text-center">
