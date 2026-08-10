@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { BLOG_POSTS } from '@/lib/blog';
+import { getPublishedBlogPosts } from '@/lib/blog-service';
 import { Metadata } from 'next';
 import { Clock, Calendar, ArrowRight, BookOpen } from 'lucide-react';
 
@@ -12,9 +12,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogIndex() {
-  const featuredPost = BLOG_POSTS.find(post => post.featured) || BLOG_POSTS[0];
-  const secondaryPosts = BLOG_POSTS.filter(post => post.slug !== featuredPost.slug);
+export default async function BlogIndex() {
+  const posts = await getPublishedBlogPosts();
+  const featuredPost = posts.find(post => post.featured) || posts[0];
+  const secondaryPosts = posts.filter(post => post.slug !== (featuredPost?.slug || ''));
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] selection:bg-[#8B5CF6]/30 selection:text-white py-20 px-4 sm:px-6 md:px-12">

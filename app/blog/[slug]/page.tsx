@@ -1,19 +1,22 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getBlogPostBySlug, BLOG_POSTS } from '@/lib/blog';
+import { getPublishedBlogPosts, getPublishedBlogPostBySlug } from '@/lib/blog-service';
 import { BlogPostingSchema } from '@/components/seo/BlogPostingSchema';
 import { FaqSchema } from '@/components/seo/FaqSchema';
 import { ArrowLeft, Clock, Calendar, User, Share2, Tag, BookOpen, HelpCircle } from 'lucide-react';
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
-  return BLOG_POSTS.map((post) => ({
+  const posts = await getPublishedBlogPosts();
+  return posts.map((post) => ({
     slug: post.slug,
   }));
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = getBlogPostBySlug(params.slug);
+  const post = await getPublishedBlogPostBySlug(params.slug);
   if (!post) {
     return {
       title: 'Post Not Found | Parlexa Blog',
@@ -174,7 +177,6 @@ function renderMarkdownContent(content: string) {
 function parseFormattedText(text: string): React.ReactNode[] {
   if (!text) return [];
 
-  // Match bold links **[text](url)** OR link-bolds [**text**](url) OR standard links [text](url) OR bold **text** OR italic *text* OR inline code `code`
   const tokenRegex = /(\*\*\s*\[.*?\]\(.*?\)\s*\*\*|\[\s*\*\*.*?\*\*\s*\]\(.*?\)|\[.*?\]\(.*?\)|\*\*.*?\*\*|\*.*?\*|`.*?`)/g;
   const parts = text.split(tokenRegex);
 
@@ -314,8 +316,8 @@ function parseFormattedText(text: string): React.ReactNode[] {
   return nodes;
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = getBlogPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getPublishedBlogPostBySlug(params.slug);
 
   if (!post) {
     notFound();

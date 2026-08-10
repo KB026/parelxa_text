@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { LayoutDashboard, Clock, ListOrdered, DollarSign, Key, Users, Shield, CheckCircle, ClipboardCheck, FileText, Settings, MessageSquare, Layers } from 'lucide-react';
+import { LayoutDashboard, Clock, ListOrdered, DollarSign, Key, Users, Shield, CheckCircle, ClipboardCheck, FileText, Settings, MessageSquare, Layers, Newspaper } from 'lucide-react';
 import { Navbar } from "@/components/parlexa/Navbar";
 import { Footer } from "@/components/parlexa/Footer";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
@@ -28,9 +29,21 @@ export default async function AdminLayout({
     redirect('/dashboard?message=Unauthorized access to admin portal');
   }
 
+  // Fetch pending blog drafts count using service role key (bypassing client RLS for admin sidebar count)
+  const adminSupabase = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { count: pendingBlogDraftsCount } = await adminSupabase
+    .from('blog_posts' as any)
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'draft');
+
   const navLinks = [
     { href: '/admin', label: 'Platform Overview', icon: <LayoutDashboard size={18} /> },
     { href: '/admin/bundle-builder', label: 'Bundle Builder', icon: <Layers size={18} />, accent: '#0EA5E9' },
+    { href: '/admin/blog-review', label: 'Blog Review Queue', icon: <Newspaper size={18} />, badge: pendingBlogDraftsCount || 0, accent: '#EC4899' },
     { href: '/admin/listings', label: 'Manage Listings', icon: <ListOrdered size={18} /> },
     { href: '/admin/transactions', label: 'Transactions', icon: <DollarSign size={18} />, accent: '#34d399' },
     { href: '/admin/claims', label: 'Listing Claims', icon: <Key size={18} /> },
@@ -61,13 +74,28 @@ export default async function AdminLayout({
                 padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-card)', 
                 border: '1px solid var(--border-subtle)', color: 'var(--text-white)', 
                 fontWeight: 600, fontSize: '14px', textDecoration: 'none',
-                display: 'flex', alignItems: 'center', gap: '12px',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 transition: 'all 0.2s ease',
               }}
               className="admin-sidebar-link"
             >
-              <span style={{ fontSize: '18px' }}>{link.icon}</span>
-              {link.label}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '18px', color: link.accent || 'inherit' }}>{link.icon}</span>
+                {link.label}
+              </div>
+              {typeof link.badge === 'number' && link.badge > 0 && (
+                <span style={{
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  background: link.accent || '#EC4899',
+                  color: '#000',
+                  fontWeight: 700,
+                  fontSize: '11px',
+                  lineHeight: '1.2'
+                }}>
+                  {link.badge}
+                </span>
+              )}
             </Link>
           ))}
 
