@@ -9,16 +9,16 @@ import { sendFeaturedAlert } from '@/lib/email/actions';
 /**
  * Creates a Razorpay order for boosting a listing
  */
-export async function createPromotionOrder(agentId: number, plan: 'weekly' | 'monthly') {
+export async function createPromotionOrder(agentId: number, plan: 'growth' | 'pro') {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) throw new Error('Unauthorized');
   
-  // Define pricing logic (as per approved plan)
+  // Define pricing logic
   const amounts = {
-    weekly: 29,    // $29 for 7 days
-    monthly: 99,   // $99 for 30 days
+    growth: 49900,  // ₹499 in paise
+    pro: 89900,     // ₹899 in paise
   };
   
   // Verify ownership
@@ -32,7 +32,7 @@ export async function createPromotionOrder(agentId: number, plan: 'weekly' | 'mo
     throw new Error('Unauthorized: You do not own this agent listing.');
   }
 
-  const amountInPaise = amounts[plan] * 100;
+  const amountInPaise = amounts[plan];
   
   try {
     if (!razorpay) {
@@ -48,7 +48,7 @@ export async function createPromotionOrder(agentId: number, plan: 'weekly' | 'mo
 
     const order = await razorpay.orders.create({
       amount: amountInPaise,
-      currency: 'USD',
+      currency: 'INR',
       receipt: `promo_${agentId}_${Date.now()}`,
       notes: {
         agentId: agentId.toString(),
@@ -77,7 +77,7 @@ export async function verifyPromotionPayment(data: {
   razorpay_payment_id: string;
   razorpay_signature: string;
   agentId: number;
-  plan: 'weekly' | 'monthly';
+  plan: 'growth' | 'pro';
 }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -109,10 +109,10 @@ export async function verifyPromotionPayment(data: {
   // 2. Calculate Dates
   const startDate = new Date();
   const endDate = new Date();
-  if (data.plan === 'weekly') endDate.setDate(startDate.getDate() + 7);
+  if (data.plan === 'growth') endDate.setDate(startDate.getDate() + 30);
   else endDate.setDate(startDate.getDate() + 30);
   
-  const amounts = { weekly: 29, monthly: 99 };
+  const amounts = { growth: 499, pro: 899 };
   
   try {
     // 3. Activate Promotion via Atomic RPC
