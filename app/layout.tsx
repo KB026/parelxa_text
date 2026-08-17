@@ -81,6 +81,7 @@ export const viewport = {
 };
 
 import Script from 'next/script';
+import NextTopLoader from 'nextjs-toploader';
 
 export default function RootLayout({
   children,
@@ -95,6 +96,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${dmSans.variable} ${spaceGrotesk.variable} antialiased`}
       >
+        <NextTopLoader
+          color="#12B886"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px rgba(18, 184, 134, 0.5), 0 0 5px rgba(18, 184, 134, 0.5)"
+          zIndex={99999}
+        />
         <CompareProvider>
           {children}
           <CompareBar />
