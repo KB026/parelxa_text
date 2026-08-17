@@ -35,7 +35,7 @@ export function FAQSection() {
   };
 
   return (
-    <section className="max-w-3xl mx-auto py-24 px-5">
+    <section id="faq" className="max-w-3xl mx-auto py-24 px-5 scroll-mt-20">
       <FaqSchema faqs={HOMEPAGE_FAQS} />
       
       <div className="text-center mb-12">

@@ -39,6 +39,8 @@ export default async function ProductsPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const category = normalize(searchParams.cats);
+  const intent = normalize(searchParams.intent);
+  const isClaimIntent = intent === 'claim';
   
   const initialParams: SearchParams = {
     q: normalize(searchParams.q),
@@ -61,6 +63,41 @@ export default async function ProductsPage({
 
   return (
     <div className="agents-page" style={{ maxWidth: '1280px', margin: '0 auto', padding: '100px 40px 80px' }}>
+      {isClaimIntent && (
+        <div className="mb-10 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#F59E0B]/15 via-[#8B5CF6]/10 to-transparent border border-[#F59E0B]/30 backdrop-blur-2xl shadow-[0_0_40px_rgba(245,158,11,0.12)] animate-in fade-in duration-300">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#F59E0B]/20 border border-[#F59E0B]/40 flex items-center justify-center shrink-0 text-[#F59E0B] shadow-inner">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <div>
+                <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+                  <h2 className="text-xl font-bold text-white tracking-tight">
+                    Claim Your AI Tool Listing
+                  </h2>
+                  <span className="px-2.5 py-0.5 text-xs font-semibold bg-[#F59E0B]/20 text-[#FCD34D] border border-[#F59E0B]/40 rounded-full tracking-wide uppercase">
+                    Maker Verification
+                  </span>
+                </div>
+                <p className="text-sm text-gray-300 max-w-2xl leading-relaxed">
+                  Search for your product name below. Click on your tool card to open its detail page, then select <strong className="text-[#FCD34D] font-semibold">&ldquo;Claim This Tool&rdquo;</strong> to verify maker ownership, edit features, and access your live vendor dashboard.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0 self-stretch md:self-auto pt-2 md:pt-0 border-t md:border-t-0 border-white/10">
+              <a
+                href="/dashboard/vendor/listings/new"
+                className="w-full sm:w-auto px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white text-xs font-semibold rounded-xl border border-white/20 transition-all text-center"
+              >
+                Not listed? Submit new &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className="mb-6">
         <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-3">
           {category ? `Best ${category} AI Tools & Agents` : 'Explore Enterprise AI Agents'}
