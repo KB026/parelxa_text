@@ -31,9 +31,9 @@ export default async (req: Request) => {
   console.log(`🤖 WEEKLY BLOG AGENT — Execution Started at ${new Date(timestamp).toISOString()}`);
   console.log(`====================================================`);
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://quhctuntkvwvjgxebhst.supabase.co';
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-  const geminiKey = process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
+  const geminiKey = process.env.GOOGLE_GEMINI_API_KEY || '';
   const openaiKey = process.env.OPENAI_API_KEY || '';
 
   if (!supabaseUrl || !serviceRoleKey) {

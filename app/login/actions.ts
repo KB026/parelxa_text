@@ -131,7 +131,7 @@ export async function signup(formData: FormData) {
   redirect('/login?message=Verification Email Sent, Kindly verify to login.');
 }
 
-export async function registerUserAjax(data: { email: string; password: string; role: string; first_name: string; last_name: string; phone?: string }) {
+export async function registerUserAjax(data: { email: string; password: string; role: string; first_name: string; last_name: string; phone?: string; how_did_you_hear?: string }) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -153,6 +153,7 @@ export async function registerUserAjax(data: { email: string; password: string; 
           first_name: data.first_name,
           last_name: data.last_name,
           phone: data.phone || '',
+          how_did_you_hear: data.how_did_you_hear || '',
           full_name: `${data.first_name} ${data.last_name}`.trim(),
         }
       }

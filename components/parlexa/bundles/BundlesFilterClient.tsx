@@ -1,18 +1,45 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { BundleFull } from '@/lib/bundles-service';
 import { CompositeBundleIcon } from './CompositeBundleIcon';
-import { Star, CheckCircle2, ArrowRight, Layers } from 'lucide-react';
+import { Star, CheckCircle2, ArrowRight, Layers, Lock } from 'lucide-react';
 import { trackBundleView } from '@/lib/analytics/bundle-analytics';
+import { createClient } from '@/lib/supabase/client';
+import { AuthModal } from '@/components/parlexa/AuthModal';
 
 interface BundlesFilterClientProps {
   bundles: BundleFull[];
 }
 
 export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundles }) => {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [user, setUser] = useState<any>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [pendingBundleSlug, setPendingBundleSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data?.user ?? null);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser && pendingBundleSlug) {
+        router.push(`/bundles/${pendingBundleSlug}`);
+        setPendingBundleSlug(null);
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [pendingBundleSlug, router]);
 
   const categories = [
     'All',
@@ -29,6 +56,22 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
   const filteredBundles = selectedCategory === 'All'
     ? bundles
     : bundles.filter(b => b.category.toLowerCase() === selectedCategory.toLowerCase());
+
+  const handleKitClick = (e: React.MouseEvent, bundleId: number, slug: string) => {
+    trackBundleView({
+      bundle_id: bundleId,
+      bundle_slug: slug
+    });
+
+    if (!user) {
+      e.preventDefault();
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('parlexa_bundle_intent', slug);
+      }
+      setPendingBundleSlug(slug);
+      setIsAuthModalOpen(true);
+    }
+  };
 
   return (
     <div className="space-y-10">
@@ -134,15 +177,11 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
                 {/* CTA Button */}
                 <Link
                   href={`/bundles/${bundle.slug}`}
-                  onClick={() =>
-                    trackBundleView({
-                      bundle_id: bundle.id,
-                      bundle_slug: bundle.slug
-                    })
-                  }
+                  onClick={(e) => handleKitClick(e, bundle.id, bundle.slug)}
                   className="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#18181C] group-hover:bg-gradient-to-r group-hover:from-[#38BDF8] group-hover:to-[#0EA5E9] text-white group-hover:text-slate-950 font-bold text-sm transition-all duration-200 border border-white/10 group-hover:border-[#0EA5E9]"
                 >
-                  <span>Get This Kit</span>
+                  {!user && <Lock className="w-3.5 h-3.5" />}
+                  <span>{user ? 'Get This Kit' : 'Sign In to Access Kit'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -150,6 +189,13 @@ export const BundlesFilterClient: React.FC<BundlesFilterClientProps> = ({ bundle
           );
         })}
       </div>
+
+      {/* AUTH MODAL */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialView="register"
+      />
     </div>
   );
 };

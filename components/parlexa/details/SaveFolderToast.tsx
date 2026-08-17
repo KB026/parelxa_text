@@ -122,7 +122,7 @@ export function SaveFolderToast({ agentId, isOpen, onClose }: SaveFolderToastPro
 
           <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
             <Link 
-              href="/dashboard/consumer/saved"
+              href="/dashboard/consumer/saved-tools"
               style={{
                 display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--cyan)',
                 textDecoration: 'none', fontSize: '14px', fontWeight: 600, justifyContent: 'center'

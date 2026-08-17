@@ -31,6 +31,8 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
+  const [howDidYouHear, setHowDidYouHear] = useState('');
+  const [howDidYouHearCustom, setHowDidYouHearCustom] = useState('');
   const [role, setRole] = useState<'user' | 'vendor'>('user');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +50,8 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
     setFirstName('');
     setLastName('');
     setPhone('');
+    setHowDidYouHear('');
+    setHowDidYouHearCustom('');
     setError('');
     setSuccess('');
     setLoading(false);
@@ -146,6 +150,10 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
       return;
     }
 
+    const finalSource = howDidYouHear === 'Other' && howDidYouHearCustom
+      ? `Other: ${howDidYouHearCustom.trim()}`
+      : howDidYouHear;
+
     setLoading(true);
 
     try {
@@ -156,6 +164,7 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
         first_name: firstName,
         last_name: lastName,
         phone,
+        how_did_you_hear: finalSource,
       });
 
       if (res?.error) {
@@ -370,6 +379,28 @@ export function AuthModal({ isOpen, onClose, initialView = 'signin', initialRole
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-slate-300">Phone Number (Optional)</label>
                   <input className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" type="tel" placeholder="+1 (555) 000-0000" value={phone} onChange={e => setPhone(e.target.value)} />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-slate-300">How did you hear about Parlexa?</label>
+                  <select className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20" value={howDidYouHear} onChange={e => setHowDidYouHear(e.target.value)}>
+                    <option value="">Select an option...</option>
+                    <option value="Google Search">Google Search</option>
+                    <option value="Social Media (LinkedIn, X/Twitter, Instagram, YouTube)">Social Media (LinkedIn, X / Twitter, Instagram, YouTube)</option>
+                    <option value="Friend / Founder Referral">Friend / Founder Referral</option>
+                    <option value="Blog / Article / Press">Blog / Article / Press</option>
+                    <option value="Product Hunt">Product Hunt</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {howDidYouHear === 'Other' && (
+                    <input
+                      className="bg-[#111c2e] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/20 mt-1"
+                      type="text"
+                      placeholder="Please specify (e.g. Podcast, Newsletter)..."
+                      value={howDidYouHearCustom}
+                      onChange={e => setHowDidYouHearCustom(e.target.value)}
+                    />
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-1.5">

@@ -51,8 +51,9 @@ export function EditListingForm({ agent }: { agent: Agent }) {
     city: agent.city || '',
     founders: agent.founders || '',
     companyLinkedin: agent.companyLinkedin || '',
+    howDidYouHear: (agent as any).how_did_you_hear || '',
+    howDidYouHearCustom: '',
   });
-
 
   const [error, setError] = useState('');
 
@@ -69,11 +70,42 @@ export function EditListingForm({ agent }: { agent: Agent }) {
 
   async function handleSubmit() {
     setError('');
+    if (!form.logoUrl) {
+      setError('Logo Upload is required.');
+      setStep(1);
+      return;
+    }
+    if (!form.screenshots || form.screenshots.length === 0) {
+      setError('At least 1 Product Screenshot is required.');
+      setStep(1);
+      return;
+    }
+    if (!form.howDidYouHear) {
+      setError('Please select how you heard about Parlexa.');
+      setStep(4);
+      return;
+    }
+    if (form.howDidYouHear === 'Other' && !form.howDidYouHearCustom.trim()) {
+      setError('Please specify how you heard about Parlexa in the text box.');
+      setStep(4);
+      return;
+    }
+
+    const finalSource = form.howDidYouHear === 'Other' && form.howDidYouHearCustom
+      ? `Other: ${form.howDidYouHearCustom.trim()}`
+      : form.howDidYouHear;
+
     const fd = new FormData();
     Object.entries(form).forEach(([key, value]) => {
-      if (Array.isArray(value)) fd.set(key, JSON.stringify(value));
-      else if (typeof value === 'boolean') fd.set(key, value.toString());
-      else fd.set(key, (value as string) || '');
+      if (key === 'howDidYouHear') {
+        fd.set('how_did_you_hear', finalSource);
+      } else if (Array.isArray(value)) {
+        fd.set(key, JSON.stringify(value));
+      } else if (typeof value === 'boolean') {
+        fd.set(key, value.toString());
+      } else {
+        fd.set(key, (value as string) || '');
+      }
     });
 
     const result = await updateListing(agent.id, fd);
@@ -127,8 +159,8 @@ export function EditListingForm({ agent }: { agent: Agent }) {
               <ImageUpload
                 bucket="agent-logos"
                 folder="logos"
-                label="Logo Upload"
-                helperText="square, min 200x200"
+                label="Logo Upload *"
+                helperText="square, min 200x200 (Required)"
                 value={form.logoUrl}
                 onChange={(url) => updateField('logoUrl', url as string)}
               />
@@ -139,8 +171,8 @@ export function EditListingForm({ agent }: { agent: Agent }) {
               folder="screenshots"
               multiple={true}
               maxFiles={6}
-              label="Product Screenshots"
-              helperText="Upload screenshots of your product (dashboard, key features, etc.) — up to 6 images"
+              label="Product Screenshots *"
+              helperText="Upload screenshots of your product — at least 1 image is required (up to 6)"
               value={form.screenshots}
               onChange={(urls) => updateField('screenshots', urls as string[])}
             />
@@ -206,6 +238,27 @@ export function EditListingForm({ agent }: { agent: Agent }) {
             <div className="listing-field">
               <label className="listing-label">Founders</label>
               <input className="listing-input" value={form.founders} onChange={e => updateField('founders', e.target.value)} />
+            </div>
+            <div className="listing-field">
+              <label className="listing-label">How did you hear about Parlexa? *</label>
+              <select className="listing-input listing-select" value={form.howDidYouHear} onChange={e => updateField('howDidYouHear', e.target.value)}>
+                <option value="">Select an option...</option>
+                <option value="Google Search">Google Search</option>
+                <option value="Social Media (LinkedIn, X/Twitter, Instagram, YouTube)">Social Media (LinkedIn, X / Twitter, Instagram, YouTube)</option>
+                <option value="Friend / Founder Referral">Friend / Founder Referral</option>
+                <option value="Blog / Article / Press">Blog / Article / Press</option>
+                <option value="Product Hunt">Product Hunt</option>
+                <option value="Other">Other</option>
+              </select>
+              {form.howDidYouHear === 'Other' && (
+                <input
+                  className="listing-input"
+                  style={{ marginTop: '8px' }}
+                  placeholder="Please specify (e.g. Podcast, Tech Conference, Newsletter)..."
+                  value={form.howDidYouHearCustom}
+                  onChange={e => updateField('howDidYouHearCustom', e.target.value)}
+                />
+              )}
             </div>
           </>
         )}

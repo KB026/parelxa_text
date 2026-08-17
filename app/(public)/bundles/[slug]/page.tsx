@@ -219,6 +219,8 @@ export default async function BundleDetailPage({ params }: { params: { slug: str
           bundleId={bundle.id}
           bundleSlug={bundle.slug}
           bundleName={bundle.name}
+          bundleTagline={bundle.tagline}
+          bundleCategory={bundle.category}
           tools={bundle.tools_full}
         />
 

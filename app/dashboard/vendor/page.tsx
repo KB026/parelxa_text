@@ -192,6 +192,13 @@ export default async function VendorDashboard() {
                         {listing.approval_status === 'approved' ? 'Active' : 
                          listing.approval_status === 'rejected' ? 'Action Required' : 'In Review'}
                       </span>
+
+                      {(listing as any).vendor_plan && (listing as any).vendor_plan !== 'free' && (
+                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                          {(listing as any).vendor_plan === 'pro' ? 'Scale (₹899/mo)' : 'Growth (₹499/mo)'}
+                        </span>
+                      )}
+
                       {listing.category && (
                         <span className="text-xs font-medium px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
                           {listing.category}

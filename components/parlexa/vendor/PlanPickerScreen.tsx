@@ -1,0 +1,666 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Script from 'next/script';
+
+type PlanId = 'free' | 'growth' | 'pro';
+
+interface PlanPickerScreenProps {
+  toolName: string;
+  agentId: number;
+}
+
+type FeatureIcon = 'check' | 'dash' | 'cross';
+
+interface PlanFeature {
+  text: string;
+  icon: FeatureIcon;
+}
+
+interface Plan {
+  id: PlanId;
+  listingNum: string;
+  name: string;
+  tagline: string;
+  price: string;
+  priceNote: string;
+  priceSub: string;
+  amountPaise: number;
+  reachRightLabel: string;
+  reachPercent: number;
+  reachDescription: string;
+  reachBold: string;
+  features: PlanFeature[];
+  cta: string;
+  badge?: string;
+  highlighted?: boolean;
+}
+
+const PLANS: Plan[] = [
+  {
+    id: 'free',
+    listingNum: 'LISTING / 01',
+    name: 'Launch',
+    tagline: 'A bare entry in the directory. Get on the map, free forever.',
+    price: 'Free',
+    priceNote: '/ forever',
+    priceSub: 'No card required',
+    amountPaise: 0,
+    reachRightLabel: 'INDEX ONLY',
+    reachPercent: 20,
+    reachDescription: "Buyers can find you. They can\u2019t click through \u2014",
+    reachBold: 'no link to your site.',
+    features: [
+      { text: 'Name, logo, one-line tagline', icon: 'dash' },
+      { text: '1 category', icon: 'dash' },
+      { text: 'Link to your website', icon: 'cross' },
+      { text: 'Screenshots or demo video', icon: 'cross' },
+      { text: 'Pricing shown to buyers', icon: 'cross' },
+      { text: 'Reviews enabled', icon: 'cross' },
+      { text: 'Manual review, up to 1 week', icon: 'dash' },
+    ],
+    cta: 'List for free',
+  },
+  {
+    id: 'growth',
+    listingNum: 'LISTING / 02',
+    name: 'Growth',
+    tagline: 'A complete, trusted profile buyers can act on.',
+    price: '\u20b9499',
+    priceNote: '/ month',
+    priceSub: 'Billed monthly',
+    amountPaise: 49900,
+    reachRightLabel: 'YOUR SITE',
+    reachPercent: 60,
+    reachDescription: 'Buyers can click through \u2014',
+    reachBold: 'dofollow link, live and reachable.',
+    badge: 'MOST LISTINGS',
+    highlighted: true,
+    features: [
+      { text: 'Everything in Launch', icon: 'check' },
+      { text: 'Link to your website (dofollow)', icon: 'check' },
+      { text: 'Verified badge', icon: 'check' },
+      { text: '3 categories + audience tags', icon: 'check' },
+      { text: 'Media gallery on your profile', icon: 'check' },
+      { text: 'Pricing shown to buyers', icon: 'check' },
+      { text: 'Reviews enabled', icon: 'check' },
+      { text: 'Review within 72 hours', icon: 'check' },
+    ],
+    cta: 'Start Growth',
+  },
+  {
+    id: 'pro',
+    listingNum: 'LISTING / 03',
+    name: 'Scale',
+    tagline: 'Promoted placement and leads routed straight to you.',
+    price: '\u20b9899',
+    priceNote: '/ month',
+    priceSub: 'Billed monthly',
+    amountPaise: 89900,
+    reachRightLabel: 'HOMEPAGE',
+    reachPercent: 100,
+    reachDescription: 'Buyers see you first \u2014',
+    reachBold: 'top of search, homepage rotation, newsletter.',
+    features: [
+      { text: 'Everything in Growth', icon: 'check' },
+      { text: 'Featured badge + homepage rotation', icon: 'check' },
+      { text: 'Top-of-category search placement', icon: 'check' },
+      { text: '5 categories, extended profile', icon: 'check' },
+      { text: 'Lead capture \u2192 your inbox/CRM', icon: 'check' },
+      { text: 'Buyer intent & benchmarking data', icon: 'check' },
+      { text: 'Newsletter + comparison-page inclusion', icon: 'check' },
+      { text: 'Review within 24 hours, dedicated support', icon: 'check' },
+    ],
+    cta: 'Get Scale',
+  },
+];
+
+// Brand colours extracted from globals.css + logo
+const BRAND = {
+  bg:        '#09090b',
+  bgCard:    'rgba(255,255,255,0.03)',
+  bgElevated:'#0f0f13',
+  border:    'rgba(255,255,255,0.07)',
+  cyan:      '#38bdf8',
+  purple:    '#c026d3',
+  blue:      '#2563eb',
+  // Logo gradient: purple â†’ blue
+  grad:      'linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #2563eb 100%)',
+  gradGlow:  'rgba(192,38,211,0.25)',
+  textWhite: '#f1f5f9',
+  textMuted: '#7a90b0',
+  textDim:   '#4a5f80',
+};
+
+export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreenProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState<PlanId | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  if (!mounted) return null;
+
+  async function confirmPlan(
+    planId: PlanId,
+    paymentId?: string,
+    subscriptionOrOrderId?: string,
+    signature?: string
+  ) {
+    const res = await fetch('/api/vendor/confirm-plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        agentId,
+        plan: planId,
+        razorpay_payment_id: paymentId || null,
+        razorpay_subscription_id: subscriptionOrOrderId || null,
+        razorpay_signature: signature || null,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Plan confirmation failed');
+    return data;
+  }
+
+  async function handleFree() {
+    setLoading('free');
+    setError(null);
+    try {
+      await confirmPlan('free');
+      router.push('/dashboard/vendor/listings?plan=launch');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Something went wrong');
+      setLoading(null);
+    }
+  }
+
+  async function handlePaid(planId: 'growth' | 'pro') {
+    setLoading(planId);
+    setError(null);
+    try {
+      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        setError('Payment gateway key missing. Please contact support.');
+        setLoading(null);
+        return;
+      }
+      const orderRes = await fetch('/api/vendor/create-plan-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentId, plan: planId }),
+      });
+      const orderData = await orderRes.json();
+      if (!orderRes.ok) throw new Error(orderData.error || 'Failed to create order');
+
+      // Test Mode / Sandbox handling: Bypass SDK modal and simulate instant successful payment
+      if (orderData.isMock) {
+        await confirmPlan(
+          planId,
+          `mock_pay_${Date.now()}`,
+          orderData.subscriptionId || orderData.orderId || `mock_sub_${Date.now()}`,
+          'mock_signature'
+        );
+        router.push(`/dashboard/vendor/listings?plan=${planId}`);
+        return;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const RzpSDK = (window as any).Razorpay;
+      if (!RzpSDK) throw new Error('Razorpay SDK not loaded. Refresh and retry.');
+      const plan = PLANS.find(p => p.id === planId)!;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const options: any = {
+        key: orderData.keyId || razorpayKey,
+        name: 'Parlexa',
+        description: `${plan.name} Plan`,
+        theme: { color: '#7c3aed' },
+        modal: { ondismiss: () => setLoading(null) },
+        handler: async (r: { razorpay_payment_id: string; razorpay_subscription_id?: string; razorpay_order_id?: string; razorpay_signature?: string }) => {
+          await confirmPlan(
+            planId,
+            r.razorpay_payment_id,
+            r.razorpay_subscription_id || r.razorpay_order_id,
+            r.razorpay_signature
+          );
+          router.push(`/dashboard/vendor/listings?plan=${planId}`);
+        },
+      };
+
+      if (orderData.subscriptionId) {
+        options.subscription_id = orderData.subscriptionId;
+      } else if (orderData.orderId) {
+        options.order_id = orderData.orderId;
+        options.amount = orderData.amount;
+        options.currency = orderData.currency || 'INR';
+      }
+
+      const rzp = new RzpSDK(options);
+      rzp.open();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Payment failed');
+      setLoading(null);
+    }
+  }
+
+  return (
+    <>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+
+      <style>{`
+        @keyframes pp-fade-up {
+          from { opacity: 0; transform: translateY(22px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pp-spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pp-shimmer {
+          0%   { background-position: -400px 0; }
+          100% { background-position: 400px 0; }
+        }
+        .pp-overlay { animation: pp-fade-up 0.4s ease both; }
+        .pp-card {
+          transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+                      box-shadow 0.22s ease,
+                      border-color 0.2s ease;
+        }
+        .pp-card:hover { transform: translateY(-5px); }
+        .pp-cta {
+          transition: opacity 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .pp-cta:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 24px rgba(192,38,211,0.3);
+        }
+        .pp-cta-plain:hover:not(:disabled) {
+          background: rgba(255,255,255,0.06) !important;
+          box-shadow: none;
+        }
+        .pp-scroll::-webkit-scrollbar { width: 5px; }
+        .pp-scroll::-webkit-scrollbar-track { background: #09090b; }
+        .pp-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        @media (max-width: 900px) {
+          .pp-grid { grid-template-columns: 1fr !important; max-width: 460px !important; }
+        }
+      `}</style>
+
+      {/* Full-screen overlay */}
+      <div
+        className="pp-scroll"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          overflowY: 'auto',
+          background: BRAND.bg,
+          fontFamily: "'DM Sans', sans-serif",
+          color: BRAND.textWhite,
+        }}
+      >
+        {/* Ambient background glow */}
+        <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+          <div style={{
+            position: 'absolute', top: '-200px', left: '50%', transform: 'translateX(-50%)',
+            width: '800px', height: '600px', borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(192,38,211,0.10) 0%, transparent 65%)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '-100px', right: '-100px',
+            width: '500px', height: '500px', borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(37,99,235,0.08) 0%, transparent 65%)',
+          }} />
+          {/* Subtle grid */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }} />
+        </div>
+
+        {/* â”€â”€ HEADER â”€â”€ */}
+        <div
+          className="pp-overlay"
+          style={{ textAlign: 'center', padding: '56px 32px 40px', position: 'relative', zIndex: 1 }}
+        >
+          {/* Success pill */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            background: 'rgba(16,185,129,0.08)',
+            border: '1px solid rgba(16,185,129,0.2)',
+            borderRadius: '100px', padding: '6px 18px',
+            fontSize: '12.5px', color: 'rgba(255,255,255,0.55)',
+            marginBottom: '28px', backdropFilter: 'blur(8px)',
+          }}>
+            <span style={{
+              width: '18px', height: '18px',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              borderRadius: '50%', display: 'inline-flex',
+              alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              boxShadow: '0 0 10px rgba(16,185,129,0.4)',
+            }}>
+              <svg width="9" height="8" viewBox="0 0 10 8" fill="none">
+                <path d="M1 4L3.5 6.5L9 1" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+            <strong style={{ color: BRAND.textWhite }}>&ldquo;{toolName}&rdquo;</strong>
+            <span>submitted successfully</span>
+          </div>
+
+          {/* Headline */}
+          <h1 style={{
+            fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
+            fontSize: 'clamp(26px, 3.5vw, 42px)',
+            fontWeight: 700,
+            lineHeight: 1.15,
+            letterSpacing: '-1px',
+            marginBottom: '12px',
+            background: 'linear-gradient(135deg, #fff 0%, #38bdf8 60%, #c026d3 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}>
+            Choose your listing tier
+          </h1>
+          <p style={{
+            color: BRAND.textMuted,
+            fontSize: '15px',
+            lineHeight: 1.6,
+            maxWidth: '420px',
+            margin: '0 auto',
+          }}>
+            Three tiers. Each unlocks more reach, trust signals, and buyer visibility.
+          </p>
+        </div>
+
+        {/* â”€â”€ ERROR â”€â”€ */}
+        {error && (
+          <div style={{
+            maxWidth: '1020px', margin: '0 auto', padding: '0 32px 20px',
+            position: 'relative', zIndex: 1,
+          }}>
+            <div style={{
+              padding: '13px 18px',
+              background: 'rgba(239,68,68,0.08)',
+              border: '1px solid rgba(239,68,68,0.2)',
+              borderRadius: '8px', color: '#fca5a5', fontSize: '14px', textAlign: 'center',
+            }}>
+              {error}
+            </div>
+          </div>
+        )}
+
+        {/* â”€â”€ CARD GRID â”€â”€ */}
+        <div style={{ padding: '0 32px 64px', position: 'relative', zIndex: 1 }}>
+          <div
+            className="pp-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '20px',
+              maxWidth: '1020px',
+              margin: '0 auto',
+              alignItems: 'stretch',
+            }}
+          >
+            {PLANS.map((plan, idx) => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                delay={idx * 0.07}
+                loading={loading}
+                onSelect={() => plan.id === 'free' ? handleFree() : handlePaid(plan.id as 'growth' | 'pro')}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* â”€â”€ FOOTER â”€â”€ */}
+        <div style={{
+          textAlign: 'center', paddingBottom: '48px',
+          fontSize: '12px', color: BRAND.textDim,
+          letterSpacing: '0.04em', position: 'relative', zIndex: 1,
+        }}>
+          Secure payments via Razorpay &nbsp;Â·&nbsp; Cancel anytime &nbsp;Â·&nbsp; No lock-in
+        </div>
+      </div>
+    </>
+  );
+}
+
+// â”€â”€â”€ PLAN CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function PlanCard({
+  plan, delay, loading, onSelect,
+}: {
+  plan: Plan;
+  delay: number;
+  loading: PlanId | null;
+  onSelect: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const isActive = loading === plan.id;
+  const isDisabled = !!loading;
+  const hl = !!plan.highlighted; // Verified plan â€” brand gradient card
+
+  // Per-plan accent
+  const accent = hl
+    ? 'linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #2563eb 100%)'   // brand gradient
+    : plan.id === 'pro'
+    ? '#38bdf8'   // cyan for Featured
+    : 'rgba(255,255,255,0.15)'; // subtle for Free
+
+  const accentSolid = hl ? '#7c3aed' : plan.id === 'pro' ? '#38bdf8' : 'rgba(255,255,255,0.2)';
+
+  return (
+    <div
+      className="pp-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        animationDelay: `${delay}s`,
+        borderRadius: '16px',
+        padding: hl ? '30px 26px 26px' : '28px 24px 24px',
+        // Highlighted card gets a subtle gradient background
+        background: hl
+          ? 'linear-gradient(160deg, rgba(124,58,237,0.15) 0%, rgba(37,99,235,0.08) 100%)'
+          : plan.id === 'pro'
+          ? 'linear-gradient(160deg, rgba(56,189,248,0.05) 0%, rgba(15,15,19,0.8) 100%)'
+          : 'rgba(255,255,255,0.02)',
+        border: hl
+          ? `1.5px solid ${hovered ? 'rgba(124,58,237,0.6)' : 'rgba(124,58,237,0.3)'}`
+          : plan.id === 'pro'
+          ? `1.5px solid ${hovered ? 'rgba(56,189,248,0.4)' : 'rgba(56,189,248,0.15)'}`
+          : `1.5px solid ${hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)'}`,
+        boxShadow: hl
+          ? hovered
+            ? '0 20px 60px rgba(124,58,237,0.3), 0 0 0 1px rgba(124,58,237,0.15)'
+            : '0 8px 32px rgba(124,58,237,0.15)'
+          : plan.id === 'pro' && hovered
+          ? '0 16px 48px rgba(56,189,248,0.12)'
+          : 'none',
+        backdropFilter: 'blur(20px)',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+      }}
+    >
+      {/* Top accent glow line */}
+      {(hl || plan.id === 'pro') && (
+        <div style={{
+          position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px',
+          background: hl
+            ? 'linear-gradient(90deg, transparent, rgba(192,38,211,0.8), rgba(37,99,235,0.8), transparent)'
+            : 'linear-gradient(90deg, transparent, rgba(56,189,248,0.6), transparent)',
+          borderRadius: '1px',
+          opacity: hovered ? 1 : 0.5,
+          transition: 'opacity 0.3s ease',
+        }} />
+      )}
+
+      {/* Badge */}
+      {plan.badge && (
+        <div style={{
+          position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)',
+          background: 'linear-gradient(135deg, #c026d3 0%, #7c3aed 100%)',
+          color: '#fff', fontSize: '10px', fontWeight: 700,
+          letterSpacing: '0.12em', padding: '4px 16px', borderRadius: '100px',
+          whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(192,38,211,0.4)',
+        }}>
+          {plan.badge}
+        </div>
+      )}
+
+      {/* Listing number */}
+      <div style={{
+        fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.16em',
+        color: hl ? 'rgba(192,38,211,0.7)' : BRAND.textDim,
+        marginBottom: '12px', fontFamily: 'monospace',
+      }}>
+        {plan.listingNum}
+      </div>
+
+      {/* Plan name */}
+      <div style={{
+        fontSize: '30px', fontWeight: 700,
+        fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
+        lineHeight: 1.1, marginBottom: '8px', letterSpacing: '-0.5px',
+        // Gradient name for highlighted, white for others
+        background: hl ? 'linear-gradient(135deg, #c026d3, #7c3aed, #38bdf8)' : undefined,
+        WebkitBackgroundClip: hl ? 'text' : undefined,
+        WebkitTextFillColor: hl ? 'transparent' : BRAND.textWhite,
+        backgroundClip: hl ? 'text' : undefined,
+        color: hl ? undefined : BRAND.textWhite,
+      }}>
+        {plan.name}
+      </div>
+
+      {/* Tagline */}
+      <p style={{
+        fontSize: '13px', color: BRAND.textMuted,
+        marginBottom: '22px', lineHeight: 1.55, minHeight: '40px',
+      }}>
+        {plan.tagline}
+      </p>
+
+      {/* Price */}
+      <div style={{ marginBottom: '22px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '4px' }}>
+          <span style={{
+            fontSize: '42px', fontWeight: 700, lineHeight: 1, letterSpacing: '-1.5px',
+            fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
+            color: hl ? '#c026d3' : plan.id === 'pro' ? BRAND.cyan : BRAND.textWhite,
+          }}>
+            {plan.price}
+          </span>
+          <span style={{ fontSize: '13px', color: BRAND.textDim }}>{plan.priceNote}</span>
+        </div>
+        <div style={{ fontSize: '12px', color: BRAND.textDim }}>{plan.priceSub}</div>
+      </div>
+
+      {/* Reach bar */}
+      <div style={{ marginBottom: '22px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '7px' }}>
+          <span style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '0.16em', color: BRAND.textDim, fontFamily: 'monospace' }}>
+            REACH
+          </span>
+          <span style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '0.16em', color: hl ? 'rgba(192,38,211,0.6)' : BRAND.textDim, fontFamily: 'monospace' }}>
+            {plan.reachRightLabel}
+          </span>
+        </div>
+        {/* Track */}
+        <div style={{ width: '100%', height: '3px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', marginBottom: '10px', overflow: 'hidden' }}>
+          <div style={{
+            height: '100%',
+            width: `${plan.reachPercent}%`,
+            background: hl ? BRAND.grad : plan.id === 'pro' ? BRAND.cyan : 'rgba(255,255,255,0.25)',
+            borderRadius: '2px',
+          }} />
+        </div>
+        <p style={{ fontSize: '12.5px', color: BRAND.textMuted, lineHeight: 1.5, margin: 0 }}>
+          {plan.reachDescription}{' '}
+          <strong style={{ color: BRAND.textWhite }}>{plan.reachBold}</strong>
+        </p>
+      </div>
+
+      {/* Divider */}
+      <div style={{ height: '1px', background: 'rgba(255,255,255,0.05)', marginBottom: '18px' }} />
+
+      {/* Features */}
+      <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 26px 0', flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {plan.features.map((f, i) => (
+          <li key={i} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            padding: '8.5px 0',
+            borderBottom: '1px solid rgba(255,255,255,0.04)',
+          }}>
+            <FeatureIconEl type={f.icon} accent={accentSolid} highlighted={hl} />
+            <span style={{
+              fontSize: '13px', lineHeight: 1.4,
+              color: f.icon === 'cross' ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.68)',
+            }}>
+              {f.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      {/* CTA Button */}
+      <button
+        id={`pp-cta-${plan.id}`}
+        className={hl || plan.id === 'pro' ? 'pp-cta' : 'pp-cta pp-cta-plain'}
+        onClick={onSelect}
+        disabled={isDisabled}
+        style={{
+          width: '100%', padding: '14px 20px',
+          borderRadius: '10px', border: 'none',
+          fontWeight: 600, fontSize: '14px',
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
+          opacity: isDisabled && !isActive ? 0.4 : 1,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          // CTA styles per plan
+          background: hl
+            ? BRAND.grad
+            : plan.id === 'pro'
+            ? `linear-gradient(135deg, ${BRAND.cyan} 0%, #0284c7 100%)`
+            : 'rgba(255,255,255,0.06)',
+          color: '#fff',
+          boxShadow: hl
+            ? '0 4px 20px rgba(124,58,237,0.35)'
+            : plan.id === 'pro'
+            ? '0 4px 20px rgba(56,189,248,0.2)'
+            : 'none',
+        }}
+      >
+        {isActive ? (
+          <span style={{
+            width: '17px', height: '17px',
+            border: '2px solid rgba(255,255,255,0.25)',
+            borderTopColor: '#fff', borderRadius: '50%',
+            animation: 'pp-spin 0.65s linear infinite',
+            display: 'inline-block',
+          }} />
+        ) : plan.cta}
+      </button>
+    </div>
+  );
+}
+
+// â”€â”€â”€ FEATURE ICON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function FeatureIconEl({ type, accent, highlighted }: { type: FeatureIcon; accent: string; highlighted: boolean }) {
+  const base: React.CSSProperties = {
+    flexShrink: 0, width: '18px',
+    textAlign: 'center' as const, fontSize: '13px', lineHeight: 1,
+  };
+  if (type === 'check') return <span style={{ ...base, color: highlighted ? '#c026d3' : accent }}>&#10003;</span>;
+  if (type === 'dash') return <span style={{ ...base, color: 'rgba(255,255,255,0.25)', fontSize: '15px' }}>&#8212;</span>;
+  return <span style={{ ...base, color: 'rgba(255,255,255,0.14)', fontSize: '11px' }}>&#10005;</span>;
+}

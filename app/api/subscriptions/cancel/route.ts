@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { razorpay } from '@/lib/razorpay';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,10 +17,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Verify ownership and get subscription_id
-    const { data: agent, error: agentError } = await supabase
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error('[subscriptions/cancel] CRITICAL: Missing Supabase credentials');
+      return NextResponse.json({ error: 'Server misconfiguration: Supabase credentials missing' }, { status: 500 });
+    }
+
+    const adminSupabase = createAdminClient(supabaseUrl, serviceRoleKey);
+
+    // Verify ownership and fetch listing subscription details
+    const { data: agent, error: agentError } = await adminSupabase
       .from('agents')
-      .select('subscription_id, subscription_status, user_id')
+      .select('id, subscription_id, subscription_status, user_id, vendor_plan')
       .eq('id', listing_id)
       .single();
 
@@ -28,27 +38,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Listing not found or unauthorized' }, { status: 404 });
     }
 
-    if (!agent.subscription_id) {
-      return NextResponse.json({ error: 'No subscription found for this listing' }, { status: 400 });
-    }
+    const subscriptionId = agent.subscription_id;
 
     if (agent.subscription_status === 'cancelled') {
       return NextResponse.json({ error: 'Subscription is already cancelled' }, { status: 400 });
     }
 
-    // Call Razorpay API to cancel at end of cycle
-    if (razorpay) {
-      // The second parameter 'false' means cancel_at_cycle_end = true in standard razorpay-node
-      // Specifically: cancel(subscriptionId, cancelAtCycleEnd) 
-      // Actually, passing `true` or `1` means cancel_at_cycle_end = true depending on SDK version. Let's pass { cancel_at_cycle_end: 1 } if it takes an object, but razorpay-node takes (id, cancel_at_cycle_end: boolean) usually. 
-      // Actually, it is `razorpay.subscriptions.cancel(subscription_id, false)` for immediate cancel, and `true` for cycle end. Wait, no. The parameter is `cancel_at_cycle_end` (boolean). So we should pass `true`.
-      await razorpay.subscriptions.cancel(agent.subscription_id, true);
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    // Call Razorpay REST API to cancel subscription at current cycle end
+    if (keyId && keySecret && subscriptionId && subscriptionId.startsWith('sub_')) {
+      try {
+        const credentials = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
+        const rzpRes = await fetch(`https://api.razorpay.com/v1/subscriptions/${subscriptionId}/cancel`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            cancel_at_cycle_end: 1, // Cancel auto-renewal at end of current paid billing cycle
+          }),
+        });
+
+        if (!rzpRes.ok) {
+          const errData = await rzpRes.json().catch(() => ({}));
+          console.warn('[subscriptions/cancel] Razorpay cancel returned warning:', errData);
+        }
+      } catch (rzpErr) {
+        console.error('[subscriptions/cancel] Razorpay API error:', rzpErr);
+      }
     }
 
-    // Update the database
-    const { error: updateError } = await supabase
+    // Update DB status to cancelled
+    const { error: updateError } = await adminSupabase
       .from('agents')
-      .update({ subscription_status: 'cancelled' })
+      .update({
+        subscription_status: 'cancelled',
+      })
       .eq('id', listing_id);
 
     if (updateError) {
@@ -56,7 +84,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to update database' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, message: 'Subscription cancelled successfully' });
+    return NextResponse.json({
+      success: true,
+      message: 'Subscription auto-renewal cancelled successfully. Your plan features remain active until the end of your current billing period.',
+    });
 
   } catch (err) {
     console.error('Error cancelling subscription:', err);

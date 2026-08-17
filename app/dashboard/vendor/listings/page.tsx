@@ -5,10 +5,11 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Script from 'next/script';
 import { redirect } from 'next/navigation';
-import { Calendar, Star, Shield } from 'lucide-react';
+import { Calendar, Star, Shield, ShieldAlert, Sparkles } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { deleteTool } from './actions';
 import { Toast } from '@/components/parlexa/ui/Toast';
+import { CancelSubscriptionModal } from '@/components/parlexa/vendor/CancelSubscriptionModal';
 
 interface Listing {
   id: number;
@@ -23,6 +24,7 @@ interface Listing {
   rejection_reason?: string;
   subscription_id?: string | null;
   subscription_status?: string | null;
+  vendor_plan?: string | null;
   listing_expires_at?: string | null;
   company_name?: string | null;
 }
@@ -33,6 +35,13 @@ export default function VendorListings() {
   const [cancellingId, setCancellingId] = useState<number | null>(null);
   const [payingId, setPayingId] = useState<number | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [cancelModalData, setCancelModalData] = useState<{
+    isOpen: boolean;
+    listingId: number;
+    toolName: string;
+    planName: string;
+    expiresAt?: string | null;
+  } | null>(null);
 
   const fetchListings = useCallback(async () => {
     const supabase = createClient() as any;
@@ -307,12 +316,45 @@ export default function VendorListings() {
                     </div>
                   </div>
                   
-                  {listing.is_verified && (
-                    <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-                      <Shield size={16} /> 
-                      Verified Tool
-                    </div>
-                  )}
+                  <div className="flex flex-wrap items-center gap-3">
+                    {listing.vendor_plan && listing.vendor_plan !== 'free' ? (
+                      <div className="flex flex-wrap items-center gap-3 bg-purple-500/10 px-3.5 py-1.5 rounded-xl border border-purple-500/20">
+                        <span className="text-xs font-bold text-purple-400 flex items-center gap-1.5">
+                          <Sparkles size={13} />
+                          {listing.vendor_plan === 'pro' ? 'Scale Plan (₹899/mo)' : 'Growth Plan (₹499/mo)'}
+                        </span>
+                        {listing.subscription_status === 'cancelled' ? (
+                          <span className="text-xs text-amber-400 font-medium flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
+                            <Calendar size={12} /> Cancels at cycle end
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => setCancelModalData({
+                              isOpen: true,
+                              listingId: listing.id,
+                              toolName: listing.name,
+                              planName: listing.vendor_plan || 'growth',
+                              expiresAt: listing.listing_expires_at,
+                            })}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-semibold transition-all shadow-sm"
+                          >
+                            <ShieldAlert size={13} /> Cancel Auto-Renew
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-xs font-medium text-slate-400 bg-slate-900/50 px-3 py-1.5 rounded-xl border border-slate-800/50">
+                        Launch Plan (Free)
+                      </span>
+                    )}
+
+                    {listing.is_verified && (
+                      <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20">
+                        <Shield size={16} /> 
+                        Verified Tool
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
@@ -324,6 +366,19 @@ export default function VendorListings() {
           message={toast.message}
           type={toast.type}
           onClose={() => setToast(null)}
+        />
+      )}
+      {cancelModalData && (
+        <CancelSubscriptionModal
+          isOpen={cancelModalData.isOpen}
+          listingId={cancelModalData.listingId}
+          toolName={cancelModalData.toolName}
+          planName={cancelModalData.planName}
+          expiresAt={cancelModalData.expiresAt}
+          onClose={() => setCancelModalData(null)}
+          onSuccess={(id) => {
+            setListings(prev => prev.map(l => l.id === id ? { ...l, subscription_status: 'cancelled' } : l));
+          }}
         />
       )}
     </section>

@@ -148,3 +148,24 @@ export async function sendBundleDemoRequestEmail(params: {
     return { success: false, error };
   }
 }
+
+export async function sendBundleDocsEmail(email: string, bundleName: string, bundleSlug: string) {
+  try {
+    const docsLink = `https://parlexa.in/bundles/${bundleSlug}/docs`;
+    const html = loadTemplate('bundle-docs', {
+      BUNDLE_NAME: bundleName,
+      DOCS_LINK: docsLink
+    });
+
+    return await resend.emails.send({
+      from: 'noreply@parlexa.in',
+      to: email,
+      subject: `⚡ Your ${bundleName} Deployment Documentation Link`,
+      html
+    });
+  } catch (error) {
+    console.error('Send bundle docs email error:', error);
+    return { success: false, error };
+  }
+}
+

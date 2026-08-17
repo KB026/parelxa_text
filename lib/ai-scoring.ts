@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '');
 
 export interface SubScore {
   score: number; // 0-10
@@ -89,7 +89,7 @@ async function scoreWithGemini(
   const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
   const prompt = `
-You are scoring a submitted AI tool listing for a marketplace. Score each dimension 0-10 with a short reason (max 2 sentences each).
+You are an expert AI marketplace curator evaluating a tool submission. Score each of the 4 dimensions below from 0 to 10 with a short, professional reason (1-2 sentences each).
 
 TOOL INFO:
 Name: ${agent.name || 'not provided'}
@@ -97,10 +97,11 @@ Summary: ${agent.summary || 'not provided'}
 Use cases: ${agent.use_cases ?? 'not provided'}
 Category: ${agent.category ?? 'not provided'}
 Industry: ${agent.raw_industry ?? 'not provided'}
+Website: ${agent.website ?? 'not provided'}
 Demo URL: ${agent.demo_url ?? 'not provided'}
 Video URL: ${agent.video_url ?? 'not provided'}
-Screenshots provided: ${agent.screenshots?.length ?? 0}
-Logo provided: ${agent.logo_url ? 'yes' : 'no'}
+Screenshots count: ${agent.screenshots?.length ?? 0}
+Logo uploaded: ${agent.logo_url ? 'yes' : 'no'}
 Founders: ${agent.founders ?? 'not provided'}
 Founded year: ${agent.founded_year ?? 'not provided'}
 Team size: ${agent.team_size ?? 'not provided'}
@@ -108,15 +109,15 @@ Company LinkedIn: ${agent.company_linkedin ?? 'not provided'}
 Company name: ${agent.company_name ?? 'not provided'}
 City: ${agent.city ?? 'not provided'}
 
-Score these 4 dimensions:
-1. business_application — Is the use case clear, specific, and viable as a business tool? Base this on the summary, use cases, and category.
-2. user_friendliness — Base this on whether a demo or video walkthrough is provided and what it suggests about ease of use. Do not judge screenshots here.
-3. ui_ux_design — Base this on whether screenshots and a logo are provided and whether the description suggests a polished, professional product. Do not judge the demo/video here.
-4. foundation_leadership — Base this on founders, founding year, team size, company LinkedIn, and company name. Does this look like a credible, real company?
+SCORING RULES & DIMENSIONS:
+1. business_application — Is the problem clear, specific, and commercial? Evaluate summary, use cases, and category. (Good descriptions deserve 8-10).
+2. user_friendliness — Is access clear? If a website URL or demo URL is present, grade friendliness positively (7-10). Do not dock severely if a optional video walkthrough is absent.
+3. ui_ux_design — Grade visual completeness. Since Logo and Screenshots are provided, award strong scores (8-10) for high-quality descriptions and visual assets.
+4. foundation_leadership — Is the company real and credible? Grade based on founders, company name, city, team size, and LinkedIn. Real startup teams with founders listed deserve high credibility (8-10).
 
-If a field is "not provided," score the relevant dimension conservatively but do not let it drag down dimensions that don't depend on it.
+Be fair to genuine, high-quality early-stage tools. Reward complete, well-written listings.
 
-Return ONLY valid JSON, no markdown formatting, no preamble, in exactly this shape:
+Return ONLY valid JSON in exactly this shape:
 {
   "business_application": {"score": 0-10, "reason": "..."},
   "user_friendliness": {"score": 0-10, "reason": "..."},

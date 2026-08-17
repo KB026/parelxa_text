@@ -40,6 +40,11 @@ export default async function AdminLayout({
     .select('*', { count: 'exact', head: true })
     .eq('status', 'draft');
 
+  const { count: pendingToolSubmissionsCount } = await adminSupabase
+    .from('agents')
+    .select('*', { count: 'exact', head: true })
+    .eq('approval_status', 'pending');
+
   const navLinks = [
     { href: '/admin', label: 'Platform Overview', icon: <LayoutDashboard size={18} /> },
     { href: '/admin/bundle-builder', label: 'Bundle Builder', icon: <Layers size={18} />, accent: '#0EA5E9' },
@@ -50,7 +55,7 @@ export default async function AdminLayout({
     { href: '/admin/users', label: 'User Management', icon: <Users size={18} /> },
     { href: '/admin/moderation/reviews', label: 'Review Moderation', icon: <Shield size={18} /> },
     { href: '/admin/verifications', label: 'Vendor Verifications', icon: <CheckCircle size={18} />, accent: '#60a5fa' },
-    { href: '/admin/approval-queue', label: 'Agent Approvals', icon: <ClipboardCheck size={18} />, accent: '#a78bfa' },
+    { href: '/admin/approval-queue', label: 'Agent Approvals', icon: <ClipboardCheck size={18} />, badge: pendingToolSubmissionsCount || 0, accent: '#a78bfa' },
     { href: '/admin/resolution-center', label: 'Resolution Center', icon: <MessageSquare size={18} />, accent: '#38bdf8' },
     { href: '/admin/promotions', label: 'Promotions & Revenue', icon: <DollarSign size={18} />, accent: '#fb923c' },
     { href: '/admin/reports', label: 'Reports & Analytics', icon: <FileText size={18} /> },

@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Sparkles, FileText, Tags, CreditCard, Building2, Eye, Check, ArrowLeft } from 'lucide-react';
+import { FileText, Tags, CreditCard, Building2, Eye, Check, ArrowLeft } from 'lucide-react';
 import { ImageUpload } from '@/components/parlexa/ui/ImageUpload';
+import PlanPickerScreen from '@/components/parlexa/vendor/PlanPickerScreen';
 const STORAGE_KEY = 'parlexa_listing_draft';
 const STEPS = ['Basic Info', 'Classification', 'Pricing', 'Company', 'Review'];
 
@@ -55,6 +56,8 @@ interface FormData {
   company_gstin: string;
   contact_name: string;
   contact_phone: string;
+  how_did_you_hear: string;
+  how_did_you_hear_custom: string;
   external_reviews: Array<{ platform: string; url: string }>;
 }
 
@@ -63,7 +66,7 @@ const defaultForm: FormData = {
   category: 'AI & LLMs', tags: [], industries: [], use_cases: '', raw_industry: '',
   pricing_model: '', pricing: '', price_range: '', free_trial: '', has_india_pricing: false, inr_price: '',
   company_name: '', founded_year: '', team_size: '', city: '', founders: '', company_linkedin: '', company_gstin: '',
-  contact_name: '', contact_phone: '',
+  contact_name: '', contact_phone: '', how_did_you_hear: '', how_did_you_hear_custom: '',
   external_reviews: [],
 };
 
@@ -73,8 +76,10 @@ export default function NewListingPage() {
   const [form, setForm] = useState<FormData>(defaultForm);
   const [tagInput, setTagInput] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submittedAgentId, setSubmittedAgentId] = useState<number | null>(null);
   const [lastSaved, setLastSaved] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGstRegistered, setIsGstRegistered] = useState(false);
 
   // Load draft from localStorage — but clear it if ?fresh=true
   useEffect(() => {
@@ -88,6 +93,9 @@ export default function NewListingPage() {
       if (saved) {
         const parsed = JSON.parse(saved);
         setForm(prev => ({ ...prev, ...parsed.data }));
+        if (parsed.data?.company_gstin) {
+          setIsGstRegistered(true);
+        }
         if (parsed.step) setStep(parsed.step);
       }
     } catch { /* ignore */ }
@@ -132,12 +140,37 @@ export default function NewListingPage() {
   };
 
   async function handleSubmit() {
+    if (!form.logo_url) {
+      alert('Logo Upload is required to submit your listing.');
+      setStep(1);
+      return;
+    }
+    if (!form.screenshots || form.screenshots.length === 0) {
+      alert('At least 1 Product Screenshot is required to submit your listing.');
+      setStep(1);
+      return;
+    }
+    if (!form.how_did_you_hear) {
+      alert('Please select how you heard about Parlexa.');
+      setStep(4);
+      return;
+    }
+    if (form.how_did_you_hear === 'Other' && !form.how_did_you_hear_custom.trim()) {
+      alert('Please specify how you heard about Parlexa in the text box.');
+      setStep(4);
+      return;
+    }
+
+    const finalSource = form.how_did_you_hear === 'Other' && form.how_did_you_hear_custom
+      ? `Other: ${form.how_did_you_hear_custom.trim()}`
+      : form.how_did_you_hear;
+
     setIsSubmitting(true);
     try {
       const res = await fetch('/api/listings/create', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify({ ...form, how_did_you_hear: finalSource })
       });
       const data = await res.json();
 
@@ -146,6 +179,7 @@ export default function NewListingPage() {
       }
 
       localStorage.removeItem(STORAGE_KEY);
+      setSubmittedAgentId(data.id);
       setSubmitted(true);
     } catch (err: unknown) {
       console.error('Submission Error:', err);
@@ -155,40 +189,13 @@ export default function NewListingPage() {
     }
   }
 
-  // ── CONFIRMATION SCREEN ──
-  if (submitted) {
+  // ── PLAN PICKER (shown after successful submission) ──
+  if (submitted && submittedAgentId) {
     return (
-      <div className="listing-wizard">
-        <div className="listing-form-card">
-          <div className="listing-confirmation">
-            <div className="icon"><Sparkles className="w-8 h-8 text-cyan-500" /></div>
-            <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>Listing Submitted!</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '15px', maxWidth: '400px', margin: '0 auto 24px', lineHeight: 1.7 }}>
-              Your AI tool <strong style={{ color: 'var(--text-white)' }}>{form.name}</strong> is now under review. Our team will evaluate it within <strong style={{ color: 'var(--cyan)' }}>2-3 business days</strong>.
-            </p>
-            <div style={{ background: 'var(--bg-secondary)', borderRadius: '12px', padding: '16px', marginBottom: '24px', textAlign: 'left' }}>
-              <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginBottom: '12px', fontWeight: 600 }}>WHAT HAPPENS NEXT</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
-                  <span style={{ color: 'var(--green)' }}><Check className="w-4 h-4" /></span>
-                  <span style={{ color: 'var(--text-muted)' }}>Listing received and queued for review</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
-                  <span style={{ color: 'var(--text-dim)' }}>○</span>
-                  <span style={{ color: 'var(--text-dim)' }}>Team reviews content, links, and product</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
-                  <span style={{ color: 'var(--text-dim)' }}>○</span>
-                  <span style={{ color: 'var(--text-dim)' }}>Listing goes live on the marketplace</span>
-                </div>
-              </div>
-            </div>
-            <Link href="/dashboard/vendor/listings" className="listing-btn-next" style={{ textDecoration: 'none', display: 'inline-block' }}>
-              <ArrowLeft className="w-4 h-4 inline mr-2" /> Back to My Listings
-            </Link>
-          </div>
-        </div>
-      </div>
+      <PlanPickerScreen
+        toolName={form.name}
+        agentId={submittedAgentId}
+      />
     );
   }
 
@@ -261,8 +268,8 @@ export default function NewListingPage() {
               <ImageUpload
                 bucket="agent-logos"
                 folder="logos"
-                label="Logo Upload"
-                helperText="square, min 200x200"
+                label="Logo Upload *"
+                helperText="square, min 200x200 (Required)"
                 value={form.logo_url}
                 onChange={(url) => updateField('logo_url', url as string)}
               />
@@ -273,8 +280,8 @@ export default function NewListingPage() {
               folder="screenshots"
               multiple={true}
               maxFiles={6}
-              label="Product Screenshots"
-              helperText="Upload screenshots of your product (dashboard, key features, etc.) — up to 6 images"
+              label="Product Screenshots *"
+              helperText="Upload screenshots of your product — at least 1 image is required (up to 6)"
               value={form.screenshots}
               onChange={(urls) => updateField('screenshots', urls as string[])}
             />
@@ -445,16 +452,42 @@ export default function NewListingPage() {
               <input className="listing-input" placeholder="e.g. John Doe, Jane Smith" value={form.founders} onChange={e => updateField('founders', e.target.value)} />
             </div>
 
-            <div className="listing-grid-2">
-              <div className="listing-field">
-                <label className="listing-label">Company LinkedIn <span className="optional">(optional)</span></label>
-                <input className="listing-input" type="url" placeholder="https://linkedin.com/company/..." value={form.company_linkedin} onChange={e => updateField('company_linkedin', e.target.value)} />
-              </div>
-              <div className="listing-field">
-                <label className="listing-label">Company GSTIN <span className="optional">(For B2B Tax Credit)</span></label>
-                <input className="listing-input" placeholder="e.g. 27AAAAA0000A1Z5" value={form.company_gstin} onChange={e => updateField('company_gstin', e.target.value)} />
+            <div className="listing-field">
+              <label className="listing-label">Company LinkedIn <span className="optional">(optional)</span></label>
+              <input className="listing-input" type="url" placeholder="https://linkedin.com/company/..." value={form.company_linkedin} onChange={e => updateField('company_linkedin', e.target.value)} />
+            </div>
+
+            <div className="listing-field">
+              <div className="listing-toggle-row">
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-white)' }}>🏢 Is your company GST registered?</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '2px' }}>Enable this if your business has a registered GSTIN in India</div>
+                </div>
+                <button
+                  type="button"
+                  className={`listing-toggle ${isGstRegistered ? 'on' : ''}`}
+                  onClick={() => {
+                    const next = !isGstRegistered;
+                    setIsGstRegistered(next);
+                    if (!next) {
+                      updateField('company_gstin', '');
+                    }
+                  }}
+                />
               </div>
             </div>
+
+            {isGstRegistered && (
+              <div className="listing-field">
+                <label className="listing-label">Company GSTIN <span className="optional">(For B2B Tax Invoice & Credit)</span></label>
+                <input
+                  className="listing-input"
+                  placeholder="e.g. 27AAAAA0000A1Z5"
+                  value={form.company_gstin}
+                  onChange={e => updateField('company_gstin', e.target.value.toUpperCase())}
+                />
+              </div>
+            )}
 
             <div className="listing-grid-2">
               <div className="listing-field">
@@ -465,6 +498,28 @@ export default function NewListingPage() {
                 <label className="listing-label">Contact Phone *</label>
                 <input className="listing-input" type="tel" placeholder="e.g. +91 9876543210" value={form.contact_phone} onChange={e => updateField('contact_phone', e.target.value)} />
               </div>
+            </div>
+
+            <div className="listing-field">
+              <label className="listing-label">How did you hear about Parlexa? *</label>
+              <select className="listing-input listing-select" value={form.how_did_you_hear} onChange={e => updateField('how_did_you_hear', e.target.value)}>
+                <option value="">Select an option...</option>
+                <option value="Google Search">Google Search</option>
+                <option value="Social Media (LinkedIn, X/Twitter, Instagram, YouTube)">Social Media (LinkedIn, X / Twitter, Instagram, YouTube)</option>
+                <option value="Friend / Founder Referral">Friend / Founder Referral</option>
+                <option value="Blog / Article / Press">Blog / Article / Press</option>
+                <option value="Product Hunt">Product Hunt</option>
+                <option value="Other">Other</option>
+              </select>
+              {form.how_did_you_hear === 'Other' && (
+                <input
+                  className="listing-input"
+                  style={{ marginTop: '8px' }}
+                  placeholder="Please specify (e.g. Podcast, Tech Conference, Newsletter)..."
+                  value={form.how_did_you_hear_custom}
+                  onChange={e => updateField('how_did_you_hear_custom', e.target.value)}
+                />
+              )}
             </div>
 
             {/* Optional External Reviews Proof Section */}
