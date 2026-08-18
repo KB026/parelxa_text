@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Building2, Sparkles } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Press & Media Kit | Parlexa — The Global AI Agent Marketplace',
   description: 'Official press kit, company overview, founder details, company descriptions, live platform stats, and downloadable brand assets for Parlexa.',
