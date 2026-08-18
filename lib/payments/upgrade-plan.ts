@@ -3,7 +3,7 @@ import { sendSubmissionConfirmation, sendListingStatusUpdate } from '@/lib/email
 
 export interface PlanUpgradeParams {
   agentId: number;
-  plan: 'free' | 'growth' | 'pro';
+  plan: 'free' | 'growth' | 'pro' | 'growth_annual' | 'pro_annual';
   paymentId?: string | null;
   subscriptionOrOrderId?: string | null;
   userId?: string | null;
@@ -98,13 +98,15 @@ export async function processListingPlanUpgrade(params: PlanUpgradeParams): Prom
     }
   }
 
-  // 3. Determine plan expiry & badges (paid plans get 30 days, free is null)
+  // 3. Determine plan expiry & badges (paid plans get 30 days for monthly, 365 days for annual)
+  const isAnnual = plan.endsWith('_annual');
+  const durationDays = isAnnual ? 365 : 30;
   const expiresAt = plan !== 'free'
-    ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    ? new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000).toISOString()
     : null;
 
-  const isVerified = plan === 'growth' || plan === 'pro';
-  const isFeatured = plan === 'pro';
+  const isVerified = plan.startsWith('growth') || plan.startsWith('pro');
+  const isFeatured = plan.startsWith('pro');
 
   // 4. Run auto-approval logic
   const aiScore = agent.ai_score || 0;
@@ -142,12 +144,20 @@ export async function processListingPlanUpgrade(params: PlanUpgradeParams): Prom
 
   const toolName = agent.name;
   const vendorEmail = userEmail || agent.user_email;
-  const planLabel = plan === 'free' ? 'Indexed (Free)' : plan === 'growth' ? 'Verified (₹499/mo)' : 'Featured (₹899/mo)';
+  const planLabel = plan === 'free' ? 'Indexed (Free)' 
+    : plan === 'growth' ? 'Verified Growth (₹499/mo)' 
+    : plan === 'pro' ? 'Featured Scale (₹899/mo)'
+    : plan === 'growth_annual' ? 'Annual Growth (₹4,999/yr)'
+    : 'Annual Scale (₹8,499/yr)';
 
   // 6. Record transaction if paid plan & paymentId exists
   if (plan !== 'free' && paymentId) {
     try {
-      const planAmount = amountPaise ? Math.round(amountPaise / 100) : (plan === 'growth' ? 499 : 899);
+      const defaultAmount = plan === 'growth' ? 499 
+        : plan === 'pro' ? 899 
+        : plan === 'growth_annual' ? 4999 
+        : 8499;
+      const planAmount = amountPaise ? Math.round(amountPaise / 100) : defaultAmount;
       await adminSupabase.from('transactions').insert([{
         user_id: userId || agent.user_id || null,
         agent_id: agentId,

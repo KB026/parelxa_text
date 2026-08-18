@@ -55,4 +55,4 @@ This document contains pre-approved, ready-to-paste copy blurbs and metadata for
 > 
 > We’d love your feedback, thoughts, and questions below! What AI agents are you using in your stack today?
 > 
-> — Abhinav, Gaurav & the Parlexa Team
+> — Abhinav & the Parlexa Team

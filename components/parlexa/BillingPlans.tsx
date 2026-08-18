@@ -9,7 +9,7 @@ interface BillingPlansProps {
   initialAgents: Agent[];
 }
 
-type PlanId = 'free' | 'growth' | 'pro';
+type PlanId = 'free' | 'growth' | 'pro' | 'growth_annual' | 'pro_annual';
 type FeatureIcon = 'check' | 'dash' | 'cross';
 
 interface PlanFeature {
@@ -39,13 +39,13 @@ interface Plan {
 const BRAND_GRAD = 'linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #2563eb 100%)';
 const BRAND_CYAN = '#38bdf8';
 
-const PLANS: Plan[] = [
+const MONTHLY_PLANS: Plan[] = [
   {
     id: 'free',
     listingNum: 'LISTING / 01',
-    name: 'Launch',
+    name: 'Launch Plan',
     tagline: 'A bare entry in the directory. Get on the map, free forever.',
-    price: 'Free',
+    price: '\u20b90',
     priceNote: '/ forever',
     priceSub: 'No card required',
     reachRightLabel: 'INDEX ONLY',
@@ -66,16 +66,16 @@ const PLANS: Plan[] = [
   {
     id: 'growth',
     listingNum: 'LISTING / 02',
-    name: 'Growth',
+    name: 'Growth Plan',
     tagline: 'A complete, trusted profile buyers can act on.',
     price: '\u20b9499',
     priceNote: '/ month',
-    priceSub: 'Billed monthly',
+    priceSub: '+ 18% GST billed monthly',
     reachRightLabel: 'YOUR SITE',
     reachPercent: 60,
     reachDescription: 'Buyers can click through \u2014',
     reachBold: 'dofollow link, live and reachable.',
-    badge: 'MOST LISTINGS',
+    badge: 'MOST POPULAR',
     highlighted: true,
     features: [
       { text: 'Everything in Launch', icon: 'check' },
@@ -92,11 +92,11 @@ const PLANS: Plan[] = [
   {
     id: 'pro',
     listingNum: 'LISTING / 03',
-    name: 'Scale',
+    name: 'Scale Plan',
     tagline: 'Promoted placement and leads routed straight to you.',
     price: '\u20b9899',
     priceNote: '/ month',
-    priceSub: 'Billed monthly',
+    priceSub: '+ 18% GST billed monthly',
     reachRightLabel: 'HOMEPAGE',
     reachPercent: 100,
     reachDescription: 'Buyers see you first \u2014',
@@ -115,12 +115,93 @@ const PLANS: Plan[] = [
   },
 ];
 
+const ANNUAL_PLANS: Plan[] = [
+  {
+    id: 'free',
+    listingNum: 'LISTING / 01',
+    name: 'Launch Plan',
+    tagline: 'A bare entry in the directory. Get on the map, free forever.',
+    price: '\u20b90',
+    priceNote: '/ forever',
+    priceSub: 'No card required',
+    reachRightLabel: 'INDEX ONLY',
+    reachPercent: 20,
+    reachDescription: "Buyers can find you. They can\u2019t click through \u2014",
+    reachBold: 'no link to your site.',
+    features: [
+      { text: 'Name, logo, one-line tagline', icon: 'dash' },
+      { text: '1 category', icon: 'dash' },
+      { text: 'Link to your website', icon: 'cross' },
+      { text: 'Screenshots or demo video', icon: 'cross' },
+      { text: 'Pricing shown to buyers', icon: 'cross' },
+      { text: 'Reviews enabled', icon: 'cross' },
+      { text: 'Manual review, up to 1 week', icon: 'dash' },
+    ],
+    cta: 'Current plan',
+  },
+  {
+    id: 'growth_annual',
+    listingNum: 'LISTING / 02',
+    name: 'Growth Plan',
+    tagline: 'A complete, trusted profile for a full year. Save \u20b9989/yr.',
+    price: '\u20b94,999',
+    priceNote: '/ year',
+    priceSub: '(\u20b9416/mo + GST equivalent)',
+    reachRightLabel: 'YOUR SITE',
+    reachPercent: 60,
+    reachDescription: 'Buyers can click through \u2014',
+    reachBold: 'dofollow link, live for 365 days.',
+    badge: 'SAVE ~17%',
+    highlighted: true,
+    features: [
+      { text: 'Everything in Launch', icon: 'check' },
+      { text: 'Link to your website (dofollow)', icon: 'check' },
+      { text: 'Verified badge (1 Full Year)', icon: 'check' },
+      { text: '3 categories + audience tags', icon: 'check' },
+      { text: 'Media gallery on your profile', icon: 'check' },
+      { text: 'Pricing shown to buyers', icon: 'check' },
+      { text: 'Reviews enabled', icon: 'check' },
+      { text: 'Priority review within 24 hours', icon: 'check' },
+    ],
+    cta: 'Start Growth',
+  },
+  {
+    id: 'pro_annual',
+    listingNum: 'LISTING / 03',
+    name: 'Scale Plan',
+    tagline: 'Maximum visibility & leads for a full year. Save \u20b92,289/yr.',
+    price: '\u20b98,499',
+    priceNote: '/ year',
+    priceSub: '(\u20b9708/mo + GST equivalent)',
+    reachRightLabel: 'HOMEPAGE',
+    reachPercent: 100,
+    reachDescription: 'Buyers see you first \u2014',
+    reachBold: 'top of search, homepage rotation, 365 days.',
+    badge: 'BEST VALUE (SAVE 21%)',
+    features: [
+      { text: 'Everything in Growth', icon: 'check' },
+      { text: 'Featured badge + homepage rotation (1 Year)', icon: 'check' },
+      { text: 'Top-of-category search placement', icon: 'check' },
+      { text: '5 categories, extended profile', icon: 'check' },
+      { text: 'Lead capture \u2192 your inbox/CRM', icon: 'check' },
+      { text: 'Buyer intent & benchmarking data', icon: 'check' },
+      { text: 'Newsletter + comparison-page inclusion', icon: 'check' },
+      { text: 'Dedicated account manager & support', icon: 'check' },
+    ],
+    cta: 'Get Scale',
+  },
+];
+
 export default function BillingPlans({ initialAgents }: BillingPlansProps) {
   const [loading, setLoading] = useState<string | null>(null);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
   const [selectedAgentId, setSelectedAgentId] = useState<string>(initialAgents[0]?.id?.toString() || '');
   const [error, setError] = useState<string | null>(null);
 
-  const handleUpgrade = async (planId: 'growth' | 'pro') => {
+  const activePlans = billingCycle === 'annual' ? ANNUAL_PLANS : MONTHLY_PLANS;
+
+  const handleUpgrade = async (planId: PlanId) => {
+    if (planId === 'free') return;
     if (!selectedAgentId) {
       setError('Please select a listing to upgrade');
       return;
@@ -148,7 +229,7 @@ export default function BillingPlans({ initialAgents }: BillingPlansProps) {
       const options = {
         key: res.keyId, amount: res.amount, currency: 'INR',
         name: 'Parlexa',
-        description: `${planId === 'growth' ? 'Verified' : 'Featured'} Plan`,
+        description: `${planId.startsWith('growth') ? 'Verified' : 'Featured'} Plan`,
         order_id: res.orderId,
         handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
           setLoading(planId);
@@ -231,6 +312,49 @@ export default function BillingPlans({ initialAgents }: BillingPlansProps) {
         </div>
       )}
 
+      {/* Monthly / Annual Billing Toggle - Hidden (monthly payment feature hidden while code is preserved) */}
+      {/*
+      <div style={{
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        gap: '12px', marginBottom: '32px',
+      }}>
+        <div style={{
+          display: 'inline-flex', padding: '4px',
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: '100px',
+        }}>
+          <button
+            type="button"
+            onClick={() => setBillingCycle('monthly')}
+            style={{
+              padding: '8px 20px', borderRadius: '100px', border: 'none',
+              fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              background: billingCycle === 'monthly' ? 'rgba(255,255,255,0.12)' : 'transparent',
+              color: billingCycle === 'monthly' ? '#fff' : 'var(--text-dim)',
+            }}
+          >
+            Monthly Billing
+          </button>
+          <button
+            type="button"
+            onClick={() => setBillingCycle('annual')}
+            style={{
+              padding: '8px 20px', borderRadius: '100px', border: 'none',
+              fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              background: billingCycle === 'annual' ? BRAND_GRAD : 'transparent',
+              color: '#fff',
+              boxShadow: billingCycle === 'annual' ? '0 4px 14px rgba(124,58,237,0.3)' : 'none',
+            }}
+          >
+            Annual Billing <span style={{ fontSize: '11px', opacity: 0.9, fontWeight: 700, marginLeft: '4px' }}>(Save up to 21%)</span>
+          </button>
+        </div>
+      </div>
+      */}
+
       {/* 3-card grid */}
       <div
         className="bp-grid"
@@ -241,13 +365,13 @@ export default function BillingPlans({ initialAgents }: BillingPlansProps) {
           alignItems: 'stretch',
         }}
       >
-        {PLANS.map((plan, idx) => (
+        {activePlans.map((plan, idx) => (
           <BillingCard
             key={plan.id}
             plan={plan}
             delay={idx * 0.06}
             loading={loading}
-            onSelect={() => plan.id !== 'free' && handleUpgrade(plan.id as 'growth' | 'pro')}
+            onSelect={() => plan.id !== 'free' && handleUpgrade(plan.id)}
           />
         ))}
       </div>
@@ -262,7 +386,7 @@ function BillingCard({ plan, delay, loading, onSelect }: {
   const isActive = loading === plan.id;
   const isDisabled = !!loading;
   const hl = !!plan.highlighted;
-  const isPro = plan.id === 'pro';
+  const isPro = plan.id === 'pro' || plan.id === 'pro_annual';
   const isFree = plan.id === 'free';
 
   return (
@@ -361,7 +485,7 @@ function BillingCard({ plan, delay, loading, onSelect }: {
 
       {/* Price */}
       <div style={{ marginBottom: '18px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '3px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '3px', flexWrap: 'wrap' }}>
           <span style={{
             fontSize: '36px', fontWeight: 700, lineHeight: 1, letterSpacing: '-1px',
             fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
@@ -369,9 +493,14 @@ function BillingCard({ plan, delay, loading, onSelect }: {
           }}>
             {plan.price}
           </span>
+          {!isFree && (
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-dim)' }}>
+              + GST
+            </span>
+          )}
           <span style={{ fontSize: '12.5px', color: 'var(--text-dim)' }}>{plan.priceNote}</span>
         </div>
-        <div style={{ fontSize: '11.5px', color: 'var(--text-dim)', opacity: 0.7 }}>{plan.priceSub}</div>
+        <div style={{ fontSize: '11.5px', color: 'var(--text-dim)', opacity: 0.8 }}>{plan.priceSub}</div>
       </div>
 
       {/* Reach bar */}

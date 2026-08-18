@@ -63,8 +63,9 @@ export async function updateSession(request: NextRequest) {
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    url.searchParams.set('redirected', 'true');
+    url.pathname = '/';
+    url.searchParams.set('auth', 'login');
+    url.searchParams.set('next', request.nextUrl.pathname);
     const response = NextResponse.redirect(url);
     supabaseResponse.cookies.getAll().forEach(c => response.cookies.set(c));
     return response;

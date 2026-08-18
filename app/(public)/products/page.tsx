@@ -18,8 +18,13 @@ export async function generateMetadata({ searchParams }: { searchParams: { [key:
   let description = "Discover, compare, and deploy 200+ verified enterprise AI tools and AI agents worldwide. Search by category, pricing, and capabilities on Parlexa.";
 
   if (category) {
-    title = `Best ${category} AI Tools & Agents | Compare & Deploy | Parlexa`;
-    description = `Analyze top-rated ${category} AI tools and autonomous agents. Compare enterprise features, integration capabilities, pricing, and real reviews on Parlexa.`;
+    const hasAi = /\bAI\b/i.test(category);
+    title = hasAi 
+      ? `Best ${category} Tools & Agents | Compare & Deploy | Parlexa`
+      : `Best ${category} AI Tools & Agents | Compare & Deploy | Parlexa`;
+    description = hasAi
+      ? `Analyze top-rated ${category} tools and autonomous agents. Compare enterprise features, integration capabilities, pricing, and real reviews on Parlexa.`
+      : `Analyze top-rated ${category} AI tools and autonomous agents. Compare enterprise features, integration capabilities, pricing, and real reviews on Parlexa.`;
   } else if (query) {
     title = `Search results for "${query}" | Enterprise AI Tools | Parlexa`;
   }
@@ -100,7 +105,9 @@ export default async function ProductsPage({
 
       <header className="mb-6">
         <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-3">
-          {category ? `Best ${category} AI Tools & Agents` : 'Explore Enterprise AI Agents'}
+          {category 
+            ? (/\bAI\b/i.test(category) ? `Best ${category} Tools & Agents` : `Best ${category} AI Tools & Agents`) 
+            : 'Explore Enterprise AI Agents'}
         </h1>
         <p className="text-base md:text-lg text-gray-400 max-w-2xl">
           {category 

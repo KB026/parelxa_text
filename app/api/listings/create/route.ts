@@ -86,6 +86,11 @@ export async function POST(req: NextRequest) {
 
     const adminSupabase = createAdminClient(supabaseUrl, serviceRoleKey);
 
+    const selectedPlan = listing_data.plan || 'free';
+    const isPaidPlan = ['growth', 'pro', 'growth_annual', 'pro_annual'].includes(selectedPlan);
+    const isVerified = isPaidPlan;
+    const isFeatured = ['pro', 'pro_annual'].includes(selectedPlan);
+
     const { data: insertedData, error: insertError } = await adminSupabase.from('agents').insert([
       {
         name: listing_data.name,
@@ -120,7 +125,9 @@ export async function POST(req: NextRequest) {
         company_gstin: listing_data.company_gstin || null,
         source_name: listing_data.how_did_you_hear || null,
         approval_status: 'pending',
-        vendor_plan: 'free',
+        vendor_plan: selectedPlan,
+        is_verified: isVerified,
+        is_featured: isFeatured,
         ai_score: aiScoreAvg > 0 ? aiScoreAvg : null,
         ai_scores: aiScores,
         quality_score: null,
@@ -134,6 +141,33 @@ export async function POST(req: NextRequest) {
     }
 
     const newListing = insertedData?.[0];
+
+    // Log transaction if payment occurred
+    if (isPaidPlan && listing_data.razorpay_payment_id && newListing?.id) {
+      try {
+        const defaultAmount = selectedPlan === 'growth' ? 499 
+          : selectedPlan === 'pro' ? 899 
+          : selectedPlan === 'growth_annual' ? 4999 
+          : 8499;
+        await adminSupabase.from('transactions').insert([
+          {
+            user_id: user.id,
+            agent_id: newListing.id,
+            amount: defaultAmount,
+            currency: 'INR',
+            status: 'completed',
+            gateway: 'razorpay',
+            gateway_payment_id: listing_data.razorpay_payment_id,
+            gateway_order_id: listing_data.razorpay_subscription_id || listing_data.razorpay_order_id || null,
+            subscription_id: listing_data.razorpay_subscription_id || listing_data.razorpay_order_id || null,
+            user_email: user.email || null,
+            created_at: new Date().toISOString(),
+          }
+        ]);
+      } catch (txErr) {
+        console.error('Transaction insert error (non-fatal):', txErr);
+      }
+    }
 
     // 6. Insert external review links
     if (listing_data.external_reviews && Array.isArray(listing_data.external_reviews) && newListing?.id) {

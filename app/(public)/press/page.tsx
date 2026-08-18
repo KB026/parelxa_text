@@ -44,13 +44,13 @@ async function getLivePressStats() {
       .select('*', { count: 'exact', head: true });
 
     return {
-      agentCount: agentCount || 94,
+      agentCount: agentCount || 200,
       categoryCount: categoryCount || 10,
     };
   } catch (error) {
     console.error('Error fetching press stats:', error);
     return {
-      agentCount: 94,
+      agentCount: 200,
       categoryCount: 10,
     };
   }
@@ -125,7 +125,7 @@ export default async function PressPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 border-b border-white/10 pb-6 mb-6">
             <div>
               <div className="text-xs font-mono text-[#71717A] uppercase mb-1">Founders</div>
-              <div className="text-sm font-semibold text-white">Abhinav Arora & Gaurav Virmani</div>
+              <div className="text-sm font-semibold text-white">Abhinav Arora</div>
             </div>
             <div>
               <div className="text-xs font-mono text-[#71717A] uppercase mb-1">Founded Year</div>
@@ -189,7 +189,7 @@ export default async function PressPage() {
               <span className="text-[#71717A] text-xs font-mono">272 words</span>
             </div>
             <p className="text-sm text-[#D4D4D8] leading-relaxed bg-[#0A0A0A] border border-white/5 p-4 rounded-lg">
-              Parlexa (parlexa.in) is the definitive B2B enterprise marketplace designed to accelerate the discovery, evaluation, and procurement of autonomous AI agents and intelligent software tools. Headquartered in India with a global footprint, Parlexa bridges the gap between enterprise software buyers and high-growth AI innovators. As corporate IT and operations shift from passive text generation toward agentic automation—where AI systems reason, invoke APIs, and execute multi-step workflows—evaluating model reliability, security compliance, and regional language support becomes critical. Parlexa addresses this market fragmentation through a multi-tenant platform featuring curated, vetted AI listings across voice intelligence, contact center automation, Indic sovereign language models, support tools, and developer infrastructure. Corporate leaders can compare verified pricing structures, read authentic user reviews, analyze live capability matrices, and initiate direct vendor engagements. Built on a foundation of sovereign data isolation, strict security standards, and local market relevance, Parlexa enables organizations across APAC and global markets to compress software evaluation cycles from months to days. Founded by Abhinav Arora and Gaurav Virmani in 2026, Parlexa serves as the central hub powering the next decade of enterprise digital transformation.
+              Parlexa (parlexa.in) is the definitive B2B enterprise marketplace designed to accelerate the discovery, evaluation, and procurement of autonomous AI agents and intelligent software tools. Headquartered in India with a global footprint, Parlexa bridges the gap between enterprise software buyers and high-growth AI innovators. As corporate IT and operations shift from passive text generation toward agentic automation—where AI systems reason, invoke APIs, and execute multi-step workflows—evaluating model reliability, security compliance, and regional language support becomes critical. Parlexa addresses this market fragmentation through a multi-tenant platform featuring curated, vetted AI listings across voice intelligence, contact center automation, Indic sovereign language models, support tools, and developer infrastructure. Corporate leaders can compare verified pricing structures, read authentic user reviews, analyze live capability matrices, and initiate direct vendor engagements. Built on a foundation of sovereign data isolation, strict security standards, and local market relevance, Parlexa enables organizations across APAC and global markets to compress software evaluation cycles from months to days. Founded by Abhinav Arora in 2026, Parlexa serves as the central hub powering the next decade of enterprise digital transformation.
             </p>
           </div>
         </section>

@@ -9,7 +9,10 @@ import { sendFeaturedAlert } from '@/lib/email/actions';
 /**
  * Creates a Razorpay order for boosting a listing
  */
-export async function createPromotionOrder(agentId: number, plan: 'growth' | 'pro') {
+export async function createPromotionOrder(
+  agentId: number, 
+  plan: 'growth' | 'pro' | 'growth_annual' | 'pro_annual'
+) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -17,8 +20,10 @@ export async function createPromotionOrder(agentId: number, plan: 'growth' | 'pr
   
   // Define pricing logic
   const amounts = {
-    growth: 49900,  // ₹499 in paise
-    pro: 89900,     // ₹899 in paise
+    growth: 49900,        // ₹499 in paise
+    pro: 89900,           // ₹899 in paise
+    growth_annual: 499900, // ₹4,999 in paise
+    pro_annual: 849900,    // ₹8,499 in paise
   };
   
   // Verify ownership
@@ -77,7 +82,7 @@ export async function verifyPromotionPayment(data: {
   razorpay_payment_id: string;
   razorpay_signature: string;
   agentId: number;
-  plan: 'growth' | 'pro';
+  plan: 'growth' | 'pro' | 'growth_annual' | 'pro_annual';
 }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -109,10 +114,15 @@ export async function verifyPromotionPayment(data: {
   // 2. Calculate Dates
   const startDate = new Date();
   const endDate = new Date();
-  if (data.plan === 'growth') endDate.setDate(startDate.getDate() + 30);
-  else endDate.setDate(startDate.getDate() + 30);
+  const isAnnual = data.plan.endsWith('_annual');
+  endDate.setDate(startDate.getDate() + (isAnnual ? 365 : 30));
   
-  const amounts = { growth: 499, pro: 899 };
+  const amounts = { 
+    growth: 499, 
+    pro: 899, 
+    growth_annual: 4999, 
+    pro_annual: 8499 
+  };
   
   try {
     // 3. Activate Promotion via Atomic RPC
@@ -124,9 +134,6 @@ export async function verifyPromotionPayment(data: {
     });
       
     const promotionResult = rpcData as any;
-    if (rpcError || !promotionResult?.success) {
-      throw new Error(rpcError?.message || promotionResult?.error || 'Failed to activate promotion');
-    }
     
     // 4. Send Confirmation Email
     const { data: agentData } = await supabase.from('agents').select('name').eq('id', data.agentId).single();

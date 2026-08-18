@@ -20,12 +20,13 @@ export async function getCategories(): Promise<Category[]> {
     const rawNames = item.name.split(',').map((n: string) => n.trim()).filter(Boolean);
     for (const name of rawNames) {
       if (!categoryMap.has(name)) {
+        const hasAi = /\bAI\b/i.test(name);
         categoryMap.set(name, {
           id: item.id || idCounter++,
           name: name,
           icon: item.icon || 'LayoutGrid',
           color: item.color || 'bg-blue-100 text-blue-600',
-          desc: item.desc || item.description || `Verified ${name} AI tools and agents`
+          desc: item.desc || item.description || (hasAi ? `Verified ${name} tools and agents` : `Verified ${name} AI tools and agents`)
         });
       }
     }

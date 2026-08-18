@@ -139,7 +139,7 @@ export default function NewListingPage() {
     updateField('tags', form.tags.filter((_, i) => i !== idx));
   };
 
-  async function handleSubmit() {
+  function handleSubmit() {
     if (!form.logo_url) {
       alert('Logo Upload is required to submit your listing.');
       setStep(1);
@@ -161,40 +161,16 @@ export default function NewListingPage() {
       return;
     }
 
-    const finalSource = form.how_did_you_hear === 'Other' && form.how_did_you_hear_custom
-      ? `Other: ${form.how_did_you_hear_custom.trim()}`
-      : form.how_did_you_hear;
-
-    setIsSubmitting(true);
-    try {
-      const res = await fetch('/api/listings/create', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, how_did_you_hear: finalSource })
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to submit listing');
-      }
-
-      localStorage.removeItem(STORAGE_KEY);
-      setSubmittedAgentId(data.id);
-      setSubmitted(true);
-    } catch (err: unknown) {
-      console.error('Submission Error:', err);
-      alert('Error submitting listing: ' + (err as Error).message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    setSubmitted(true);
   }
 
-  // ── PLAN PICKER (shown after successful submission) ──
-  if (submitted && submittedAgentId) {
+  // ── PLAN PICKER (shown after user completes form review — tool is inserted into DB ONLY AFTER plan selection / payment) ──
+  if (submitted) {
     return (
       <PlanPickerScreen
         toolName={form.name}
-        agentId={submittedAgentId}
+        formData={form}
+        onClearDraft={() => localStorage.removeItem(STORAGE_KEY)}
       />
     );
   }

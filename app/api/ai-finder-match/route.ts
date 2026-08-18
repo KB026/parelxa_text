@@ -1,9 +1,46 @@
 import OpenAI from 'openai';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60s for OpenAI on Netlify/Vercel
+
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 12;
+
+function getRequestKey(req: NextRequest) {
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    'anonymous';
+}
+
+async function isRateLimited(key: string, supabase: SupabaseClient) {
+  const now = new Date();
+  const resetAt = new Date(now.getTime() + RATE_LIMIT_WINDOW_MS);
+
+  // Attempt to fetch existing record
+  const { data: existing } = await supabase
+    .from('rate_limits')
+    .select('count, reset_at')
+    .eq('key', key)
+    .single();
+
+  if (!existing || new Date(existing.reset_at) <= now) {
+    // Upsert new or reset bucket
+    await supabase.from('rate_limits').upsert({
+      key,
+      count: 1,
+      reset_at: resetAt.toISOString()
+    }, { onConflict: 'key' });
+    return false;
+  }
+
+  const newCount = existing.count + 1;
+  await supabase.from('rate_limits').update({ count: newCount }).eq('key', key);
+
+  return newCount > RATE_LIMIT_MAX_REQUESTS;
+}
 
 const industryToCategory: Record<string, string[]> = {
   'saas-tech': ['AI & LLMs', 'Developer Tools & Infra', 'Enterprise & Automation'],
@@ -22,6 +59,16 @@ const industryToCategory: Record<string, string[]> = {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createClient();
+    const requestKey = getRequestKey(request);
+
+    if (await isRateLimited(requestKey, supabase)) {
+      return NextResponse.json(
+        { error: 'Too many AI Finder requests. Please try again in a minute.' },
+        { status: 429 }
+      );
+    }
+
     const { industry, problem, size } = await request.json();
 
     if (!industry || !problem || !size) {
@@ -35,7 +82,6 @@ export async function POST(request: NextRequest) {
     }
 
     const openai = new OpenAI({ apiKey });
-    const supabase = createClient();
 
     // 0. Check the Edge Cache first
     const queryHash = `${industry}|${problem}|${size}`.toLowerCase().trim();
@@ -64,6 +110,8 @@ export async function POST(request: NextRequest) {
       .from('agents')
       .select('id, name, summary, category, rating, slug, one_liner')
       .eq('approval_status', 'approved')
+      .not('slug', 'is', null)
+      .neq('slug', '')
       .order('rating', { ascending: false })
       .limit(30);
 

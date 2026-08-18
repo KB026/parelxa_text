@@ -23,6 +23,21 @@ export function NavbarClient({ user }: NavbarClientProps) {
     setIsMounted(true);
   }, []);
 
+  // Check for auth trigger in URL (e.g. ?auth=login or ?auth=register)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const authParam = params.get('auth');
+      if (authParam === 'login' || authParam === 'signin' || authParam === 'true') {
+        setInitialView('signin');
+        setAuthOpen(true);
+      } else if (authParam === 'register' || authParam === 'signup') {
+        setInitialView('register');
+        setAuthOpen(true);
+      }
+    }
+  }, []);
+
   // Global Bridge Listener
   useEffect(() => {
     const handleOpenAuth = (e: Event) => {

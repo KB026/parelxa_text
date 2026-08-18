@@ -19,6 +19,7 @@ import { checkWishlistStatus } from '@/app/actions/wishlist';
 import { ScrollReveal } from '@/components/parlexa/ui/ScrollReveal';
 import { VisitWebsiteButton } from '@/components/parlexa/details/VisitWebsiteButton';
 import { ProductSchema } from '@/components/seo/ProductSchema';
+import { MobileStickyBar } from '@/components/parlexa/details/MobileStickyBar';
 
 const ReviewSystem = dynamic(() => import('@/components/parlexa/reviews/ReviewSystem').then(mod => mod.ReviewSystem));
 const SimilarTools = dynamic(() => import('@/components/parlexa/details/SimilarTools').then(mod => mod.SimilarTools));
@@ -162,12 +163,6 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
               <StickyLeadBox 
                 agent={agent}
                 initialSaved={isSaved}
-                onVisitWebsite={async () => {
-                  'use server';
-                  const supabase = createClient();
-                  const { data: { user: currentUser } } = await supabase.auth.getUser();
-                  await trackInteraction(Number(agent.id), 'cta_click', currentUser?.id);
-                }} 
               />
             </div>
           </div>
@@ -176,41 +171,11 @@ export default async function ProductDetailsPage({ params }: { params: { slug: s
       </div>
 
       {/* Mobile Sticky CTA Bar */}
-      <div className="flex lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#09090B] border-t border-white/10 p-4 flex-row items-center justify-between gap-4">
-        
-        {/* Left Column (Info & Actions) */}
-        <div className="flex-1 flex flex-col gap-2 min-w-0">
-          
-          {/* Top Row (Secondary Actions & Rating) */}
-          <div className="flex items-center gap-4 text-gray-400">
-            <div className="flex items-center gap-1 text-white font-bold text-sm">
-              <Star size={18} className="text-amber-500 fill-current" />
-              <span>{stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</span>
-            </div>
-            
-            <button className="hover:text-white transition-colors" title="Save">
-              <Bookmark size={18} />
-            </button>
-            <button className="hover:text-white transition-colors" title="Compare">
-              <ArrowLeftRight size={18} />
-            </button>
-            <button className="hover:text-white transition-colors" title="Share">
-              <Share2 size={18} />
-            </button>
-          </div>
-          
-          {/* Bottom Row (Pricing) */}
-          <div className="text-xs text-gray-500 truncate">
-            {agent.pricing}
-          </div>
-        </div>
-
-        {/* Right Column (Primary CTA) */}
-        <VisitWebsiteButton 
-          agent={agent}
-          className="w-auto px-6 h-11 bg-[#2563eb] text-white font-semibold rounded-lg shrink-0 flex items-center justify-center no-underline hover:bg-[#1d4ed8] transition-colors"
-        />
-      </div>
+      <MobileStickyBar 
+        agent={agent}
+        stats={stats}
+        initialSaved={isSaved}
+      />
     </div>
   );
 }

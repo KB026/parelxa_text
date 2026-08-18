@@ -1,12 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized: Authentication required' }, { status: 401 });
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile || profile.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
     const { agent_id, vendor_id, tool_name, feedback } = await req.json();
 
     if (!agent_id || !vendor_id || !tool_name || !feedback) {
@@ -18,10 +39,10 @@ export async function POST(req: NextRequest) {
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const adminSupabase = createAdminClient(supabaseUrl, supabaseServiceKey);
 
     // Update agent status
-    const { error: updateError } = await supabase
+    const { error: updateError } = await adminSupabase
       .from('agents')
       .update({ approval_status: 'rejected' })
       .eq('id', agent_id);
@@ -32,14 +53,14 @@ export async function POST(req: NextRequest) {
     revalidatePath('/', 'layout');
 
     // Get vendor email
-    const { data: vendor, error: profileError } = await supabase
+    const { data: vendor, error: vendorProfileError } = await adminSupabase
       .from('profiles')
       .select('email')
       .eq('id', vendor_id)
       .single();
 
-    if (profileError || !vendor?.email) {
-      console.error('Could not find vendor email:', profileError);
+    if (vendorProfileError || !vendor?.email) {
+      console.error('Could not find vendor email:', vendorProfileError);
       return NextResponse.json({ error: 'Vendor email not found' }, { status: 404 });
     }
 

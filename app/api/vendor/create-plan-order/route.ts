@@ -2,20 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 const PLAN_AMOUNTS_PAISE: Record<string, number> = {
-  growth: 49900,  // ₹499
-  pro:    89900,  // ₹899
+  growth:        49900,   // ₹499/mo
+  pro:           89900,   // ₹899/mo
+  growth_annual: 499900,  // ₹4,999/yr
+  pro_annual:    849900,  // ₹8,499/yr
 };
 
 export async function POST(req: NextRequest) {
   try {
     const { agentId, plan } = await req.json();
 
-    if (!agentId || !plan) {
-      return NextResponse.json({ error: 'Missing agentId or plan' }, { status: 400 });
+    if (!plan) {
+      return NextResponse.json({ error: 'Missing plan' }, { status: 400 });
     }
 
-    if (!['growth', 'pro'].includes(plan)) {
-      return NextResponse.json({ error: 'Invalid plan. Must be growth or pro.' }, { status: 400 });
+    if (!['growth', 'pro', 'growth_annual', 'pro_annual'].includes(plan)) {
+      return NextResponse.json({ error: 'Invalid plan. Must be growth, pro, growth_annual, or pro_annual.' }, { status: 400 });
     }
 
     // Authenticate
@@ -41,10 +43,12 @@ export async function POST(req: NextRequest) {
 
     const credentials = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
     
-    // Check for Plan IDs in environment
+    // Check for Plan IDs in environment (supports both exact new keys & fallbacks)
     const PLAN_IDS: Record<string, string | undefined> = {
-      growth: process.env.RAZORPAY_GROWTH_PLAN_ID,
-      pro:    process.env.RAZORPAY_PRO_PLAN_ID,
+      growth:        process.env.RAZORPAY_MONTHLY_GROWTH_PLAN_ID || process.env.RAZORPAY_GROWTH_PLAN_ID,
+      pro:           process.env.RAZORPAY_MONTHLY_SCALE_PLAN_ID || process.env.RAZORPAY_PRO_PLAN_ID,
+      growth_annual: process.env.RAZORPAY_YEARLY_GROWTH_PLAN_ID || process.env.RAZORPAY_GROWTH_ANNUAL_PLAN_ID,
+      pro_annual:    process.env.RAZORPAY_YEARLY_SCALE_PLAN_ID || process.env.RAZORPAY_PRO_ANNUAL_PLAN_ID,
     };
     const razorpayPlanId = PLAN_IDS[plan];
 
@@ -58,7 +62,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           plan_id: razorpayPlanId,
-          total_count: 120, // 10-year subscription max length
+          total_count: plan.endsWith('_annual') ? 10 : 60,
           quantity: 1,
           customer_notify: 1,
           notes: {

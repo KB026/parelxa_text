@@ -78,16 +78,18 @@ export async function signup(formData: FormData) {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceRoleKey) {
-    return redirect(`/login?mode=register&message=Server misconfiguration`);
+    return redirect(`/?auth=register&message=Server misconfiguration`);
   }
 
   const supabaseAdmin = createSupabaseClient(supabaseUrl, serviceRoleKey);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3005';
 
   const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
     type: 'signup',
     email,
     password,
     options: {
+      redirectTo: `${appUrl}/auth/callback?role=${role}`,
       data: {
         role,
         first_name,
@@ -99,11 +101,11 @@ export async function signup(formData: FormData) {
   });
 
   if (linkError) {
-    return redirect(`/login?mode=register&message=Could not authenticate user: ${linkError.message}`);
+    return redirect(`/?auth=register&message=Could not authenticate user: ${linkError.message}`);
   }
 
   const user = linkData.user;
-  const verifyUrl = linkData.properties?.action_link;
+  let verifyUrl = linkData.properties?.action_link;
 
   if (user) {
     // Ensure profile exists just in case trigger fails
@@ -120,6 +122,9 @@ export async function signup(formData: FormData) {
 
   // Send the manual verification email using Resend
   if (verifyUrl) {
+    if (appUrl.includes('localhost')) {
+      verifyUrl = verifyUrl.replace(/^https?:\/\/[^\/]+/, appUrl);
+    }
     try {
       await sendSignupVerificationEmail(email, `${first_name} ${last_name}`.trim(), verifyUrl);
     } catch (e) {
@@ -128,7 +133,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/login?message=Verification Email Sent, Kindly verify to login.');
+  redirect('/?auth=login&message=Verification Email Sent, Kindly verify to login.');
 }
 
 export async function registerUserAjax(data: { email: string; password: string; role: string; first_name: string; last_name: string; phone?: string; how_did_you_hear?: string }) {
@@ -142,12 +147,14 @@ export async function registerUserAjax(data: { email: string; password: string; 
     }
 
     const supabaseAdmin = createSupabaseClient(supabaseUrl, serviceRoleKey);
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3005';
 
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'signup',
       email: data.email,
       password: data.password,
       options: {
+        redirectTo: `${appUrl}/auth/callback?role=${data.role}`,
         data: {
           role: data.role,
           first_name: data.first_name,
@@ -165,7 +172,7 @@ export async function registerUserAjax(data: { email: string; password: string; 
     }
 
     const user = linkData.user;
-    const verifyUrl = linkData.properties?.action_link;
+    let verifyUrl = linkData.properties?.action_link;
 
     if (user) {
       // Ensure profile exists just in case trigger fails
@@ -186,6 +193,9 @@ export async function registerUserAjax(data: { email: string; password: string; 
 
     // Send the manual verification email using Resend
     if (verifyUrl) {
+      if (appUrl.includes('localhost')) {
+        verifyUrl = verifyUrl.replace(/^https?:\/\/[^\/]+/, appUrl);
+      }
       try {
         await sendSignupVerificationEmail(data.email, `${data.first_name} ${data.last_name}`.trim(), verifyUrl);
       } catch (e) {

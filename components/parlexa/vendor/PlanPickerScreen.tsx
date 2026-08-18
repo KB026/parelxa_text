@@ -4,11 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 
-type PlanId = 'free' | 'growth' | 'pro';
+type PlanId = 'free' | 'growth' | 'pro' | 'growth_annual' | 'pro_annual';
 
 interface PlanPickerScreenProps {
   toolName: string;
-  agentId: number;
+  agentId?: number;
+  formData?: any;
+  onClearDraft?: () => void;
 }
 
 type FeatureIcon = 'check' | 'dash' | 'cross';
@@ -37,11 +39,11 @@ interface Plan {
   highlighted?: boolean;
 }
 
-const PLANS: Plan[] = [
+const MONTHLY_PLANS: Plan[] = [
   {
     id: 'free',
     listingNum: 'LISTING / 01',
-    name: 'Launch',
+    name: 'Launch Plan',
     tagline: 'A bare entry in the directory. Get on the map, free forever.',
     price: 'Free',
     priceNote: '/ forever',
@@ -65,17 +67,17 @@ const PLANS: Plan[] = [
   {
     id: 'growth',
     listingNum: 'LISTING / 02',
-    name: 'Growth',
+    name: 'Growth Plan',
     tagline: 'A complete, trusted profile buyers can act on.',
     price: '\u20b9499',
     priceNote: '/ month',
-    priceSub: 'Billed monthly',
+    priceSub: '+ 18% GST billed monthly',
     amountPaise: 49900,
     reachRightLabel: 'YOUR SITE',
     reachPercent: 60,
     reachDescription: 'Buyers can click through \u2014',
     reachBold: 'dofollow link, live and reachable.',
-    badge: 'MOST LISTINGS',
+    badge: 'MOST POPULAR',
     highlighted: true,
     features: [
       { text: 'Everything in Launch', icon: 'check' },
@@ -92,11 +94,11 @@ const PLANS: Plan[] = [
   {
     id: 'pro',
     listingNum: 'LISTING / 03',
-    name: 'Scale',
+    name: 'Scale Plan',
     tagline: 'Promoted placement and leads routed straight to you.',
     price: '\u20b9899',
     priceNote: '/ month',
-    priceSub: 'Billed monthly',
+    priceSub: '+ 18% GST billed monthly',
     amountPaise: 89900,
     reachRightLabel: 'HOMEPAGE',
     reachPercent: 100,
@@ -116,6 +118,86 @@ const PLANS: Plan[] = [
   },
 ];
 
+const ANNUAL_PLANS: Plan[] = [
+  {
+    id: 'free',
+    listingNum: 'LISTING / 01',
+    name: 'Launch Plan',
+    tagline: 'A bare entry in the directory. Get on the map, free forever.',
+    price: 'Free',
+    priceNote: '/ forever',
+    priceSub: 'No card required',
+    amountPaise: 0,
+    reachRightLabel: 'INDEX ONLY',
+    reachPercent: 20,
+    reachDescription: "Buyers can find you. They can\u2019t click through \u2014",
+    reachBold: 'no link to your site.',
+    features: [
+      { text: 'Name, logo, one-line tagline', icon: 'dash' },
+      { text: '1 category', icon: 'dash' },
+      { text: 'Link to your website', icon: 'cross' },
+      { text: 'Screenshots or demo video', icon: 'cross' },
+      { text: 'Pricing shown to buyers', icon: 'cross' },
+      { text: 'Reviews enabled', icon: 'cross' },
+      { text: 'Manual review, up to 1 week', icon: 'dash' },
+    ],
+    cta: 'List for free',
+  },
+  {
+    id: 'growth_annual',
+    listingNum: 'LISTING / 02',
+    name: 'Growth Plan',
+    tagline: 'A complete, trusted profile for a full year. Save \u20b9989/yr.',
+    price: '\u20b94,999',
+    priceNote: '/ year',
+    priceSub: '(\u20b9416/mo + GST equivalent)',
+    amountPaise: 499900,
+    reachRightLabel: 'YOUR SITE',
+    reachPercent: 60,
+    reachDescription: 'Buyers can click through \u2014',
+    reachBold: 'dofollow link, live for 365 days.',
+    badge: 'SAVE ~17%',
+    highlighted: true,
+    features: [
+      { text: 'Everything in Launch', icon: 'check' },
+      { text: 'Link to your website (dofollow)', icon: 'check' },
+      { text: 'Verified badge (1 Full Year)', icon: 'check' },
+      { text: '3 categories + audience tags', icon: 'check' },
+      { text: 'Media gallery on your profile', icon: 'check' },
+      { text: 'Pricing shown to buyers', icon: 'check' },
+      { text: 'Reviews enabled', icon: 'check' },
+      { text: 'Priority review within 24 hours', icon: 'check' },
+    ],
+    cta: 'Start Growth',
+  },
+  {
+    id: 'pro_annual',
+    listingNum: 'LISTING / 03',
+    name: 'Scale Plan',
+    tagline: 'Maximum visibility & leads for a full year. Save \u20b92,289/yr.',
+    price: '\u20b98,499',
+    priceNote: '/ year',
+    priceSub: '(\u20b9708/mo + GST equivalent)',
+    amountPaise: 849900,
+    reachRightLabel: 'HOMEPAGE',
+    reachPercent: 100,
+    reachDescription: 'Buyers see you first \u2014',
+    reachBold: 'top of search, homepage rotation, 365 days.',
+    badge: 'BEST VALUE (SAVE 21%)',
+    features: [
+      { text: 'Everything in Growth', icon: 'check' },
+      { text: 'Featured badge + homepage rotation (1 Year)', icon: 'check' },
+      { text: 'Top-of-category search placement', icon: 'check' },
+      { text: '5 categories, extended profile', icon: 'check' },
+      { text: 'Lead capture \u2192 your inbox/CRM', icon: 'check' },
+      { text: 'Buyer intent & benchmarking data', icon: 'check' },
+      { text: 'Newsletter + comparison-page inclusion', icon: 'check' },
+      { text: 'Dedicated account manager & support', icon: 'check' },
+    ],
+    cta: 'Get Scale',
+  },
+];
+
 // Brand colours extracted from globals.css + logo
 const BRAND = {
   bg:        '#09090b',
@@ -125,7 +207,7 @@ const BRAND = {
   cyan:      '#38bdf8',
   purple:    '#c026d3',
   blue:      '#2563eb',
-  // Logo gradient: purple â†’ blue
+  // Logo gradient: purple -> blue
   grad:      'linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #2563eb 100%)',
   gradGlow:  'rgba(192,38,211,0.25)',
   textWhite: '#f1f5f9',
@@ -133,11 +215,19 @@ const BRAND = {
   textDim:   '#4a5f80',
 };
 
-export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreenProps) {
+export default function PlanPickerScreen({
+  toolName,
+  agentId,
+  formData,
+  onClearDraft,
+}: PlanPickerScreenProps) {
   const router = useRouter();
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
   const [loading, setLoading] = useState<PlanId | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+
+  const activePlans = billingCycle === 'annual' ? ANNUAL_PLANS : MONTHLY_PLANS;
 
   useEffect(() => {
     setMounted(true);
@@ -147,41 +237,70 @@ export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreen
 
   if (!mounted) return null;
 
-  async function confirmPlan(
+  async function createAndSubmitListing(
     planId: PlanId,
     paymentId?: string,
     subscriptionOrOrderId?: string,
     signature?: string
   ) {
-    const res = await fetch('/api/vendor/confirm-plan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        agentId,
-        plan: planId,
-        razorpay_payment_id: paymentId || null,
-        razorpay_subscription_id: subscriptionOrOrderId || null,
-        razorpay_signature: signature || null,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Plan confirmation failed');
-    return data;
+    if (agentId) {
+      // Existing agent upgrade flow
+      const res = await fetch('/api/vendor/confirm-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agentId,
+          plan: planId,
+          razorpay_payment_id: paymentId || null,
+          razorpay_subscription_id: subscriptionOrOrderId || null,
+          razorpay_signature: signature || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Plan confirmation failed');
+      return data;
+    } else if (formData) {
+      // NEW Listing creation flow (Inserted into DB FOR THE FIRST TIME here!)
+      const finalSource = formData.how_did_you_hear === 'Other' && formData.how_did_you_hear_custom
+        ? `Other: ${formData.how_did_you_hear_custom.trim()}`
+        : formData.how_did_you_hear;
+
+      const res = await fetch('/api/listings/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          how_did_you_hear: finalSource,
+          plan: planId,
+          razorpay_payment_id: paymentId || null,
+          razorpay_subscription_id: subscriptionOrOrderId || null,
+          razorpay_signature: signature || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Listing creation failed');
+
+      if (onClearDraft) onClearDraft();
+      return data;
+    } else {
+      throw new Error('Missing form data or agent ID');
+    }
   }
 
   async function handleFree() {
     setLoading('free');
     setError(null);
     try {
-      await confirmPlan('free');
-      router.push('/dashboard/vendor/listings?plan=launch');
+      await createAndSubmitListing('free');
+      router.push('/dashboard/vendor/listings?submitted=true');
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Something went wrong');
       setLoading(null);
     }
   }
 
-  async function handlePaid(planId: 'growth' | 'pro') {
+  async function handlePaid(planId: PlanId) {
+    if (planId === 'free') return handleFree();
     setLoading(planId);
     setError(null);
     try {
@@ -194,27 +313,27 @@ export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreen
       const orderRes = await fetch('/api/vendor/create-plan-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agentId, plan: planId }),
+        body: JSON.stringify({ agentId: agentId || 0, plan: planId }),
       });
       const orderData = await orderRes.json();
       if (!orderRes.ok) throw new Error(orderData.error || 'Failed to create order');
 
       // Test Mode / Sandbox handling: Bypass SDK modal and simulate instant successful payment
       if (orderData.isMock) {
-        await confirmPlan(
+        await createAndSubmitListing(
           planId,
           `mock_pay_${Date.now()}`,
           orderData.subscriptionId || orderData.orderId || `mock_sub_${Date.now()}`,
           'mock_signature'
         );
-        router.push(`/dashboard/vendor/listings?plan=${planId}`);
+        router.push(`/dashboard/vendor/listings?submitted=true&plan=${planId}`);
         return;
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const RzpSDK = (window as any).Razorpay;
       if (!RzpSDK) throw new Error('Razorpay SDK not loaded. Refresh and retry.');
-      const plan = PLANS.find(p => p.id === planId)!;
+      const plan = activePlans.find(p => p.id === planId)!;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const options: any = {
@@ -224,13 +343,13 @@ export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreen
         theme: { color: '#7c3aed' },
         modal: { ondismiss: () => setLoading(null) },
         handler: async (r: { razorpay_payment_id: string; razorpay_subscription_id?: string; razorpay_order_id?: string; razorpay_signature?: string }) => {
-          await confirmPlan(
+          await createAndSubmitListing(
             planId,
             r.razorpay_payment_id,
             r.razorpay_subscription_id || r.razorpay_order_id,
             r.razorpay_signature
           );
-          router.push(`/dashboard/vendor/listings?plan=${planId}`);
+          router.push(`/dashboard/vendor/listings?submitted=true&plan=${planId}`);
         },
       };
 
@@ -376,13 +495,55 @@ export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreen
             fontSize: '15px',
             lineHeight: 1.6,
             maxWidth: '420px',
-            margin: '0 auto',
+            margin: '0 auto 24px',
           }}>
             Three tiers. Each unlocks more reach, trust signals, and buyer visibility.
           </p>
+
+          {/* Monthly / Annual Billing Toggle - Hidden (monthly payment feature hidden while code is preserved) */}
+          {/*
+          <div style={{
+            display: 'flex', justifyContent: 'center', alignItems: 'center',
+          }}>
+            <div style={{
+              display: 'inline-flex', padding: '4px',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '100px',
+            }}>
+              <button
+                type="button"
+                onClick={() => setBillingCycle('monthly')}
+                style={{
+                  padding: '8px 20px', borderRadius: '100px', border: 'none',
+                  fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: billingCycle === 'monthly' ? 'rgba(255,255,255,0.12)' : 'transparent',
+                  color: billingCycle === 'monthly' ? '#fff' : BRAND.textDim,
+                }}
+              >
+                Monthly Billing
+              </button>
+              <button
+                type="button"
+                onClick={() => setBillingCycle('annual')}
+                style={{
+                  padding: '8px 20px', borderRadius: '100px', border: 'none',
+                  fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: billingCycle === 'annual' ? BRAND.grad : 'transparent',
+                  color: '#fff',
+                  boxShadow: billingCycle === 'annual' ? '0 4px 14px rgba(192,38,211,0.3)' : 'none',
+                }}
+              >
+                Annual Billing <span style={{ fontSize: '11px', opacity: 0.9, fontWeight: 700, marginLeft: '4px' }}>(Save up to 21%)</span>
+              </button>
+            </div>
+          </div>
+          */}
         </div>
 
-        {/* â”€â”€ ERROR â”€â”€ */}
+        {/* ── ERROR ── */}
         {error && (
           <div style={{
             maxWidth: '1020px', margin: '0 auto', padding: '0 32px 20px',
@@ -399,7 +560,7 @@ export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreen
           </div>
         )}
 
-        {/* â”€â”€ CARD GRID â”€â”€ */}
+        {/* ── CARD GRID ── */}
         <div style={{ padding: '0 32px 64px', position: 'relative', zIndex: 1 }}>
           <div
             className="pp-grid"
@@ -412,13 +573,13 @@ export default function PlanPickerScreen({ toolName, agentId }: PlanPickerScreen
               alignItems: 'stretch',
             }}
           >
-            {PLANS.map((plan, idx) => (
+            {activePlans.map((plan, idx) => (
               <PlanCard
                 key={plan.id}
                 plan={plan}
                 delay={idx * 0.07}
                 loading={loading}
-                onSelect={() => plan.id === 'free' ? handleFree() : handlePaid(plan.id as 'growth' | 'pro')}
+                onSelect={() => plan.id === 'free' ? handleFree() : handlePaid(plan.id)}
               />
             ))}
           </div>
@@ -449,16 +610,17 @@ function PlanCard({
   const [hovered, setHovered] = useState(false);
   const isActive = loading === plan.id;
   const isDisabled = !!loading;
-  const hl = !!plan.highlighted; // Verified plan â€” brand gradient card
+  const hl = !!plan.highlighted;
+  const isPro = plan.id === 'pro' || plan.id === 'pro_annual';
 
   // Per-plan accent
   const accent = hl
     ? 'linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #2563eb 100%)'   // brand gradient
-    : plan.id === 'pro'
+    : isPro
     ? '#38bdf8'   // cyan for Featured
     : 'rgba(255,255,255,0.15)'; // subtle for Free
 
-  const accentSolid = hl ? '#7c3aed' : plan.id === 'pro' ? '#38bdf8' : 'rgba(255,255,255,0.2)';
+  const accentSolid = hl ? '#7c3aed' : isPro ? '#38bdf8' : 'rgba(255,255,255,0.2)';
 
   return (
     <div
@@ -472,19 +634,19 @@ function PlanCard({
         // Highlighted card gets a subtle gradient background
         background: hl
           ? 'linear-gradient(160deg, rgba(124,58,237,0.15) 0%, rgba(37,99,235,0.08) 100%)'
-          : plan.id === 'pro'
+          : isPro
           ? 'linear-gradient(160deg, rgba(56,189,248,0.05) 0%, rgba(15,15,19,0.8) 100%)'
           : 'rgba(255,255,255,0.02)',
         border: hl
           ? `1.5px solid ${hovered ? 'rgba(124,58,237,0.6)' : 'rgba(124,58,237,0.3)'}`
-          : plan.id === 'pro'
+          : isPro
           ? `1.5px solid ${hovered ? 'rgba(56,189,248,0.4)' : 'rgba(56,189,248,0.15)'}`
           : `1.5px solid ${hovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)'}`,
         boxShadow: hl
           ? hovered
             ? '0 20px 60px rgba(124,58,237,0.3), 0 0 0 1px rgba(124,58,237,0.15)'
             : '0 8px 32px rgba(124,58,237,0.15)'
-          : plan.id === 'pro' && hovered
+          : isPro && hovered
           ? '0 16px 48px rgba(56,189,248,0.12)'
           : 'none',
         backdropFilter: 'blur(20px)',
@@ -494,7 +656,7 @@ function PlanCard({
       }}
     >
       {/* Top accent glow line */}
-      {(hl || plan.id === 'pro') && (
+      {(hl || isPro) && (
         <div style={{
           position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px',
           background: hl
@@ -553,17 +715,22 @@ function PlanCard({
 
       {/* Price */}
       <div style={{ marginBottom: '22px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
           <span style={{
             fontSize: '42px', fontWeight: 700, lineHeight: 1, letterSpacing: '-1.5px',
             fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
-            color: hl ? '#c026d3' : plan.id === 'pro' ? BRAND.cyan : BRAND.textWhite,
+            color: hl ? '#c026d3' : isPro ? BRAND.cyan : BRAND.textWhite,
           }}>
             {plan.price}
           </span>
+          {plan.id !== 'free' && (
+            <span style={{ fontSize: '13px', fontWeight: 600, color: BRAND.textDim }}>
+              + GST
+            </span>
+          )}
           <span style={{ fontSize: '13px', color: BRAND.textDim }}>{plan.priceNote}</span>
         </div>
-        <div style={{ fontSize: '12px', color: BRAND.textDim }}>{plan.priceSub}</div>
+        <div style={{ fontSize: '12px', color: BRAND.textDim, opacity: 0.8 }}>{plan.priceSub}</div>
       </div>
 
       {/* Reach bar */}
@@ -581,7 +748,7 @@ function PlanCard({
           <div style={{
             height: '100%',
             width: `${plan.reachPercent}%`,
-            background: hl ? BRAND.grad : plan.id === 'pro' ? BRAND.cyan : 'rgba(255,255,255,0.25)',
+            background: hl ? BRAND.grad : isPro ? BRAND.cyan : 'rgba(255,255,255,0.25)',
             borderRadius: '2px',
           }} />
         </div>
@@ -616,7 +783,7 @@ function PlanCard({
       {/* CTA Button */}
       <button
         id={`pp-cta-${plan.id}`}
-        className={hl || plan.id === 'pro' ? 'pp-cta' : 'pp-cta pp-cta-plain'}
+        className={hl || isPro ? 'pp-cta' : 'pp-cta pp-cta-plain'}
         onClick={onSelect}
         disabled={isDisabled}
         style={{
@@ -629,7 +796,7 @@ function PlanCard({
           // CTA styles per plan
           background: hl
             ? BRAND.grad
-            : plan.id === 'pro'
+            : isPro
             ? `linear-gradient(135deg, ${BRAND.cyan} 0%, #0284c7 100%)`
             : 'rgba(255,255,255,0.06)',
           color: '#fff',

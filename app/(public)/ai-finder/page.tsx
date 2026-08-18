@@ -242,7 +242,7 @@ export default function AIFinderPage() {
                     
                     <div className="flex justify-between items-center pt-4 border-t border-white/[0.05]">
                       <span className="text-brand-violet font-bold text-lg">{agent.match_score}% Match</span>
-                      <Link href={`/products/${agent.slug}`} className="inline-flex items-center justify-center font-bold text-[#0A0A0A] rounded-lg px-5 py-2.5 transition-all duration-300 shadow-sm hover:brightness-110 bg-brand-violet text-white">
+                      <Link href={`/products/${agent.slug || agent.id}`} className="inline-flex items-center justify-center font-bold text-[#0A0A0A] rounded-lg px-5 py-2.5 transition-all duration-300 shadow-sm hover:brightness-110 bg-brand-violet text-white">
                         View Details
                       </Link>
                     </div>
