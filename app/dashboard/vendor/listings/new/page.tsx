@@ -595,7 +595,7 @@ export default function NewListingPage() {
                 <span className="cat-pill" style={{ marginLeft: 'auto' }}>{form.category}</span>
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.6, marginBottom: '20px' }}>{form.summary || 'Full description will appear here...'}</p>
-              
+
               {form.tags.length > 0 && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
                   {form.tags.map((tag, i) => (
@@ -635,9 +635,9 @@ export default function NewListingPage() {
               Next Step &rarr;
             </button>
           ) : (
-            <button 
-              type="button" 
-              className="listing-btn-submit" 
+            <button
+              type="button"
+              className="listing-btn-submit"
               onClick={handleSubmit}
               disabled={isSubmitting}
               style={{ opacity: isSubmitting ? 0.7 : 1 }}

@@ -148,15 +148,15 @@ const ANNUAL_PLANS: Plan[] = [
     listingNum: 'LISTING / 02',
     name: 'Growth Plan',
     tagline: 'A complete, trusted profile for a full year. Save \u20b9989/yr.',
-    price: '\u20b94,999',
+    price: '₹4,999',
     priceNote: '/ year',
-    priceSub: '(\u20b9416/mo + GST equivalent)',
+    priceSub: '(Taxes included)',
     amountPaise: 499900,
     reachRightLabel: 'YOUR SITE',
     reachPercent: 60,
     reachDescription: 'Buyers can click through \u2014',
     reachBold: 'dofollow link, live for 365 days.',
-    badge: 'SAVE ~17%',
+    badge: 'POPULAR CHOICE',
     highlighted: true,
     features: [
       { text: 'Everything in Launch', icon: 'check' },
@@ -175,9 +175,9 @@ const ANNUAL_PLANS: Plan[] = [
     listingNum: 'LISTING / 03',
     name: 'Scale Plan',
     tagline: 'Maximum visibility & leads for a full year. Save \u20b92,289/yr.',
-    price: '\u20b98,499',
+    price: '₹8,499',
     priceNote: '/ year',
-    priceSub: '(\u20b9708/mo + GST equivalent)',
+    priceSub: '(Taxes included)',
     amountPaise: 849900,
     reachRightLabel: 'HOMEPAGE',
     reachPercent: 100,
@@ -226,6 +226,24 @@ export default function PlanPickerScreen({
   const [loading, setLoading] = useState<PlanId | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+
+  // Coupon state
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount_type: 'percentage' | 'flat';
+    discount_value: number;
+    breakdowns: Record<string, {
+      originalBase: number;
+      discountAmount: number;
+      discountedBase: number;
+      gstAmount: number;
+      finalTotal: number;
+    }>;
+  } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
 
   const activePlans = billingCycle === 'annual' ? ANNUAL_PLANS : MONTHLY_PLANS;
 
@@ -299,6 +317,77 @@ export default function PlanPickerScreen({
     }
   }
 
+  async function handleApplyCoupon() {
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+    setCouponError(null);
+    setCouponSuccess(null);
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponInput.trim(), basePrice: 4999 }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Invalid coupon');
+
+      const breakdowns: Record<string, {
+        originalBase: number;
+        discountAmount: number;
+        discountedBase: number;
+        gstAmount: number;
+        finalTotal: number;
+      }> = {};
+
+      const baseMap: Record<string, number> = {
+        growth: 499,
+        pro: 899,
+        growth_annual: 4999,
+        pro_annual: 8499,
+      };
+
+      for (const p of activePlans) {
+        if (p.id === 'free') continue;
+        const base = baseMap[p.id] || 4999;
+        let disc = 0;
+        if (data.discount_type === 'percentage') {
+          disc = Math.round((base * data.discount_value) / 100);
+        } else {
+          disc = Math.min(data.discount_value, base);
+        }
+        const finalTotal = Math.max(0, base - disc);
+        const discBase = Math.round(finalTotal / 1.18);
+        const gst = finalTotal - discBase;
+        breakdowns[p.id] = {
+          originalBase: base,
+          discountAmount: disc,
+          discountedBase: discBase,
+          gstAmount: gst,
+          finalTotal,
+        };
+      }
+
+      setAppliedCoupon({
+        code: data.code,
+        discount_type: data.discount_type,
+        discount_value: data.discount_value,
+        breakdowns,
+      });
+      setCouponSuccess(`Coupon "${data.code}" applied! ${data.discount_type === 'percentage' ? `${data.discount_value}% OFF` : `₹${data.discount_value} OFF`}`);
+    } catch (err: unknown) {
+      setCouponError(err instanceof Error ? err.message : 'Failed to apply coupon');
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
+  function handleRemoveCoupon() {
+    setAppliedCoupon(null);
+    setCouponInput('');
+    setCouponSuccess(null);
+    setCouponError(null);
+  }
+
   async function handlePaid(planId: PlanId) {
     if (planId === 'free') return handleFree();
     setLoading(planId);
@@ -313,7 +402,11 @@ export default function PlanPickerScreen({
       const orderRes = await fetch('/api/vendor/create-plan-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agentId: agentId || 0, plan: planId }),
+        body: JSON.stringify({
+          agentId: agentId || 0,
+          plan: planId,
+          couponCode: appliedCoupon?.code || undefined,
+        }),
       });
       const orderData = await orderRes.json();
       if (!orderRes.ok) throw new Error(orderData.error || 'Failed to create order');
@@ -541,6 +634,87 @@ export default function PlanPickerScreen({
             </div>
           </div>
           */}
+          
+          {/* ── COUPON CODE BAR ── */}
+          <div style={{
+            maxWidth: '520px', margin: '28px auto 0',
+            background: 'rgba(255,255,255,0.03)',
+            border: appliedCoupon ? '1px solid rgba(134,239,172,0.3)' : '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '12px', padding: '14px 18px',
+            backdropFilter: 'blur(16px)',
+          }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                type="text"
+                placeholder="Enter coupon code"
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                disabled={couponLoading || !!appliedCoupon}
+                style={{
+                  flex: 1,
+                  background: 'rgba(0,0,0,0.4)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: '8px',
+                  padding: '10px 14px',
+                  color: '#fff',
+                  fontSize: '13px',
+                  letterSpacing: '0.05em',
+                  fontFamily: 'monospace',
+                  textTransform: 'uppercase',
+                  outline: 'none',
+                }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleApplyCoupon(); }}
+              />
+              {appliedCoupon ? (
+                <button
+                  type="button"
+                  onClick={handleRemoveCoupon}
+                  style={{
+                    padding: '10px 16px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(239,68,68,0.3)',
+                    background: 'rgba(239,68,68,0.1)',
+                    color: '#fca5a5',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Remove
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleApplyCoupon}
+                  disabled={couponLoading || !couponInput.trim()}
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: BRAND.grad,
+                    color: '#fff',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: couponLoading || !couponInput.trim() ? 'not-allowed' : 'pointer',
+                    opacity: couponLoading || !couponInput.trim() ? 0.5 : 1,
+                    boxShadow: '0 4px 14px rgba(192,38,211,0.3)',
+                  }}
+                >
+                  {couponLoading ? 'Checking...' : 'Apply'}
+                </button>
+              )}
+            </div>
+            {couponSuccess && (
+              <div style={{ marginTop: '8px', fontSize: '12.5px', color: '#86efac', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>✔</span> {couponSuccess}
+              </div>
+            )}
+            {couponError && (
+              <div style={{ marginTop: '8px', fontSize: '12.5px', color: '#fca5a5', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>✖</span> {couponError}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── ERROR ── */}
@@ -577,15 +751,16 @@ export default function PlanPickerScreen({
               <PlanCard
                 key={plan.id}
                 plan={plan}
-                delay={idx * 0.07}
+                delay={idx * 0.08}
                 loading={loading}
-                onSelect={() => plan.id === 'free' ? handleFree() : handlePaid(plan.id)}
+                appliedCoupon={appliedCoupon}
+                onSelect={() => handlePaid(plan.id)}
               />
             ))}
           </div>
         </div>
 
-        {/* â”€â”€ FOOTER â”€â”€ */}
+        {/* ── FOOTER ── */}
         <div style={{
           textAlign: 'center', paddingBottom: '48px',
           fontSize: '12px', color: BRAND.textDim,
@@ -598,20 +773,33 @@ export default function PlanPickerScreen({
   );
 }
 
-// â”€â”€â”€ PLAN CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function PlanCard({
-  plan, delay, loading, onSelect,
+  plan, delay, loading, onSelect, appliedCoupon,
 }: {
   plan: Plan;
   delay: number;
   loading: PlanId | null;
   onSelect: () => void;
+  appliedCoupon?: {
+    code: string;
+    discount_type: 'percentage' | 'flat';
+    discount_value: number;
+    breakdowns: Record<string, {
+      originalBase: number;
+      discountAmount: number;
+      discountedBase: number;
+      gstAmount: number;
+      finalTotal: number;
+    }>;
+  } | null;
 }) {
   const [hovered, setHovered] = useState(false);
   const isActive = loading === plan.id;
   const isDisabled = !!loading;
   const hl = !!plan.highlighted;
   const isPro = plan.id === 'pro' || plan.id === 'pro_annual';
+
+  const breakdown = appliedCoupon?.breakdowns[plan.id];
 
   // Per-plan accent
   const accent = hl
@@ -715,22 +903,52 @@ function PlanCard({
 
       {/* Price */}
       <div style={{ marginBottom: '22px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
-          <span style={{
-            fontSize: '42px', fontWeight: 700, lineHeight: 1, letterSpacing: '-1.5px',
-            fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
-            color: hl ? '#c026d3' : isPro ? BRAND.cyan : BRAND.textWhite,
-          }}>
-            {plan.price}
-          </span>
-          {plan.id !== 'free' && (
-            <span style={{ fontSize: '13px', fontWeight: 600, color: BRAND.textDim }}>
-              + GST
-            </span>
-          )}
-          <span style={{ fontSize: '13px', color: BRAND.textDim }}>{plan.priceNote}</span>
-        </div>
-        <div style={{ fontSize: '12px', color: BRAND.textDim, opacity: 0.8 }}>{plan.priceSub}</div>
+        {breakdown && plan.id !== 'free' ? (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '2px', flexWrap: 'wrap' }}>
+              <span style={{
+                fontSize: '18px', textDecoration: 'line-through', color: BRAND.textDim, fontWeight: 600,
+              }}>
+                {plan.price}
+              </span>
+              <span style={{
+                fontSize: '38px', fontWeight: 700, lineHeight: 1, letterSpacing: '-1.5px',
+                fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
+                color: '#86efac',
+              }}>
+                ₹{breakdown.finalTotal.toLocaleString('en-IN')}
+              </span>
+              <span style={{ fontSize: '13px', color: BRAND.textDim }}>
+                {plan.priceNote}
+              </span>
+            </div>
+            <div style={{
+              fontSize: '11px', color: '#86efac', fontWeight: 600, marginTop: '4px',
+              display: 'inline-flex', alignItems: 'center', gap: '4px',
+              background: 'rgba(134,239,172,0.1)', padding: '3px 8px', borderRadius: '6px',
+            }}>
+              40% OFF Applied • Includes ₹{breakdown.gstAmount.toLocaleString('en-IN')} GST
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
+              <span style={{
+                fontSize: '42px', fontWeight: 700, lineHeight: 1, letterSpacing: '-1.5px',
+                fontFamily: "'Space Grotesk', 'DM Sans', sans-serif",
+                color: hl ? '#c026d3' : isPro ? BRAND.cyan : BRAND.textWhite,
+              }}>
+                {plan.price}
+              </span>
+              <span style={{ fontSize: '13px', color: BRAND.textDim }}>
+                {plan.priceNote}
+              </span>
+            </div>
+            <div style={{ fontSize: '11.5px', color: BRAND.textDim, fontWeight: 500 }}>
+              {plan.priceSub}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Reach bar */}
@@ -815,7 +1033,11 @@ function PlanCard({
             animation: 'pp-spin 0.65s linear infinite',
             display: 'inline-block',
           }} />
-        ) : plan.cta}
+        ) : breakdown && plan.id !== 'free' ? (
+          `Pay ₹${breakdown.finalTotal.toLocaleString('en-IN')} with Razorpay`
+        ) : (
+          plan.cta
+        )}
       </button>
     </div>
   );

@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing agentId or plan' }, { status: 400 });
     }
 
-    if (!['free', 'growth', 'pro'].includes(plan)) {
+    if (!['free', 'growth', 'pro', 'growth_annual', 'pro_annual'].includes(plan)) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
     }
 

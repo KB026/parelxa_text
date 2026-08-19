@@ -5,13 +5,16 @@ import { razorpay, validatePaymentVerification } from '@/lib/razorpay';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { sendFeaturedAlert } from '@/lib/email/actions';
+import { validateCoupon } from '@/lib/coupons';
+import { processListingPlanUpgrade } from '@/lib/payments/upgrade-plan';
 
 /**
  * Creates a Razorpay order for boosting a listing
  */
 export async function createPromotionOrder(
   agentId: number, 
-  plan: 'growth' | 'pro' | 'growth_annual' | 'pro_annual'
+  plan: 'growth' | 'pro' | 'growth_annual' | 'pro_annual',
+  couponCode?: string
 ) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -25,6 +28,13 @@ export async function createPromotionOrder(
     growth_annual: 499900, // ₹4,999 in paise
     pro_annual: 849900,    // ₹8,499 in paise
   };
+
+  const basePrices = {
+    growth: 499,
+    pro: 899,
+    growth_annual: 4999,
+    pro_annual: 8499,
+  };
   
   // Verify ownership
   const { data: agent, error: agentError } = await supabase
@@ -37,7 +47,17 @@ export async function createPromotionOrder(
     throw new Error('Unauthorized: You do not own this agent listing.');
   }
 
-  const amountInPaise = amounts[plan];
+  let amountInPaise = amounts[plan];
+  let couponResult = null;
+
+  if (couponCode && couponCode.trim()) {
+    const base = basePrices[plan] || 4999;
+    couponResult = await validateCoupon(couponCode, base);
+    if (!couponResult.valid) {
+      throw new Error(couponResult.error || 'Invalid coupon code');
+    }
+    amountInPaise = couponResult.breakdown?.amountInPaise || amountInPaise;
+  }
   
   try {
     if (!razorpay) {
@@ -58,7 +78,10 @@ export async function createPromotionOrder(
       notes: {
         agentId: agentId.toString(),
         plan,
-        userId: user.id
+        userId: user.id,
+        coupon_code: couponResult?.coupon?.code || '',
+        discount_amount: couponResult?.breakdown?.discountAmount ? String(couponResult.breakdown.discountAmount) : '0',
+        gst_amount: couponResult?.breakdown?.gstAmount ? String(couponResult.breakdown.gstAmount) : '0',
       }
     });
     
@@ -66,7 +89,7 @@ export async function createPromotionOrder(
       success: true, 
       orderId: order.id, 
       amount: amountInPaise,
-      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || ''
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || ''
     };
   } catch (err: unknown) {
     console.error('Razorpay: Order creation failed:', err);
@@ -125,22 +148,29 @@ export async function verifyPromotionPayment(data: {
   };
   
   try {
-    // 3. Activate Promotion via Atomic RPC
-    const { data: rpcData, error: rpcError } = await supabase.rpc('activate_promotion', {
-      p_agent_id: data.agentId,
-      p_plan: data.plan,
-      p_payment_id: data.razorpay_payment_id,
-      p_amount: amounts[data.plan]
+    // 3. Process Listing Plan Upgrade with full database atomicity & transaction logging
+    const upgradeResult = await processListingPlanUpgrade({
+      agentId: data.agentId,
+      plan: data.plan,
+      paymentId: data.razorpay_payment_id,
+      subscriptionOrOrderId: data.razorpay_order_id,
+      userId: user.id,
+      userEmail: user.email,
+      amountPaise: amounts[data.plan] * 100,
     });
-      
-    const promotionResult = rpcData as any;
-    
-    // 4. Send Confirmation Email
-    const { data: agentData } = await supabase.from('agents').select('name').eq('id', data.agentId).single();
-    if (agentData && user.email) {
-      await sendFeaturedAlert(user.email, agentData.name, false);
+
+    if (!upgradeResult.success) {
+      throw new Error(upgradeResult.error || 'Failed to update listing plan in database');
     }
 
+    // 4. Send Confirmation Email Alert
+    const { data: agentData } = await supabase.from('agents').select('name').eq('id', data.agentId).single();
+    if (agentData && user.email) {
+      await sendFeaturedAlert(user.email, agentData.name, data.plan.startsWith('pro'));
+    }
+
+    revalidatePath('/dashboard/vendor/billing');
+    revalidatePath('/dashboard/vendor/listings');
     revalidatePath('/admin/promotions');
     revalidatePath('/'); // For homepage featured Tools
     revalidatePath('/products');

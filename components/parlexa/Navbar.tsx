@@ -36,7 +36,7 @@ export async function Navbar() {
     <header className="fixed top-0 inset-x-0 z-50 h-16 flex items-center justify-between px-6 md:px-12 bg-[#0A0A0A]/60 backdrop-blur-xl border-b border-white/[0.08]">
       {/* Left (Logo) */}
       <Link href="/" className="flex items-center hover:opacity-80 transition-opacity shrink-0">
-        <Image src="/logo.png" alt="Parlexa Logo" width={220} height={44} className="object-contain w-[140px] md:w-[180px] lg:w-[220px] h-auto" priority />
+        <Image src="/logo.png" alt="Parlexa Logo" width={220} height={44} className="object-contain w-[140px] md:w-[180px] lg:w-[220px] h-auto" priority style={{ height: 'auto' }} />
       </Link>
       
       {/* Center (Nav Links) */}

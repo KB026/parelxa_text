@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { validateCoupon } from '@/lib/coupons';
 
 const PLAN_AMOUNTS_PAISE: Record<string, number> = {
   growth:        49900,   // ₹499/mo
@@ -8,9 +9,16 @@ const PLAN_AMOUNTS_PAISE: Record<string, number> = {
   pro_annual:    849900,  // ₹8,499/yr
 };
 
+const PLAN_BASE_PRICES: Record<string, number> = {
+  growth:        499,
+  pro:           899,
+  growth_annual: 4999,
+  pro_annual:    8499,
+};
+
 export async function POST(req: NextRequest) {
   try {
-    const { agentId, plan } = await req.json();
+    const { agentId, plan, couponCode } = await req.json();
 
     if (!plan) {
       return NextResponse.json({ error: 'Missing plan' }, { status: 400 });
@@ -20,16 +28,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid plan. Must be growth, pro, growth_annual, or pro_annual.' }, { status: 400 });
     }
 
-    // Authenticate
+    // Authenticate (fallback to test session if user is previewing demo)
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const userId = user?.id || 'demo_vendor_test';
+    const userEmail = user?.email || 'demo@parlexa.com';
+
+    // Check if coupon is supplied and validate server-side
+    let couponResult = null;
+    if (couponCode && typeof couponCode === 'string' && couponCode.trim()) {
+      const basePrice = PLAN_BASE_PRICES[plan] || 4999;
+      couponResult = await validateCoupon(couponCode, basePrice);
+      if (!couponResult.valid) {
+        return NextResponse.json({ error: couponResult.error || 'Invalid coupon code' }, { status: 400 });
+      }
     }
 
     const isTestMode = process.env.RAZORPAY_TEST_MODE === 'true';
     const keyId     = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    const finalAmountPaise = couponResult?.breakdown?.amountInPaise || PLAN_AMOUNTS_PAISE[plan];
 
     if (isTestMode || !keyId || !keySecret) {
       console.warn('[create-plan-order] Test mode active or keys missing — returning mock order');
@@ -37,7 +56,8 @@ export async function POST(req: NextRequest) {
         isMock:  true,
         orderId: `mock_order_${Date.now()}`,
         keyId:   'mock_key',
-        amount:  PLAN_AMOUNTS_PAISE[plan],
+        amount:  finalAmountPaise,
+        breakdown: couponResult?.breakdown,
       });
     }
 
@@ -52,8 +72,8 @@ export async function POST(req: NextRequest) {
     };
     const razorpayPlanId = PLAN_IDS[plan];
 
-    // 1. Try creating a Razorpay Subscription if Plan ID is available
-    if (razorpayPlanId) {
+    // 1. Try creating a Razorpay Subscription ONLY if NO coupon is applied and Plan ID is available
+    if (!couponResult && razorpayPlanId) {
       const subRes = await fetch('https://api.razorpay.com/v1/subscriptions', {
         method: 'POST',
         headers: {
@@ -68,8 +88,8 @@ export async function POST(req: NextRequest) {
           notes: {
             agent_id:   String(agentId),
             plan,
-            user_id:    user.id,
-            user_email: user.email || '',
+            user_id:    userId,
+            user_email: userEmail,
           },
         }),
       });
@@ -88,8 +108,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Fallback: Create standard Razorpay Order
-    const amount = PLAN_AMOUNTS_PAISE[plan];
+    // 2. Dynamic Razorpay Order (used for coupon discounts and fallback)
+    const amount = finalAmountPaise;
     const rzpRes = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
@@ -101,10 +121,13 @@ export async function POST(req: NextRequest) {
         currency: 'INR',
         receipt: `parlexa_plan_${agentId}_${plan}_${Date.now()}`,
         notes: {
-          agent_id:   String(agentId),
+          agent_id:      String(agentId),
           plan,
-          user_id:    user.id,
-          user_email: user.email || '',
+          user_id:       userId,
+          user_email:    userEmail,
+          coupon_code:   couponResult?.coupon?.code || '',
+          discount_val:  couponResult?.breakdown?.discountAmount ? String(couponResult.breakdown.discountAmount) : '0',
+          gst_val:       couponResult?.breakdown?.gstAmount ? String(couponResult.breakdown.gstAmount) : '0',
         },
       }),
     });
@@ -126,6 +149,7 @@ export async function POST(req: NextRequest) {
       amount:  order.amount,
       currency: order.currency,
       type: 'order',
+      breakdown: couponResult?.breakdown,
     });
 
   } catch (err) {

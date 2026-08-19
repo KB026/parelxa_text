@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, Shield, Star, Settings, LayoutDashboard, MessageSquare } from 'lucide-react';
+import { FileText, Shield, Star, Settings, LayoutDashboard, MessageSquare, CreditCard } from 'lucide-react';
 
 export function VendorSidebar() {
   const pathname = usePathname();
@@ -14,8 +14,7 @@ export function VendorSidebar() {
     { label: 'Deep Analytics', href: '/dashboard/vendor/analytics', icon: <FileText size={18} /> },
     { label: 'Verification', href: '/dashboard/vendor/verification', icon: <Shield size={18} /> },
     { label: 'Resolution Center', href: '/dashboard/vendor/resolution', icon: <MessageSquare size={18} /> },
-    // {/* HIDDEN: Billing & Plans - re-enable when billing flow is ready */}
-    // { label: 'Billing & Plan', href: '/dashboard/vendor/billing', icon: <CreditCard size={18} /> },
+    { label: 'Billing & Plan', href: '/dashboard/vendor/billing', icon: <CreditCard size={18} /> },
     { label: 'Settings', href: '/dashboard/vendor/settings', icon: <Settings size={18} /> },
   ];
 
