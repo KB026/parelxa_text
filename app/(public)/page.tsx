@@ -66,43 +66,43 @@ export default async function PublicHomePage() {
   const uniqueNewArrivals = (newArrivals || []).filter(a => !trendingIds.has(a.id));
 
   return (
-    <div className="home-container bg-[#0A0A0A] min-h-screen">
+    <div className="home-container bg-[#0A0A0A] min-h-screen w-full max-w-full overflow-x-hidden">
       <OrganizationSchema />
       {/* Hero Section Container */}
-      <div className="w-full pb-32 bg-gradient-to-b from-[#09090B] to-[#12121a]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}>
-        <section className="relative overflow-hidden w-full min-h-[90vh] pt-[120px] pb-20 flex flex-col items-center text-center">
+      <div className="w-full max-w-full overflow-hidden pb-16 sm:pb-32 bg-gradient-to-b from-[#09090B] to-[#12121a]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 95%, 0 100%)' }}>
+        <section className="relative overflow-hidden w-full min-h-[80vh] sm:min-h-[90vh] pt-24 sm:pt-[120px] pb-12 sm:pb-20 flex flex-col items-center text-center px-4">
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-brand-blue/20 rounded-full blur-[120px] mix-blend-screen animate-pulse duration-10000"></div>
             <div className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] bg-brand-fuchsia/15 rounded-full blur-[150px] mix-blend-screen"></div>
           </div>
-          <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center text-[11.5vw] md:text-[12.5vw] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/[0.08] to-white/[0.01] select-none pointer-events-none z-0">MARKETPLACE</div>
-          <div className="relative z-20 flex flex-col items-center text-center max-w-4xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards mt-6">
+          <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-full text-center text-[13vw] sm:text-[11.5vw] md:text-[12.5vw] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/[0.08] to-white/[0.01] select-none pointer-events-none z-0 truncate">MARKETPLACE</div>
+          <div className="relative z-20 flex flex-col items-center text-center max-w-4xl w-full mx-auto px-2 sm:px-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out fill-mode-forwards mt-2 sm:mt-6">
             
-            <div className="relative z-10 inline-flex items-center gap-2.5 px-4 py-1.5 mt-8 mb-6 rounded-full border border-white/[0.12] bg-white/[0.02] backdrop-blur-md shadow-sm">
+            <div className="relative z-10 inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 mt-4 sm:mt-8 mb-4 sm:mb-6 rounded-full border border-white/[0.12] bg-white/[0.02] backdrop-blur-md shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-violet opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-violet"></span>
               </span>
-              <span className="text-[11px] font-semibold text-gray-300 uppercase tracking-[0.2em] select-none">Global AI Ecosystem</span>
+              <span className="text-[10px] sm:text-[11px] font-semibold text-gray-300 uppercase tracking-[0.2em] select-none whitespace-nowrap">Global AI Ecosystem</span>
             </div>
-            <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-[1.05] font-medium tracking-tight mt-6 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
+            <h1 className="text-white text-2xl sm:text-4xl md:text-5xl lg:text-7xl leading-tight sm:leading-[1.05] font-semibold tracking-tight mt-3 sm:mt-6 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)] px-1">
               Enterprise AI Tools & AI Agents. <br className="hidden sm:block" /> 
-              <span className="bg-gradient-to-r from-white to-gray-500 text-transparent bg-clip-text">Built for Enterprise Scale.</span>
+              <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 text-transparent bg-clip-text block sm:inline mt-1 sm:mt-0">Built for Enterprise Scale.</span>
             </h1>
-          <p className="text-gray-400 text-base md:text-lg lg:text-xl max-w-[670px] mt-5 md:mt-6 px-2">Discover, compare, and deploy 200+ verified enterprise AI tools and AI agents worldwide.</p>
+          <p className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl max-w-[670px] mt-4 sm:mt-6 px-2">Discover, compare, and deploy 200+ verified enterprise AI tools and AI agents worldwide.</p>
           
 
-          <div className="w-full relative z-30 hover:scale-[1.02] transition-transform duration-500">
+          <div className="w-full relative z-30 hover:scale-[1.01] transition-transform duration-500">
             <UniversalAISearch />
           </div>
           
           {/* The "Trusted By" Section */}
-          <p className="text-xs font-semibold tracking-[0.2em] text-gray-500 uppercase mt-16 mb-6">Integrating with the world's best models</p>
-          <div className="flex items-center justify-center flex-wrap gap-4 sm:gap-6 md:gap-10 lg:gap-16 grayscale select-none text-gray-500">
-            <span className="text-base sm:text-lg md:text-2xl font-bold tracking-tighter hover:text-white transition-colors duration-300 cursor-default">OpenAI</span>
-            <span className="text-base sm:text-lg md:text-2xl font-serif italic tracking-tight hover:text-white transition-colors duration-300 cursor-default">Anthropic</span>
-            <span className="text-base sm:text-lg md:text-2xl font-black tracking-widest hover:text-white transition-colors duration-300 cursor-default">META</span>
-            <span className="text-base sm:text-lg md:text-2xl font-semibold tracking-tight hover:text-white transition-colors duration-300 cursor-default">Google</span>
+          <p className="text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-gray-500 uppercase mt-8 sm:mt-16 mb-4 sm:mb-6">Integrating with the world's best models</p>
+          <div className="flex items-center justify-center flex-wrap gap-3 sm:gap-6 md:gap-10 lg:gap-16 grayscale select-none text-gray-500 px-2">
+            <span className="text-xs sm:text-lg md:text-2xl font-bold tracking-tighter hover:text-white transition-colors duration-300 cursor-default">OpenAI</span>
+            <span className="text-xs sm:text-lg md:text-2xl font-serif italic tracking-tight hover:text-white transition-colors duration-300 cursor-default">Anthropic</span>
+            <span className="text-xs sm:text-lg md:text-2xl font-black tracking-widest hover:text-white transition-colors duration-300 cursor-default">META</span>
+            <span className="text-xs sm:text-lg md:text-2xl font-semibold tracking-tight hover:text-white transition-colors duration-300 cursor-default">Google</span>
           </div>
         </div>
         </section>

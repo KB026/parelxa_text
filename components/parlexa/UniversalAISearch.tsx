@@ -63,16 +63,16 @@ export function UniversalAISearch() {
   };
 
   return (
-    <div ref={wrapperRef} className="relative max-w-[800px] mx-auto mb-10 px-4 z-[100]">
-      <form onSubmit={handleAISearch} className="relative w-full max-w-3xl mx-auto mt-10 p-2 bg-white/[0.02] backdrop-blur-3xl border border-white/[0.06] rounded-[3rem] shadow-[0_0_40px_rgba(139,92,246,0.15)] hover:shadow-[0_0_50px_rgba(139,92,246,0.25)] transition-shadow duration-300">
-        <div className="flex items-center w-full h-[54px] bg-[#0A0A0C] rounded-full pl-6 pr-2 border border-white/[0.05] transition-all duration-300 focus-within:border-white/15 focus-within:bg-[#0F0F13]">
-          <Sparkles className="w-5 h-5 text-gray-500 mr-3 shrink-0" />
+    <div ref={wrapperRef} className="relative w-full max-w-[800px] mx-auto mb-6 sm:mb-10 px-1 sm:px-4 z-[100]">
+      <form onSubmit={handleAISearch} className="relative w-full max-w-3xl mx-auto mt-6 sm:mt-10 p-1 sm:p-2 bg-white/[0.02] backdrop-blur-3xl border border-white/[0.06] rounded-full sm:rounded-[3rem] shadow-[0_0_40px_rgba(139,92,246,0.15)] hover:shadow-[0_0_50px_rgba(139,92,246,0.25)] transition-shadow duration-300">
+        <div className="flex items-center w-full h-[46px] sm:h-[54px] bg-[#0A0A0C] rounded-full pl-3 sm:pl-6 pr-1.5 sm:pr-2 border border-white/[0.05] transition-all duration-300 focus-within:border-white/15 focus-within:bg-[#0F0F13]">
+          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 mr-2 sm:mr-3 shrink-0" />
           <input 
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Ask anything... (e.g. 'sales agent')"
-            className="flex-1 min-w-0 bg-transparent border-none outline-none text-gray-200 placeholder-gray-500 text-[15px] truncate mr-4"
+            className="flex-1 min-w-0 bg-transparent border-none outline-none text-gray-200 placeholder-gray-500 text-xs sm:text-[15px] placeholder:text-[11px] sm:placeholder:text-[15px] truncate mr-2 sm:mr-4"
             disabled={isSearching}
           />
           
@@ -85,7 +85,7 @@ export function UniversalAISearch() {
           <button 
             type="submit"
             disabled={isSearching}
-            className="bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] hover:border-white/[0.2] text-gray-300 hover:text-white text-[14px] font-medium px-6 py-2 rounded-full transition-all duration-300 shrink-0"
+            className="bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] hover:border-white/[0.2] text-gray-300 hover:text-white text-xs sm:text-[14px] font-medium px-3 sm:px-6 py-1.5 sm:py-2 rounded-full transition-all duration-300 shrink-0 whitespace-nowrap"
           >
             {isSearching ? 'Thinking...' : 'AI Search'}
           </button>
@@ -93,14 +93,7 @@ export function UniversalAISearch() {
       </form>
 
       {showResults && (isSearching || result) && (
-        <div style={{ 
-          marginTop: '24px',
-          background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-          borderRadius: '24px', padding: '32px', boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
-          textAlign: 'left',
-          width: '100%',
-          animation: 'fadeIn 0.4s ease-out'
-        }}>
+        <div className="mt-4 sm:mt-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.5)] text-left w-full animate-in fade-in duration-300">
           {isSearching ? (
             <div style={{ padding: '40px 0', textAlign: 'center' }}>
               <div className="ai-loader" style={{ marginBottom: '16px' }}>

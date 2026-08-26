@@ -65,7 +65,7 @@ export default async function DirectoryPage({
   ]);
 
   return (
-    <div className="agents-page" style={{ maxWidth: '1280px', margin: '0 auto', padding: '100px 40px 80px' }}>
+    <div className="agents-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20">
       <header className="mb-6">
         <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-3">
           {category 

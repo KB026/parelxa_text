@@ -67,7 +67,7 @@ export default async function ProductsPage({
   ]);
 
   return (
-    <div className="agents-page" style={{ maxWidth: '1280px', margin: '0 auto', padding: '100px 40px 80px' }}>
+    <div className="agents-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20">
       {isClaimIntent && (
         <div className="mb-10 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#F59E0B]/15 via-[#8B5CF6]/10 to-transparent border border-[#F59E0B]/30 backdrop-blur-2xl shadow-[0_0_40px_rgba(245,158,11,0.12)] animate-in fade-in duration-300">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">

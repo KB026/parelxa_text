@@ -54,30 +54,30 @@ export function WhyParlexaSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-[#09090D] border-y border-white/[0.08] py-20 px-5 md:px-8 relative z-10 overflow-hidden">
+    <section ref={sectionRef} className="bg-[#09090D] border-y border-white/[0.08] py-12 sm:py-20 px-4 sm:px-6 md:px-8 relative z-10 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         
         {/* --- Main Tilted Icon Showcase Split Layout --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start mb-12 sm:mb-20">
           
           {/* Left Column: 3D Three.js Procedural Pentagon Logo Stage */}
           <div className="lg:col-span-5 flex flex-col items-start text-left w-full">
             
             {/* Header matching reference: "Introducing Parlexa" */}
-            <div className="mb-6">
-              <span className="text-[#12B886] font-medium text-lg sm:text-xl tracking-wide block mb-1 font-mono">
+            <div className="mb-4 sm:mb-6">
+              <span className="text-[#12B886] font-medium text-base sm:text-xl tracking-wide block mb-1 font-mono">
                 Introducing
               </span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-none">
+              <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-none">
                 Parlexa
               </h2>
             </div>
 
             {/* Stage Container for 3D Three.js Logo */}
-            <div className="relative w-full h-[360px] sm:h-[440px] rounded-2xl bg-black/30 border border-white/[0.06] flex flex-col items-center justify-center overflow-hidden">
+            <div className="relative w-full h-[280px] sm:h-[360px] md:h-[440px] rounded-2xl bg-black/30 border border-white/[0.06] flex flex-col items-center justify-center overflow-hidden">
               
               {/* Radial Backdrop Illumination Glow */}
-              <div className="absolute w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-tr from-purple-600/30 via-indigo-500/20 to-blue-600/30 rounded-full blur-[100px] pointer-events-none" />
+              <div className="absolute w-60 h-60 sm:w-96 sm:h-96 bg-gradient-to-tr from-purple-600/30 via-indigo-500/20 to-blue-600/30 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none" />
 
               {/* Dynamic 3D Three.js Procedural Logo Canvas */}
               <div className="relative z-10 w-full h-full">

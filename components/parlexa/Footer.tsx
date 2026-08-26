@@ -4,11 +4,11 @@ const DynamicBackground = dynamic(() => import('@/components/parlexa/DynamicBack
 
 export async function Footer() {
   return (
-    <footer className="bg-[#09090B] border-t border-white/10 relative overflow-hidden pt-16">
+    <footer className="bg-[#09090B] border-t border-white/10 relative overflow-hidden pt-12 sm:pt-16">
       <DynamicBackground type="footer" />
       <div className="relative z-10">
         {/* Top Section (Link Columns) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 max-w-7xl mx-auto px-4 sm:px-6">
           
           {/* Column 1: Platform */}
           <div>

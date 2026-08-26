@@ -104,19 +104,19 @@ export function NavbarClient({ user }: NavbarClientProps) {
 
   return (
     <>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3">
         {user ? (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             {user.role === 'admin' && (
-              <Link href="/admin" className="text-[10px] font-bold px-2.5 py-0.5 bg-amber-500/90 text-black rounded-full no-underline uppercase tracking-wider hover:bg-amber-400 transition-colors">
+              <Link href="/admin" className="text-[10px] font-bold px-2 py-0.5 bg-amber-500/90 text-black rounded-full no-underline uppercase tracking-wider hover:bg-amber-400 transition-colors">
                 Admin
               </Link>
             )}
             <Link
               href={dashboardHref}
-              className="flex items-center gap-2 px-1 pr-3 py-0.5 rounded-full border border-white/[0.06] hover:border-brand-violet/30 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-300 group"
+              className="flex items-center gap-1.5 sm:gap-2 px-1 sm:px-1.5 pr-2 sm:pr-3 py-0.5 rounded-full border border-white/[0.06] hover:border-brand-violet/30 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-300 group"
             >
-              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-brand-violet/30 to-brand-fuchsia/20 border border-brand-violet/30 text-white text-[12px] font-semibold shadow-sm group-hover:from-brand-violet/50 group-hover:to-brand-fuchsia/30 transition-all duration-300">
+              <div className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-brand-violet/30 to-brand-fuchsia/20 border border-brand-violet/30 text-white text-[11px] sm:text-[12px] font-semibold shadow-sm group-hover:from-brand-violet/50 group-hover:to-brand-fuchsia/30 transition-all duration-300">
                 {user.initial}
               </div>
               <span className="text-[13px] font-medium text-gray-400 group-hover:text-white transition-colors hidden md:block">
@@ -135,7 +135,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
         ) : (
           <button
             onClick={() => setAuthOpen(true)}
-            className="flex items-center gap-2 whitespace-nowrap shrink-0 px-4 py-2 rounded-xl text-[13px] font-semibold text-white transition-all duration-300 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-brand-violet/40 hover:border-brand-violet/60"
+            className="flex items-center gap-1 sm:gap-2 whitespace-nowrap shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-[13px] font-semibold text-white transition-all duration-300 hover:-translate-y-px hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-brand-violet/40 hover:border-brand-violet/60"
             style={{
               background: 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #6D28D9 100%)',
             }}
@@ -148,13 +148,13 @@ export function NavbarClient({ user }: NavbarClientProps) {
 
       {/* Mobile hamburger */}
       <button
-        className="md:hidden flex flex-col gap-[5px] items-center justify-center w-9 h-9 bg-transparent border border-white/[0.08] rounded-lg cursor-pointer ml-3 hover:bg-white/[0.04] transition-colors"
+        className="md:hidden flex flex-col gap-[4px] items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-transparent border border-white/[0.08] rounded-lg cursor-pointer ml-1.5 sm:ml-3 hover:bg-white/[0.04] transition-colors shrink-0"
         onClick={() => setMobileMenuOpen(true)}
         aria-label="Open menu"
       >
-        <span className="block w-4 h-[1.5px] bg-gray-400 rounded-full transition-all" />
-        <span className="block w-3 h-[1.5px] bg-gray-400 rounded-full transition-all" />
-        <span className="block w-4 h-[1.5px] bg-gray-400 rounded-full transition-all" />
+        <span className="block w-3.5 sm:w-4 h-[1.5px] bg-gray-400 rounded-full transition-all" />
+        <span className="block w-2.5 sm:w-3 h-[1.5px] bg-gray-400 rounded-full transition-all" />
+        <span className="block w-3.5 sm:w-4 h-[1.5px] bg-gray-400 rounded-full transition-all" />
       </button>
 
       {/* Mobile full-screen menu */}
