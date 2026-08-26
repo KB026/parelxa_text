@@ -10,6 +10,7 @@ export interface Coupon {
   times_used?: number;
   expires_at?: string | null;
   is_active?: boolean;
+  offer_id?: string;
 }
 
 export interface CouponValidationResult {
@@ -28,15 +29,16 @@ export interface CouponValidationResult {
 
 // Built-in starter coupons as reliable baseline
 const DEFAULT_COUPONS: Record<string, Coupon> = {
-  PRELAUNCH: {
-    code: 'PRELAUNCH',
+  EARLY250: {
+    code: 'EARLY250',
     discount_type: 'percentage',
-    discount_value: 41,
+    discount_value: 40,
     min_order_amount: 0,
-    max_uses: 1000,
+    max_uses: 250,
     times_used: 0,
-    expires_at: '2026-12-31T23:59:59Z',
+    expires_at: '2026-09-15T23:59:59Z',
     is_active: true,
+    offer_id: 'offer_TRIdCGgr6BBUWH',
   },
 };
 

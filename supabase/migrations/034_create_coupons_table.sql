@@ -19,8 +19,8 @@ CREATE POLICY "Allow public read of active coupons"
   TO public, authenticated 
   USING (is_active = true);
 
--- Insert starter coupons if not already present
+-- Insert starter coupon (EARLY250)
 INSERT INTO public.coupons (code, discount_type, discount_value, min_order_amount, max_uses, times_used, expires_at, is_active)
 VALUES
-  ('PRELAUNCH', 'percentage', 41, 0, 1000, 0, '2026-12-31 23:59:59+00', true)
-ON CONFLICT (code) DO UPDATE SET discount_value = 41, is_active = true;
+  ('EARLY250', 'percentage', 40, 0, 250, 0, '2026-09-15 23:59:59+00', true)
+ON CONFLICT (code) DO UPDATE SET discount_value = 40, expires_at = '2026-09-15 23:59:59+00', is_active = true;

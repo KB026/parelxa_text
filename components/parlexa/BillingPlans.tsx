@@ -278,7 +278,7 @@ function loadRazorpayScript(): Promise<boolean> {
       const RazorpaySDK = (window as any)?.Razorpay;
       if (!RazorpaySDK) throw new Error('Razorpay checkout is loading. Please try clicking again.');
       
-      const options = {
+      const options: Record<string, any> = {
         key: res.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
         amount: res.amount,
         currency: 'INR',
@@ -294,6 +294,11 @@ function loadRazorpayScript(): Promise<boolean> {
         theme: { color: '#7c3aed' },
         modal: { ondismiss: () => setLoading(null) },
       };
+
+      const offerToApply = (res as any).offerId || (appliedCoupon?.code === 'EARLY250' ? 'offer_TRIdCGgr6BBUWH' : undefined);
+      if (offerToApply) {
+        options.offer_id = offerToApply;
+      }
       
       const rzpInstance = new RazorpaySDK(options);
       rzpInstance.open();

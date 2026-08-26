@@ -454,6 +454,10 @@ export default function PlanPickerScreen({
         options.currency = orderData.currency || 'INR';
       }
 
+      if (orderData.offerId || appliedCoupon?.code === 'EARLY250') {
+        options.offer_id = orderData.offerId || 'offer_TRIdCGgr6BBUWH';
+      }
+
       const rzp = new RzpSDK(options);
       rzp.open();
     } catch (e: unknown) {

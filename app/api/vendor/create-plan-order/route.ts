@@ -72,26 +72,36 @@ export async function POST(req: NextRequest) {
     };
     const razorpayPlanId = PLAN_IDS[plan];
 
-    // 1. Try creating a Razorpay Subscription ONLY if NO coupon is applied and Plan ID is available
-    if (!couponResult && razorpayPlanId) {
+    // Check for linked offer ID (e.g. offer_TRIdCGgr6BBUWH for EARLY250)
+    const offerId = couponResult?.coupon?.offer_id || process.env.RAZORPAY_OFFER_ID || (couponCode?.trim()?.toUpperCase() === 'EARLY250' ? 'offer_TRIdCGgr6BBUWH' : undefined);
+
+    // 1. Try creating a Razorpay Subscription (with optional linked offer) if Plan ID is available
+    if (razorpayPlanId) {
+      const subPayload: Record<string, any> = {
+        plan_id: razorpayPlanId,
+        total_count: plan.endsWith('_annual') ? 10 : 60,
+        quantity: 1,
+        customer_notify: 1,
+        notes: {
+          agent_id:   String(agentId),
+          plan,
+          user_id:    userId,
+          user_email: userEmail,
+          coupon_code: couponResult?.coupon?.code || couponCode || '',
+        },
+      };
+
+      if (offerId) {
+        subPayload.offer_id = offerId;
+      }
+
       const subRes = await fetch('https://api.razorpay.com/v1/subscriptions', {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          plan_id: razorpayPlanId,
-          total_count: plan.endsWith('_annual') ? 10 : 60,
-          quantity: 1,
-          customer_notify: 1,
-          notes: {
-            agent_id:   String(agentId),
-            plan,
-            user_id:    userId,
-            user_email: userEmail,
-          },
-        }),
+        body: JSON.stringify(subPayload),
       });
 
       if (subRes.ok) {
@@ -99,8 +109,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
           subscriptionId: subscription.id,
           keyId,
-          amount: PLAN_AMOUNTS_PAISE[plan],
+          amount: finalAmountPaise,
           type: 'subscription',
+          offerId: offerId || null,
         });
       } else {
         const errData = await subRes.json().catch(() => ({}));

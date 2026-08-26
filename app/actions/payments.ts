@@ -89,6 +89,7 @@ export async function createPromotionOrder(
       success: true, 
       orderId: order.id, 
       amount: amountInPaise,
+      offerId: couponResult?.coupon?.offer_id || (couponCode?.trim()?.toUpperCase() === 'EARLY250' ? 'offer_TRIdCGgr6BBUWH' : undefined),
       keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || ''
     };
   } catch (err: unknown) {
