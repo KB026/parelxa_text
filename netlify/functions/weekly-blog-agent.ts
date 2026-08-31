@@ -3,6 +3,11 @@ import { createClient } from "@supabase/supabase-js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 
+// Ensure WebSocket compatibility for Supabase in serverless Node environments (Node < 22)
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = class WebSocket {} as any;
+}
+
 interface TopicData {
   topic: string;
   category: string;
@@ -73,7 +78,7 @@ export default async (req: Request) => {
     try {
       const genAI = new GoogleGenerativeAI(geminiKey);
       const model = genAI.getGenerativeModel({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-flash-latest',
         tools: [{ googleSearch: {} }] as any
       });
 
@@ -262,7 +267,7 @@ OUTPUT JSON SCHEMA ONLY (no text outside JSON):
     if (geminiKey) {
       try {
         const genAI = new GoogleGenerativeAI(geminiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
         const result = await model.generateContent(generationPrompt);
         const text = result.response.text();
         const jsonMatch = text.match(/\{[\s\S]*\}/);

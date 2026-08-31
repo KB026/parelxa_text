@@ -2,6 +2,11 @@ import type { Config } from "@netlify/functions";
 import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 
+// Ensure WebSocket compatibility for Supabase in serverless Node environments (Node < 22)
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = class WebSocket {} as any;
+}
+
 // Centralized notification recipient configuration
 export const NOTIFICATION_RECIPIENTS = [
   "parlexa.ai@gmail.com",
