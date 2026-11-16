@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight, X, ExternalLink, Sparkles } from 'lucide-react';
 
 // Predefined jagged clipping paths to give a hand-torn look
 const clipPaths = [
@@ -15,37 +15,71 @@ const clipPaths = [
 // Rotations corresponding to index
 const rotations = ["md:-rotate-[1deg]", "md:rotate-[0.5deg]", "md:-rotate-[0.5deg]"];
 
-export function BlogSection() {
-  const blogs = [
-    {
-      id: 1,
-      title: "The Rise of AI Agents in Enterprise Ecosystems (2026)",
-      excerpt: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\"",
-      content: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\" But misunderstanding how these agents deploy will severely handicap modern enterprise scalability. \n\nWe are shifting from generative AI that simply writes emails or drafts code, to Agentic AI that can take actions. Future ecosystems will consist of interconnected agents handling distinct vertical pipelines—from supply chain procurement to customer success routing.\n\nThis transformation is already happening across the industry. Standard models lack the compliance and specific taxonomy required for enterprise-grade solutions. With vertical alignment, companies bypass generic hurdles and immediately leverage determinism.",
-      date: "20 APRIL 2026"
-    },
-    {
-      id: 2,
-      title: "Navigating the Parlexa Marketplace: A Complete Vendor Guide",
-      excerpt: "Listing your product effectively has always been described as a friction point. Today, when businesses have more tools than ever, positioning your AI solution correctly is paramount.",
-      content: "Listing your product effectively has always been described as a friction point. Today, when businesses have more tools than ever, positioning your AI solution correctly is paramount. Follow our step-by-step metadata and SEO guide. \n\nParlexa acts as the central hub. By establishing strong categories, utilizing rich descriptions, and allowing our AI-matching engine to map your tool to enterprise needs, vendors can experience a 300% increase in qualified leads.",
-      date: "12 APRIL 2026"
-    },
-    {
-      id: 3,
-      title: "Why Vertical AI Solutions Outperform General Models",
-      excerpt: "A custom LLM stack is one of the most important infrastructural shifts your company will ever make. Yet most enterprises either put it off for years or assume generalist models can handle it...",
-      content: "A custom LLM stack is one of the most important infrastructural shifts your company will ever make. Yet most enterprises either put it off for years or assume generalist models can handle robust, industry-specific taxonomy workloads effortlessly. \n\nGeneralists like standard GPT-4 are excellent communicators but often hallucinate complex niche logic (e.g. medical compliance, legal discovery). Vertical AI, trained exactly on proprietary datasets, guarantees safety, deterministic logic, and enterprise compliance.",
-      date: "28 MARCH 2026"
-    }
-  ];
+export interface BlogItem {
+  id: string | number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  date: string;
+}
 
-  const [selectedBlog, setSelectedBlog] = useState<{title: string, content: string, date: string, excerpt: string} | null>(null);
+const DEFAULT_FALLBACK_BLOGS: BlogItem[] = [
+  {
+    id: 1,
+    slug: "rise-of-ai-agents-2026",
+    title: "The Rise of AI Agents in Enterprise Ecosystems (2026)",
+    excerpt: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\"",
+    content: "Ask most working professionals what they believe the most transformative software addition to their tech stack will be, and they will say: \"Autonomous Agents.\" But misunderstanding how these agents deploy will severely handicap modern enterprise scalability. \n\nWe are shifting from generative AI that simply writes emails or drafts code, to Agentic AI that can take actions. Future ecosystems will consist of interconnected agents handling distinct vertical pipelines—from supply chain procurement to customer success routing.\n\nThis transformation is already happening across the industry. Standard models lack the compliance and specific taxonomy required for enterprise-grade solutions. With vertical alignment, companies bypass generic hurdles and immediately leverage determinism.",
+    date: "20 APRIL 2026"
+  },
+  {
+    id: 2,
+    slug: "parlexa-marketplace-vendor-guide",
+    title: "Navigating the Parlexa Marketplace: A Complete Vendor Guide",
+    excerpt: "Listing your product effectively has always been described as a friction point. Today, when businesses have more tools than ever, positioning your AI solution correctly is paramount.",
+    content: "Listing your product effectively has always been described as a friction point. Today, when businesses have more tools than ever, positioning your AI solution correctly is paramount. Follow our step-by-step metadata and SEO guide. \n\nParlexa acts as the central hub. By establishing strong categories, utilizing rich descriptions, and allowing our AI-matching engine to map your tool to enterprise needs, vendors can experience a 300% increase in qualified leads.",
+    date: "12 APRIL 2026"
+  },
+  {
+    id: 3,
+    slug: "vertical-ai-vs-general-models",
+    title: "Why Vertical AI Solutions Outperform General Models",
+    excerpt: "A custom LLM stack is one of the most important infrastructural shifts your company will ever make. Yet most enterprises either put it off for years or assume generalist models can handle it...",
+    content: "A custom LLM stack is one of the most important infrastructural shifts your company will ever make. Yet most enterprises either put it off for years or assume generalist models can handle robust, industry-specific taxonomy workloads effortlessly. \n\nGeneralists like standard GPT-4 are excellent communicators but often hallucinate complex niche logic (e.g. medical compliance, legal discovery). Vertical AI, trained exactly on proprietary datasets, guarantees safety, deterministic logic, and enterprise compliance.",
+    date: "28 MARCH 2026"
+  }
+];
+
+export function BlogSection({ initialBlogs }: { initialBlogs?: any[] }) {
+  const [blogs, setBlogs] = useState<BlogItem[]>(() => {
+    if (Array.isArray(initialBlogs) && initialBlogs.length > 0) {
+      return initialBlogs.slice(0, 3).map((b, idx) => ({
+        id: b.id || b.slug || idx + 1,
+        slug: b.slug,
+        title: b.title,
+        excerpt: b.excerpt || '',
+        content: b.content || b.body || b.excerpt || '',
+        date: b.publishedAt ? new Date(b.publishedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase() : (b.date || 'LATEST')
+      }));
+    }
+    return DEFAULT_FALLBACK_BLOGS;
+  });
+
+  const [selectedBlog, setSelectedBlog] = useState<BlogItem | null>(null);
+
+  // If initialBlogs wasn't provided at server render, dynamically fetch latest published posts on client
+  useEffect(() => {
+    if (!initialBlogs || initialBlogs.length === 0) {
+      fetch('/api/admin/blog-review/list')
+        .catch(() => null);
+    }
+  }, [initialBlogs]);
 
   // Helper to split content into paragraphs for the enlarged modal
   const renderArticleBody = (content: string, excerpt: string) => {
-    const paragraphs = content.split('\n\n');
-    const firstParagraph = paragraphs[0];
+    const paragraphs = content.split('\n\n').filter(p => p.trim().length > 0);
+    const firstParagraph = paragraphs[0] || excerpt;
     const rest = paragraphs.slice(1);
     
     return (
@@ -58,7 +92,7 @@ export function BlogSection() {
         </p>
         
         {/* Pull quote inserted automatically */}
-        {rest.length > 0 && (
+        {rest.length > 0 && excerpt && (
           <div className="my-8 border-t-[3px] border-b-[3px] border-black py-5 font-serif italic text-xl md:text-2xl font-semibold leading-snug text-black text-center break-inside-avoid">
             "{excerpt}"
           </div>
@@ -66,7 +100,7 @@ export function BlogSection() {
         
         {rest.map((p, i) => (
           <p key={i} className="mb-6 text-justify">
-            {p}
+            {p.replace(/^#+\s+/g, '')}
           </p>
         ))}
       </>
@@ -75,26 +109,30 @@ export function BlogSection() {
 
   return (
     <section id="blog" className="max-w-7xl mx-auto py-24 px-5 text-center">
-      <div className="mb-16">
-        <span className="text-brand-violet text-[10px] md:text-xs font-medium tracking-widest uppercase mb-4 block">
-          Blogs
-        </span>
+      <div className="mb-14">
+        <div className="inline-flex items-center gap-2 border border-brand-violet/40 bg-brand-violet/10 px-3 py-1 rounded-full mb-3">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-violet animate-pulse"></span>
+          <span className="text-brand-violet text-[10px] md:text-xs font-semibold tracking-widest uppercase">
+            PARLEXA INSIGHTS &amp; EDITORIAL
+          </span>
+        </div>
         <h2 className="text-4xl md:text-5xl font-semibold text-[#EDEDED] tracking-tight">
           Latest News From Us
         </h2>
+        <p className="text-sm md:text-base text-[#94A3B8] max-w-xl mx-auto mt-3">
+          Real-time enterprise architectural patterns, benchmarks, and honest developer critiques.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 text-left">
         {blogs.map((blog, idx) => (
-          // Bounding box container for the card to maintain the 3-column grid alignment,
-          // while the inner card has the torn clip path and rotation applied
           <div key={blog.id} className="relative group perspective-[1000px] h-full">
             <article 
               className={`relative flex flex-col h-full bg-[#E4E0D4] overflow-hidden hover:-translate-y-2 transition-all duration-300 cursor-pointer shadow-[0_15px_40px_rgba(0,0,0,0.6)] group-hover:shadow-[0_25px_50px_rgba(0,0,0,0.8)] ${rotations[idx % 3]}`}
               style={{ clipPath: clipPaths[idx % 3] }}
               onClick={() => setSelectedBlog(blog)}
             >
-              {/* Paper grain noise texture (4-8% opacity) */}
+              {/* Paper grain noise texture */}
               <div 
                 className="absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none z-0" 
                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
@@ -119,7 +157,7 @@ export function BlogSection() {
 
               <div className="p-8 pb-4 flex-1 flex flex-col relative z-10">
                 <h3 
-                  className="text-xl md:text-2xl font-bold text-[#1A1A1A] mt-2 leading-[1.1] group-hover:text-brand-violet-dark transition-colors"
+                  className="text-xl md:text-2xl font-bold text-[#1A1A1A] mt-2 leading-[1.1] group-hover:text-brand-violet-dark transition-colors line-clamp-3"
                   style={{ fontFamily: '"Playfair Display", "PT Serif", "Libre Caslon Text", serif' }}
                 >
                   {blog.title}
@@ -130,11 +168,24 @@ export function BlogSection() {
                 >
                   {blog.excerpt}
                 </p>
-                <button 
-                  className="text-brand-violet font-serif font-bold text-sm bg-transparent border-none p-0 text-left mt-6 cursor-pointer inline-flex items-center gap-2 underline decoration-brand-violet/30 underline-offset-4 hover:decoration-brand-violet/70 transition-all"
-                >
-                  Read More <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </button>
+                <div className="flex items-center justify-between mt-6">
+                  <button 
+                    className="text-brand-violet font-serif font-bold text-sm bg-transparent border-none p-0 text-left cursor-pointer inline-flex items-center gap-2 underline decoration-brand-violet/30 underline-offset-4 hover:decoration-brand-violet/70 transition-all"
+                  >
+                    Read Clipping <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                  {blog.slug && (
+                    <Link
+                      href={`/blog/${blog.slug}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xs text-[#64748B] hover:text-brand-violet flex items-center gap-1 font-mono transition-colors"
+                      title="Open full article page"
+                    >
+                      <span>Full Post</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  )}
+                </div>
               </div>
               
               <div className="relative z-10 mx-8 mt-2 mb-6">
@@ -147,9 +198,15 @@ export function BlogSection() {
         ))}
       </div>
 
-      <Link href="/blog" className="inline-block bg-brand-violet text-white hover:bg-brand-violet-dark font-medium rounded-lg px-6 py-2.5 transition-all">
-        View All Posts
-      </Link>
+      <div className="flex justify-center items-center gap-4">
+        <Link 
+          href="/blog" 
+          className="inline-flex items-center gap-2 bg-brand-violet hover:bg-brand-violet-dark text-white font-medium rounded-xl px-7 py-3 transition-all shadow-lg hover:shadow-brand-violet/20"
+        >
+          <span>View All 2026 Blog Posts</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
 
       {/* Newspaper Clipping Modal */}
       {selectedBlog && typeof document !== 'undefined' && createPortal(
@@ -195,7 +252,7 @@ export function BlogSection() {
                     </div>
                     
                     <h1 
-                      className="font-serif text-4xl md:text-6xl font-extrabold text-black leading-[1.05] tracking-tight mb-6" 
+                      className="font-serif text-3xl md:text-5xl font-extrabold text-black leading-[1.08] tracking-tight mb-6" 
                       style={{ fontFamily: '"Playfair Display", "PT Serif", "Libre Caslon Text", serif' }}
                     >
                       {selectedBlog.title}
@@ -214,8 +271,19 @@ export function BlogSection() {
                     {renderArticleBody(selectedBlog.content, selectedBlog.excerpt)}
                   </div>
                   
-                  <div className="mt-12 text-center border-t border-black/30 pt-6 font-serif italic text-sm text-black/60">
-                    Continued on next page...
+                  <div className="mt-12 flex flex-col sm:flex-row items-center justify-between border-t border-black/30 pt-6 gap-4">
+                    <span className="font-serif italic text-sm text-black/60">
+                      Published on Parlexa Research &amp; Editorial
+                    </span>
+                    {selectedBlog.slug && (
+                      <Link 
+                        href={`/blog/${selectedBlog.slug}`}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-[#F4F1EA] hover:bg-black/80 text-xs font-mono font-bold uppercase tracking-wider rounded-lg transition-all"
+                      >
+                        <span>Read Full Guide on Parlexa Blog</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    )}
                   </div>
                 </div>
 

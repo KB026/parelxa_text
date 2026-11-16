@@ -68,6 +68,43 @@ export default function BlogReviewQueuePage() {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [saveLoading, setSaveLoading] = useState(false);
 
+  // Dynamic On-Demand Generator State
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generateTopic, setGenerateTopic] = useState('');
+  const [generateCategory, setGenerateCategory] = useState('Developer Tools & Infra');
+  const [autoPublishCheck, setAutoPublishCheck] = useState(false);
+  const [generationFeedback, setGenerationFeedback] = useState<string | null>(null);
+
+  const handleGeneratePost = async (customTopic?: string) => {
+    setIsGenerating(true);
+    setGenerationFeedback(null);
+    try {
+      const topicToUse = customTopic || generateTopic;
+      const res = await fetch('/api/admin/blog-review/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: topicToUse,
+          category: generateCategory,
+          autoPublish: autoPublishCheck
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to generate blog post');
+      }
+
+      setGenerationFeedback(`🎉 Successfully generated "${data.post?.title}" (${data.post?.status})!`);
+      setGenerateTopic('');
+      await fetchDrafts();
+    } catch (err: any) {
+      alert(`Generation error: ${err.message}`);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const fetchDrafts = async () => {
     setLoading(true);
     setError(null);
@@ -215,6 +252,106 @@ export default function BlogReviewQueuePage() {
             {loading ? <Loader2 size={14} className="animate-spin" /> : 'Refresh'}
           </button>
         </div>
+      </div>
+
+      {/* Dynamic Blog Generator Command Bar */}
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-[#18181B] via-[#141414] to-[#1E1B4B]/40 border border-[#8B5CF6]/30 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-[#8B5CF6]/20 text-[#A78BFA]">
+              <Sparkles size={18} />
+            </span>
+            <h2 className="text-base font-bold text-white tracking-tight">
+              Autonomous Blog Generator (Live Market Radar &amp; Custom Topics)
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[#94A3B8]">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={autoPublishCheck}
+                onChange={(e) => setAutoPublishCheck(e.target.checked)}
+                className="w-4 h-4 rounded bg-[#0A0A0A] border-white/20 text-[#8B5CF6] focus:ring-[#8B5CF6]"
+              />
+              <span className={autoPublishCheck ? 'text-emerald-400 font-semibold' : 'text-[#94A3B8]'}>
+                {autoPublishCheck ? '✓ Auto-Publish Directly to Live Blog' : 'Queue as Draft for Human Review'}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Live Radar Suggestion Pills */}
+        <div className="space-y-1.5">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#A78BFA] flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+            Trending Builder Signals (Click to load):
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {[
+              "Why Developers Hate Hidden Demo Gates and Choose Self-Serve AI Tools",
+              "Sub-800ms Real-Time Voice AI Agents in High-Concurrency Contact Centers",
+              "Sovereign Indic LLMs: Why Indian Enterprises Are Moving Off US APIs",
+              "Eliminating USD SaaS Tax: Why Indian Tech Teams Require Localized INR Invoicing",
+              "The Model Context Protocol (MCP): Connecting Multi-Agent Stacks to Enterprise Data"
+            ].map((trend, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setGenerateTopic(trend)}
+                className="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#8B5CF6]/40 text-xs text-[#E2E8F0] transition-all text-left flex items-center gap-1.5"
+              >
+                <span>🔥</span>
+                <span>{trend}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Input & Action */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <input
+            type="text"
+            value={generateTopic}
+            onChange={(e) => setGenerateTopic(e.target.value)}
+            placeholder="Enter custom topic or leave blank to auto-detect highest-signal market trend..."
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[#0B0F17] border border-white/15 text-sm text-white placeholder-[#64748B] focus:outline-none focus:border-[#8B5CF6] transition-all"
+          />
+          <select
+            value={generateCategory}
+            onChange={(e) => setGenerateCategory(e.target.value)}
+            className="px-3 py-2.5 rounded-xl bg-[#0B0F17] border border-white/15 text-xs text-white focus:outline-none focus:border-[#8B5CF6]"
+          >
+            <option value="Developer Tools & Infra">Developer Tools &amp; Infra</option>
+            <option value="Sovereign & Vertical AI">Sovereign &amp; Vertical AI</option>
+            <option value="FinTech & Compliance">FinTech &amp; Compliance</option>
+            <option value="Customer Experience">Customer Experience</option>
+            <option value="Procurement & Evaluation">Procurement &amp; Evaluation</option>
+          </select>
+          <button
+            onClick={() => handleGeneratePost()}
+            disabled={isGenerating}
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#2563EB] hover:from-[#6D28D9] hover:to-[#1D4ED8] text-white text-xs font-bold transition-all shadow-lg hover:shadow-purple-500/25 flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                <span>Synthesizing Article...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles size={14} />
+                <span>⚡ Generate Fresh Post Now</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {generationFeedback && (
+          <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium flex items-center gap-2">
+            <CheckCircle size={14} />
+            <span>{generationFeedback}</span>
+          </div>
+        )}
       </div>
 
       {/* Main Queue List */}

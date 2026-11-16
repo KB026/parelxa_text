@@ -1,9 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+let _cachedClient: SupabaseClient | null = null;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabase(): SupabaseClient | null {
+  if (_cachedClient) return _cachedClient;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+  _cachedClient = createClient(supabaseUrl, supabaseAnonKey);
+  return _cachedClient;
+}
 
 export interface BlogPostRecord {
   id: string;
@@ -77,6 +85,9 @@ export function formatBlogPost(record: BlogPostRecord, isFirst: boolean = false)
 }
 
 export async function getPublishedBlogPosts(): Promise<FormattedBlogPost[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
@@ -92,6 +103,9 @@ export async function getPublishedBlogPosts(): Promise<FormattedBlogPost[]> {
 }
 
 export async function getPublishedBlogPostBySlug(slug: string): Promise<FormattedBlogPost | undefined> {
+  const supabase = getSupabase();
+  if (!supabase) return undefined;
+
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')

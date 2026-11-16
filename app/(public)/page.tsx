@@ -1,5 +1,6 @@
 import { getCategories, getFeaturedAgents } from "@/lib/api";
 import { getTrendingAgents, getNewArrivals, refreshTrendingScores } from "@/lib/analytics";
+import { getPublishedBlogPosts, FormattedBlogPost } from "@/lib/blog-service";
 import { Agent, Category } from "@/lib/types";
 import { Metadata } from "next";
 import Link from 'next/link';
@@ -42,18 +43,21 @@ export default async function PublicHomePage() {
   let categories: Category[] = [];
   let trendingAgents: Agent[] = [];
   let newArrivals: Agent[] = [];
+  let publishedBlogs: FormattedBlogPost[] = [];
   
   try {
-    const [f, c, t, n] = await Promise.all([
+    const [f, c, t, n, b] = await Promise.all([
       getFeaturedAgents(), 
       getCategories(),
       getTrendingAgents(8),
-      getNewArrivals(8)
+      getNewArrivals(8),
+      getPublishedBlogPosts().catch(() => [])
     ]);
     featuredAgents = f;
     categories = c;
     trendingAgents = t as unknown as Agent[];
     newArrivals = n as unknown as Agent[];
+    publishedBlogs = b as FormattedBlogPost[];
   } catch (err: any) {
     if (err?.digest === 'DYNAMIC_SERVER_USAGE' || err?.message?.includes('Dynamic server usage')) {
       throw err;
@@ -222,7 +226,7 @@ export default async function PublicHomePage() {
       {/* Editorial Blogs */}
       <section className="bg-[#111111]">
         <ScrollReveal>
-          <BlogSection />
+          <BlogSection initialBlogs={publishedBlogs} />
         </ScrollReveal>
       </section>
     </div>
